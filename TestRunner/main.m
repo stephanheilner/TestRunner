@@ -6,12 +6,12 @@
 //  Copyright © 2016 The Church of Jesus Christ of Latter-day Saints. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
+@import Runner;
 
 int main(int argc, const char * argv[]) {
     @autoreleasepool {
-        // insert code here...
-        NSLog(@"Hello, World!");
+        [TestRunner start];
     }
     return 0;
 }

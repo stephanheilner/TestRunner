@@ -1,0 +1,10 @@
+PODS:
+  - Swiftification (5.0.0)
+
+DEPENDENCIES:
+  - Swiftification
+
+SPEC CHECKSUMS:
+  Swiftification: cf7c49e2689beb8aefbb9b00ba655dc7b9b1d06e
+
+COCOAPODS: 0.39.0

@@ -1,0 +1,6 @@
+framework module Swiftification {
+  umbrella header "Swiftification-umbrella.h"
+
+  export *
+  module * { export * }
+}
