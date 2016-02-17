@@ -126,5 +126,8 @@ class XCToolTask {
     func waitUntilExit() {
         task.waitUntilExit()
     }
-    
+
+    func terminate() {
+        task.terminate()
+    }
 }

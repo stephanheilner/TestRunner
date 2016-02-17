@@ -50,7 +50,7 @@ class TestRunnerOperation: NSOperation {
     private var logFilePath: String?
     private var status: TestRunnerStatus = .Stopped
     private var lastCheck = NSDate().timeIntervalSince1970
-    private var timeoutTimer = NSTimer()
+    private var timeoutCounter = 0
     
     var loaded = false
     var completion: ((status: TestRunnerStatus, simulatorName: String, failedTests: [String], deviceID: String, retryCount: Int) -> Void)?
@@ -74,12 +74,6 @@ class TestRunnerOperation: NSOperation {
         executing = true
         status = .Running
 
-        defer {
-            completion?(status: status, simulatorName: simulatorName, failedTests: getFailedTests(), deviceID: deviceID, retryCount: retryCount)
-            executing = false
-            finished = true
-        }
-        
         let onlyTests: String = "\(AppArgs.shared.target):" + tests.joinWithSeparator(",")
         let arguments = ["-destination", "id=\(deviceID)", "run-tests", "-newSimulatorInstance", "-only", onlyTests]
 
@@ -90,18 +84,22 @@ class TestRunnerOperation: NSOperation {
             logFilename = String(format: "%@.json", simulatorName)
         }
         
+        let logMessage = String(format: "Running the following tests:\n\t%@", tests.joinWithSeparator("\n\t"))
+        if let logData = logMessage.dataUsingEncoding(NSUTF8StringEncoding) {
+            TRLog(logData, simulatorName: simulatorName)
+        }
+        
         let task = XCToolTask(arguments: arguments, logFilename: logFilename, outputFileLogType: .JSON, standardOutputLogType: .Text)
         logFilePath = task.logFilePath
         task.delegate = self
         task.launch()
         task.waitUntilExit()
         
-        if task.terminationStatus == 0 {
-            status = .Success
-            return
-        }
-        
-        status = .Failed
+        status = (task.terminationStatus == 0) ? .Success : .Failed
+        completion?(status: status, simulatorName: simulatorName, failedTests: getFailedTests(), deviceID: deviceID, retryCount: retryCount)
+
+        executing = false
+        finished = true
     }
     
     func getFailedTests() -> [String] {
@@ -134,24 +132,21 @@ class TestRunnerOperation: NSOperation {
         }
     }
     
-    func timeout() {
-        status = .Failed
-        
-        completion?(status: status, simulatorName: simulatorName, failedTests: getFailedTests(), deviceID: deviceID, retryCount: retryCount)
-
-        executing = false
-        finished = true
-    }
-    
 }
 
 extension TestRunnerOperation: XCToolTaskDelegate {
 
     func outputDataReceived(task: XCToolTask, data: NSData) {
         guard data.length > 0 else { return }
-     
-        timeoutTimer.invalidate()
-        timeoutTimer = NSTimer.scheduledTimerWithTimeInterval(AppArgs.shared.timeout, target: self, selector: "timeout", userInfo: nil, repeats: false)
+
+        let counter = timeoutCounter + 1
+        let timeoutTime = dispatch_time(DISPATCH_TIME_NOW, Int64(AppArgs.shared.timeout * Double(NSEC_PER_SEC)))
+        dispatch_after(timeoutTime, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+            if counter == self.timeoutCounter {
+                task.terminate()
+            }
+        }
+        timeoutCounter++
         
         TRLog(data, simulatorName: simulatorName)
 

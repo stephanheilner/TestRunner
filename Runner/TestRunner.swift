@@ -27,12 +27,12 @@ let logQueue: NSOperationQueue = {
 
 func TRLog(logData: NSData, simulatorName: String? = nil) {
     logQueue.addOperation(NSBlockOperation() {
-        if let log = String(data: logData, encoding: NSUTF8StringEncoding) where !log.isEmpty {
-            if let simulatorName = simulatorName {
-                print("\n", dateFormatter.stringFromDate(NSDate()), "-----------", simulatorName, "-----------\n", log, terminator: "")
-            } else {
-                print(log, terminator: "")
-            }
+        guard let log = String(data: logData, encoding: NSUTF8StringEncoding) where !log.isEmpty else { return }
+
+        if let simulatorName = simulatorName {
+            print("\n", dateFormatter.stringFromDate(NSDate()), "-----------", simulatorName, "-----------\n", log, terminator: "")
+        } else {
+            print(log, terminator: "")
         }
     })
 }
@@ -42,7 +42,7 @@ public class TestRunner: NSObject {
     public static func start() {
         // Don't buffer output
         setbuf(__stdoutp, nil)
-        
+
         let testRunner = TestRunner()
         let testsPassed = testRunner.runTests()
 
