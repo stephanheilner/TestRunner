@@ -47,12 +47,10 @@ class TestRunnerOperation: NSOperation {
     
     private let simulatorName: String
     private let retryCount: Int
-
-    private var startTime: NSTimeInterval?
-    private var elapsedTime: NSTimeInterval?
-    private var failedTests = [String]()
+    private var logFilePath: String?
     private var status: TestRunnerStatus = .Stopped
     private var lastCheck = NSDate().timeIntervalSince1970
+    private var timeoutTimer = NSTimer()
     
     var loaded = false
     var completion: ((status: TestRunnerStatus, simulatorName: String, failedTests: [String], deviceID: String, retryCount: Int) -> Void)?
@@ -74,11 +72,16 @@ class TestRunnerOperation: NSOperation {
         super.start()
         
         executing = true
-        
         status = .Running
-        startTime = NSDate().timeIntervalSince1970
 
+        defer {
+            completion?(status: status, simulatorName: simulatorName, failedTests: getFailedTests(), deviceID: deviceID, retryCount: retryCount)
+            executing = false
+            finished = true
+        }
+        
         let onlyTests: String = "\(AppArgs.shared.target):" + tests.joinWithSeparator(",")
+        let arguments = ["-destination", "id=\(deviceID)", "run-tests", "-newSimulatorInstance", "-only", onlyTests]
 
         let logFilename: String
         if retryCount > 0 {
@@ -87,19 +90,8 @@ class TestRunnerOperation: NSOperation {
             logFilename = String(format: "%@.json", simulatorName)
         }
         
-        let arguments = ["-destination", "id=\(deviceID)", "run-tests", "-newSimulatorInstance", "-only", onlyTests]
-        
         let task = XCToolTask(arguments: arguments, logFilename: logFilename, outputFileLogType: .JSON, standardOutputLogType: .Text)
-        
-        defer {
-            if let startTime = startTime {
-                self.elapsedTime = NSDate(timeIntervalSinceReferenceDate: startTime).timeIntervalSince1970
-                completion?(status: status, simulatorName: simulatorName, failedTests: failedTests, deviceID: deviceID, retryCount: retryCount)
-                executing = false
-                finished = true
-            }
-        }
-
+        logFilePath = task.logFilePath
         task.delegate = self
         task.launch()
         task.waitUntilExit()
@@ -109,16 +101,19 @@ class TestRunnerOperation: NSOperation {
             return
         }
         
-        if let logFilePath = task.logFilePath, jsonObjects = JSONObject.jsonObjectFromJSONStreamFile(logFilePath) {
-            self.failedTests = jsonObjects.flatMap { jsonObject -> String? in
-                guard let succeeded = jsonObject["succeeded"] as? Bool where succeeded == false, let className = jsonObject["className"] as? String, methodName = jsonObject["methodName"] as? String else { return nil }
-                return String(format: "%@/%@", className, methodName)
-            }.unique()
-        }
-        
         status = .Failed
     }
     
+    func getFailedTests() -> [String] {
+        guard let logFilePath = logFilePath, jsonObjects = JSONObject.jsonObjectFromJSONStreamFile(logFilePath) else { return [] }
+
+        let succeededTests = Set<String>(jsonObjects.flatMap { jsonObject -> String? in
+            guard let succeeded = jsonObject["succeeded"] as? Bool where succeeded, let className = jsonObject["className"] as? String, methodName = jsonObject["methodName"] as? String else { return nil }
+            return String(format: "%@/%@", className, methodName)
+        })
+        return tests.filter { !succeededTests.contains($0) }
+    }
+
     func notifyIfLaunched(task: XCToolTask) {
         guard !loaded else { return }
         
@@ -138,12 +133,28 @@ class TestRunnerOperation: NSOperation {
             }
         }
     }
+    
+    func timeout() {
+        status = .Failed
+        
+        completion?(status: status, simulatorName: simulatorName, failedTests: getFailedTests(), deviceID: deviceID, retryCount: retryCount)
+
+        executing = false
+        finished = true
+    }
+    
 }
 
 extension TestRunnerOperation: XCToolTaskDelegate {
 
     func outputDataReceived(task: XCToolTask, data: NSData) {
+        guard data.length > 0 else { return }
+     
+        timeoutTimer.invalidate()
+        timeoutTimer = NSTimer.scheduledTimerWithTimeInterval(AppArgs.shared.timeout, target: self, selector: "timeout", userInfo: nil, repeats: false)
+        
         TRLog(data, simulatorName: simulatorName)
+
         notifyIfLaunched(task)
     }
     

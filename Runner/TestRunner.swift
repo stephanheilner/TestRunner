@@ -13,26 +13,28 @@ enum FailureError: ErrorType {
     case Failed(log: String)
 }
 
-var dateFormatter: NSDateFormatter = {
+let dateFormatter: NSDateFormatter = {
    let dateFormatter = NSDateFormatter()
     dateFormatter.dateFormat = "M/d/yy h:mm:s a"
     return dateFormatter
 }()
 
-var timestampString: String {
-    return dateFormatter.stringFromDate(NSDate())
-}
+let logQueue: NSOperationQueue = {
+    let queue = NSOperationQueue()
+    queue.maxConcurrentOperationCount = 1
+    return queue
+}()
 
 func TRLog(logData: NSData, simulatorName: String? = nil) {
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-        if let log = String(data: logData, encoding: NSUTF8StringEncoding) {
+    logQueue.addOperation(NSBlockOperation() {
+        if let log = String(data: logData, encoding: NSUTF8StringEncoding) where !log.isEmpty {
             if let simulatorName = simulatorName {
-                print("\n", timestampString, "-----------", simulatorName, "-----------\n", log, terminator: "")
+                print("\n", dateFormatter.stringFromDate(NSDate()), "-----------", simulatorName, "-----------\n", log, terminator: "")
             } else {
                 print(log, terminator: "")
             }
         }
-    }
+    })
 }
 
 public class TestRunner: NSObject {
@@ -46,7 +48,7 @@ public class TestRunner: NSObject {
 
         exit(testsPassed ? 0 : 1)
     }
-
+    
     let testRunnerQueue = TestRunnerOperationQueue()
     let maxRetries = 5
     var simulatorPassStatus = [String: Bool]()
@@ -85,8 +87,7 @@ public class TestRunner: NSObject {
             
             return true
         }
-        
-        
+
         guard let devices = DeviceController.sharedController.resetAndCreateDevices() else {
             NSLog("No Devices available, please retry again.")
             return false

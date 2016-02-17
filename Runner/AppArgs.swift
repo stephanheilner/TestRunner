@@ -22,7 +22,7 @@ struct AppArgs {
     let partitionsCount: Int
     let currentDirectory: String
     let buildTests: Bool
-    
+    let timeout: NSTimeInterval
     let buildDir: String
     let derivedDataPath: String
     let logsDir: String
@@ -35,6 +35,12 @@ struct AppArgs {
         }
         
         buildTests = NSUserDefaults.standardUserDefaults().boolForKey("build-tests")
+        
+        if let timeout = NSUserDefaults.standardUserDefaults().objectForKey("timeout") {
+            self.timeout = NSTimeInterval(timeout.doubleValue)
+        } else {
+            timeout = NSTimeInterval(120) // Default
+        }
         
         if let target = NSUserDefaults.standardUserDefaults().stringForKey("target") {
             self.target = target

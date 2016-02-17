@@ -67,8 +67,12 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-build-tests true"
+            argument = "-timeout 120"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-build-tests true"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-workspace &quot;/Users/stephan/projects/ios/gospellibrary/GospelLibrary.xcworkspace&quot;"
@@ -92,7 +96,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-partition 0"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-simulators-count 1"
@@ -123,7 +127,7 @@
       </AdditionalOptions>
    </LaunchAction>
    <ProfileAction
-      buildConfiguration = "Release"
+      buildConfiguration = "Debug"
       shouldUseLaunchSchemeArgsEnv = "YES"
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"

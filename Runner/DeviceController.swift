@@ -150,9 +150,7 @@ class DeviceController {
                 if task.terminationStatus == 0, let processInfoString = String(data: standardOutputData, encoding: NSUTF8StringEncoding) {
                     let parts = processInfoString.componentsSeparatedByString(" ")
                     if !parts.isEmpty, let processDeviceID = parts.last?.trimmed() where deviceID == processDeviceID {
-                        // Kill the process with IT
-                        
-                        print("Terminating Device")
+                        // Kill this Simulator instance
                         application.terminate()
                     }
                 }

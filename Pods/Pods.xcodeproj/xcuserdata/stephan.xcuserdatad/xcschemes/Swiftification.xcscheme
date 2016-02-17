@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '0E49623AB4868518631BBF00'
+               BlueprintIdentifier = '71B0230F5E88691F96AA4054'
                BlueprintName = 'Swiftification'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'Swiftification.framework'>
