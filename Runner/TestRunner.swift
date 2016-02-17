@@ -88,12 +88,12 @@ public class TestRunner: NSObject {
             return true
         }
 
-        guard let devices = DeviceController.sharedController.resetAndCreateDevices() else {
-            NSLog("No Devices available, please retry again.")
+        guard let devices = DeviceController.sharedController.resetAndCreateDevices() where !devices.isEmpty else {
+            NSLog("No Devices available")
             return false
         }
         
-        guard let testsByPartition = TestPartitioner.sharedInstance.loadTestsByPartition() else {
+        guard let testsByPartition = TestPartitioner.sharedInstance.loadTestsByPartition() where !testsByPartition.isEmpty else {
             NSLog("Unable to load list of tests")
             return false
         }
