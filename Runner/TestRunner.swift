@@ -119,7 +119,7 @@ public class TestRunner: NSObject {
 
         }
         
-        print(Summary.outputSummary(false))
+        Summary.outputSummary(false)
         
         return simulatorPassStatus.values.reduce(true, combine: { passedSoFar, passed in
             return passedSoFar && passed
