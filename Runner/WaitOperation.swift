@@ -3,7 +3,7 @@
 //  TestRunner
 //
 //  Created by Stephan Heilner on 2/16/16.
-//  Copyright © 2016 The Church of Jesus Christ of Latter-day Saints. All rights reserved.
+//  Copyright © 2016 Stephan Heilner
 //
 
 import Foundation

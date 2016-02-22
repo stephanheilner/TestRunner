@@ -3,7 +3,7 @@
 //  TestRunner
 //
 //  Created by Stephan Heilner on 2/10/16.
-//  Copyright © 2016 The Church of Jesus Christ of Latter-day Saints. All rights reserved.
+//  Copyright © 2016 Stephan Heilner
 //
 
 import Cocoa
@@ -53,15 +53,14 @@ class TestPartitioner {
     }
     
     private func listTests() -> [String]? {
-        let task = XCToolTask(arguments: ["run-tests", "-only", AppArgs.shared.target, "-listTestsOnly"], logFilename: "list-tests.json", outputFileLogType: .JSON, standardOutputLogType: .Text)
+        let task = XCToolTask(arguments: ["run-tests", "-only", AppArgs.shared.target, "-listTestsOnly"], logFilename: nil, outputFileLogType: .JSON, standardOutputLogType: .JSON)
         task.launch()
-        task.delegate = self
         task.waitUntilExit()
         
         guard task.terminationStatus == 0 else { return nil }
 
         var tests: [String]?
-        if let logFilePath = task.logFilePath, jsonObjects = JSONObject.jsonObjectFromJSONStreamFile(logFilePath) {
+        if let jsonObjects = JSON.jsonObjectFromStandardOutputData(task.standardOutputData) {
             tests = jsonObjects.flatMap { jsonObject -> String? in
                 guard let className = jsonObject["className"] as? String, methodName = jsonObject["methodName"] as? String else { return nil }
                 return String(format: "%@/%@", className, methodName)
@@ -70,11 +69,4 @@ class TestPartitioner {
         return tests
     }
     
-}
-
-extension TestPartitioner: XCToolTaskDelegate {
-    
-    func outputDataReceived(task: XCToolTask, data: NSData) {
-        TRLog(data)
-    }
 }

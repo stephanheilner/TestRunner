@@ -21,7 +21,7 @@
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>NSHumanReadableCopyright</key>
-	<string>Copyright © 2016 The Church of Jesus Christ of Latter-day Saints. All rights reserved.</string>
+	<string>Copyright © 2016 Stephan Heilner</string>
 	<key>NSPrincipalClass</key>
 	<string></string>
 </dict>

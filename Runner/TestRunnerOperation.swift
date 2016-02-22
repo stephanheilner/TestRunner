@@ -3,7 +3,7 @@
 //  TestRunner
 //
 //  Created by Stephan Heilner on 1/5/16.
-//  Copyright © 2016 The Church of Jesus Christ of Latter-day Saints. All rights reserved.
+//  Copyright © 2016 Stephan Heilner
 //
 
 import Foundation
@@ -103,7 +103,7 @@ class TestRunnerOperation: NSOperation {
     }
     
     func getFailedTests() -> [String] {
-        guard let logFilePath = logFilePath, jsonObjects = JSONObject.jsonObjectFromJSONStreamFile(logFilePath) else { return [] }
+        guard let logFilePath = logFilePath, jsonObjects = JSON.jsonObjectsFromJSONStreamFile(logFilePath) else { return [] }
 
         let succeededTests = Set<String>(jsonObjects.flatMap { jsonObject -> String? in
             guard let succeeded = jsonObject["succeeded"] as? Bool where succeeded, let className = jsonObject["className"] as? String, methodName = jsonObject["methodName"] as? String else { return nil }
@@ -120,15 +120,24 @@ class TestRunnerOperation: NSOperation {
         lastCheck = now
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            if let logFilePath = task.logFilePath, jsonObjects = JSONObject.jsonObjectFromJSONStreamFile(logFilePath) {
-                for jsonObject in jsonObjects {
-                    if let event = jsonObject["event"] as? String where event == "begin-test-suite" {
-                        self.loaded = true
-                        NSNotificationCenter.defaultCenter().postNotificationName(TestRunnerOperationQueue.SimulatorLoadedNotification, object: nil)
-                        return
-                    }
-                }
+            if let logFilePath = task.logFilePath where JSON.hasBeginTestSuiteEvent(logFilePath) {
+                guard !self.loaded else { return }
+                
+                self.loaded = true
+                NSNotificationCenter.defaultCenter().postNotificationName(TestRunnerOperationQueue.SimulatorLoadedNotification, object: nil)
+                return
             }
+        }
+        
+        let launchTimeout: NSTimeInterval = 60
+        let waitForLaunchTimeout = dispatch_time(DISPATCH_TIME_NOW, Int64(launchTimeout * Double(NSEC_PER_SEC)))
+        dispatch_after(waitForLaunchTimeout, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+            guard !self.loaded else { return }
+            
+            // If not launched after 60 seconds, just mark as launched, something probably went wrong
+            self.loaded = true
+            NSNotificationCenter.defaultCenter().postNotificationName(TestRunnerOperationQueue.SimulatorLoadedNotification, object: nil)
+            return
         }
     }
     
@@ -139,7 +148,7 @@ extension TestRunnerOperation: XCToolTaskDelegate {
     func outputDataReceived(task: XCToolTask, data: NSData) {
         guard data.length > 0 else { return }
 
-        let counter = timeoutCounter + 1
+        let counter = timeoutCounter + 2
         let timeoutTime = dispatch_time(DISPATCH_TIME_NOW, Int64(AppArgs.shared.timeout * Double(NSEC_PER_SEC)))
         dispatch_after(timeoutTime, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             if counter == self.timeoutCounter {

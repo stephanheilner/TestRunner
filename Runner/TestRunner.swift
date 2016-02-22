@@ -25,12 +25,15 @@ let logQueue: NSOperationQueue = {
     return queue
 }()
 
+var lastSimulatorName = ""
+
 func TRLog(logData: NSData, simulatorName: String? = nil) {
     logQueue.addOperation(NSBlockOperation() {
         guard let log = String(data: logData, encoding: NSUTF8StringEncoding) where !log.isEmpty else { return }
 
-        if let simulatorName = simulatorName {
+        if let simulatorName = simulatorName where simulatorName != lastSimulatorName {
             print("\n", dateFormatter.stringFromDate(NSDate()), "-----------", simulatorName, "-----------\n", log, terminator: "")
+            lastSimulatorName = simulatorName
         } else {
             print(log, terminator: "")
         }
@@ -50,14 +53,9 @@ public class TestRunner: NSObject {
     }
     
     let testRunnerQueue = TestRunnerOperationQueue()
-    let maxRetries = 5
     var simulatorPassStatus = [String: Bool]()
     
     func runTests() -> Bool {
-        DeviceController.sharedController.killAndDeleteTestDevices()
-        
-        CleanBuild.sharedInstance.deleteFilesInDirectory(AppArgs.shared.logsDir)
-        
         if AppArgs.shared.buildTests {
             do {
                 try CleanBuild.sharedInstance.clean()
@@ -84,38 +82,44 @@ public class TestRunner: NSObject {
                 NSLog("Unknown error while building tests")
                 return false
             }
-            
-            return true
         }
 
-        guard let devices = DeviceController.sharedController.resetAndCreateDevices() where !devices.isEmpty else {
-            NSLog("No Devices available")
-            return false
-        }
-        
-        guard let testsByPartition = TestPartitioner.sharedInstance.loadTestsByPartition() where !testsByPartition.isEmpty else {
-            NSLog("Unable to load list of tests")
-            return false
-        }
-        
-        let partition = AppArgs.shared.partition
-        let testsByDevice = testsByPartition[partition]
-        
-        for (deviceFamily, deviceInfos) in devices {
-            for (index, deviceInfo) in deviceInfos.enumerate() {
-                guard let tests = testsByDevice[index] else { continue }
-                
-                let operation = createOperation(deviceFamily, simulatorName: deviceInfo.simulatorName, deviceID: deviceInfo.deviceID, tests: tests, retryCount: 0)
-                
-                // Wait for loaded to finish
-                testRunnerQueue.addOperation(operation)
+        if AppArgs.shared.runTests {
+            CleanBuild.sharedInstance.deleteFilesInDirectory(AppArgs.shared.logsDir)
+            DeviceController.sharedController.killAndDeleteTestDevices()
+            
+            guard let devices = DeviceController.sharedController.resetAndCreateDevices() where !devices.isEmpty else {
+                NSLog("No Devices available")
+                return false
             }
+            
+            guard let testsByPartition = TestPartitioner.sharedInstance.loadTestsByPartition() where !testsByPartition.isEmpty else {
+                NSLog("Unable to load list of tests")
+                return false
+            }
+            
+            let partition = AppArgs.shared.partition
+            let testsByDevice = testsByPartition[partition]
+            
+            for (deviceFamily, deviceInfos) in devices {
+                for (index, deviceInfo) in deviceInfos.enumerate() {
+                    guard let tests = testsByDevice[index] else { continue }
+                    
+                    let operation = createOperation(deviceFamily, simulatorName: deviceInfo.simulatorName, deviceID: deviceInfo.deviceID, tests: tests, retryCount: 0)
+                    
+                    // Wait for loaded to finish
+                    testRunnerQueue.addOperation(operation)
+                }
+            }
+            
+            testRunnerQueue.waitUntilAllOperationsAreFinished()
+            
+            // Shutdown, Delete and Kill all Simulators
+            DeviceController.sharedController.killAndDeleteTestDevices()
+
         }
         
-        testRunnerQueue.waitUntilAllOperationsAreFinished()
-        
-        // Shutdown, Delete and Kill all Simulators
-        DeviceController.sharedController.killAndDeleteTestDevices()
+        print(Summary.outputSummary(false))
         
         return simulatorPassStatus.values.reduce(true, combine: { passedSoFar, passed in
             return passedSoFar && passed
@@ -134,11 +138,11 @@ public class TestRunner: NSObject {
                 
             case .Failed:
                 let retryCount = retryCount + 1
-                NSLog("\n\nTests FAILED (Attempt %d of %d) on %@\n", retryCount, self.maxRetries, simulatorName)
+                NSLog("\n\nTests FAILED (Attempt %d of %d) on %@\n", retryCount, AppArgs.shared.retryCount, simulatorName)
                 
                 self.simulatorPassStatus[simulatorName] = false
                 
-                if retryCount < self.maxRetries {
+                if retryCount < AppArgs.shared.retryCount {
                     // Create new device for retry
                     let retryDeviceID = DeviceController.sharedController.resetDeviceWithID(deviceID, simulatorName: simulatorName) ?? deviceID
                     

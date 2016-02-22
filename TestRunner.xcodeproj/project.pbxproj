@@ -10,6 +10,7 @@
 		5DF40D82135EF7B30714775E /* Pods.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 766A83F707AEDF7B1BE3C823 /* Pods.framework */; };
 		D415192F1C73C829001F6B55 /* TestRunnerOperationQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = D415192E1C73C829001F6B55 /* TestRunnerOperationQueue.swift */; };
 		D41519311C73D466001F6B55 /* WaitOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41519301C73D466001F6B55 /* WaitOperation.swift */; };
+		D46CDB6F1C7B79E60040D62A /* Summary.swift in Sources */ = {isa = PBXBuildFile; fileRef = D46CDB6E1C7B79E60040D62A /* Summary.swift */; };
 		D48D7E381C6BB3E800472A9A /* TestPartitioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48D7E371C6BB3E800472A9A /* TestPartitioner.swift */; };
 		D493A9B51C6B99B8006BD53F /* CleanBuild.swift in Sources */ = {isa = PBXBuildFile; fileRef = D493A9B41C6B99B8006BD53F /* CleanBuild.swift */; };
 		D493A9B71C6B9A1C006BD53F /* BuildTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D493A9B61C6B9A1C006BD53F /* BuildTests.swift */; };
@@ -19,7 +20,7 @@
 		D4B1D5381C6A9EA4006138F8 /* Tool in Copy Files */ = {isa = PBXBuildFile; fileRef = D4B1D4FD1C6A9AB7006138F8 /* Tool */; settings = {ATTRIBUTES = (CodeSignOnCopy, ); }; };
 		D4B1D5531C6AA107006138F8 /* TestRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B1D5501C6AA107006138F8 /* TestRunner.swift */; };
 		D4B1D5541C6AA107006138F8 /* TestRunnerOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4B1D5511C6AA107006138F8 /* TestRunnerOperation.swift */; };
-		D4C679141C72D8640005FC67 /* JSONObject.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C679131C72D8640005FC67 /* JSONObject.swift */; };
+		D4C679141C72D8640005FC67 /* JSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4C679131C72D8640005FC67 /* JSON.swift */; };
 		D4F093B31C6B627B0053249A /* AppArgs.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4F093B21C6B627B0053249A /* AppArgs.swift */; };
 		D4F164F61C6AA2A9000460A1 /* Runner.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D4B1D5471C6AA0CB006138F8 /* Runner.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		D4F164F91C6AA841000460A1 /* Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D4B1D5471C6AA0CB006138F8 /* Runner.framework */; };
@@ -74,6 +75,7 @@
 		C33029561D552435E91F11E8 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
 		D415192E1C73C829001F6B55 /* TestRunnerOperationQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestRunnerOperationQueue.swift; sourceTree = "<group>"; };
 		D41519301C73D466001F6B55 /* WaitOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaitOperation.swift; sourceTree = "<group>"; };
+		D46CDB6E1C7B79E60040D62A /* Summary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Summary.swift; sourceTree = "<group>"; };
 		D48D7E371C6BB3E800472A9A /* TestPartitioner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestPartitioner.swift; sourceTree = "<group>"; };
 		D493A9B41C6B99B8006BD53F /* CleanBuild.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CleanBuild.swift; sourceTree = "<group>"; };
 		D493A9B61C6B9A1C006BD53F /* BuildTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuildTests.swift; sourceTree = "<group>"; };
@@ -87,7 +89,7 @@
 		D4B1D54B1C6AA0CB006138F8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D4B1D5501C6AA107006138F8 /* TestRunner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestRunner.swift; sourceTree = "<group>"; };
 		D4B1D5511C6AA107006138F8 /* TestRunnerOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestRunnerOperation.swift; sourceTree = "<group>"; };
-		D4C679131C72D8640005FC67 /* JSONObject.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSONObject.swift; sourceTree = "<group>"; };
+		D4C679131C72D8640005FC67 /* JSON.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = JSON.swift; sourceTree = "<group>"; };
 		D4F093B21C6B627B0053249A /* AppArgs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppArgs.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -175,13 +177,14 @@
 				D493A9B41C6B99B8006BD53F /* CleanBuild.swift */,
 				D493A9B81C6B9A65006BD53F /* DeviceController.swift */,
 				D4B1D54B1C6AA0CB006138F8 /* Info.plist */,
-				D4C679131C72D8640005FC67 /* JSONObject.swift */,
+				D4C679131C72D8640005FC67 /* JSON.swift */,
 				D48D7E371C6BB3E800472A9A /* TestPartitioner.swift */,
 				D4B1D5501C6AA107006138F8 /* TestRunner.swift */,
 				D4B1D5511C6AA107006138F8 /* TestRunnerOperation.swift */,
 				D415192E1C73C829001F6B55 /* TestRunnerOperationQueue.swift */,
 				D49E313D1C6E508E009F8BD0 /* XCToolTask.swift */,
 				D41519301C73D466001F6B55 /* WaitOperation.swift */,
+				D46CDB6E1C7B79E60040D62A /* Summary.swift */,
 			);
 			path = Runner;
 			sourceTree = "<group>";
@@ -382,7 +385,8 @@
 				D415192F1C73C829001F6B55 /* TestRunnerOperationQueue.swift in Sources */,
 				D4B1D5531C6AA107006138F8 /* TestRunner.swift in Sources */,
 				D493A9B71C6B9A1C006BD53F /* BuildTests.swift in Sources */,
-				D4C679141C72D8640005FC67 /* JSONObject.swift in Sources */,
+				D4C679141C72D8640005FC67 /* JSON.swift in Sources */,
+				D46CDB6F1C7B79E60040D62A /* Summary.swift in Sources */,
 				D49E313E1C6E508E009F8BD0 /* XCToolTask.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

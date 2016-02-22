@@ -3,7 +3,7 @@
 //  TestRunner
 //
 //  Created by Stephan Heilner on 2/10/16.
-//  Copyright © 2016 The Church of Jesus Christ of Latter-day Saints. All rights reserved.
+//  Copyright © 2016 Stephan Heilner
 //
 
 import Cocoa
@@ -14,7 +14,7 @@ class DeviceController {
     
     private lazy var deviceTypes: [String: String] = {
         var deviceTypes = [String: String]()
-        for (key, values) in self.getDeviceInfo() ?? [:] where key == "devicetypes" {
+        for (key, values) in self.getDeviceInfoJSON() ?? [:] where key == "devicetypes" {
             for value in values as? [[String: String]] ?? [] {
                 if let name = value["name"], identifier = value["identifier"] {
                     deviceTypes[name] = identifier
@@ -26,7 +26,7 @@ class DeviceController {
     
     private lazy var runtimes: [String: String] = {
         var runtimes = [String: String]()
-        for (key, values) in self.getDeviceInfo() ?? [:] where key == "runtimes" {
+        for (key, values) in self.getDeviceInfoJSON() ?? [:] where key == "runtimes" {
             for value in values as? [[String: String]] ?? [] {
                 if let name = value["name"], identifier = value["identifier"] {
                     runtimes[name] = identifier
@@ -80,7 +80,7 @@ class DeviceController {
         return testDeviceIDs
     }
     
-    func getDeviceInfo() -> [String: AnyObject]? {
+    func getDeviceInfoJSON() -> [String: AnyObject]? {
         let outputPipe = NSPipe()
         
         let task = NSTask()
@@ -259,7 +259,7 @@ class DeviceController {
     }
     
     func deleteTestDevices() {
-        guard let deviceInfo = getDeviceInfo() else { return }
+        guard let deviceInfo = getDeviceInfoJSON() else { return }
         
         deleteDevicesWithIDs(getTestDeviceIDs(deviceInfo))
     }

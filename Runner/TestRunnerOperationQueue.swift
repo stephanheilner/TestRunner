@@ -3,7 +3,7 @@
 //  TestRunner
 //
 //  Created by Stephan Heilner on 2/16/16.
-//  Copyright © 2016 The Church of Jesus Christ of Latter-day Saints. All rights reserved.
+//  Copyright © 2016 Stephan Heilner
 //
 
 import Foundation
@@ -22,6 +22,7 @@ class TestRunnerOperationQueue: NSOperationQueue {
     }
     
     override func addOperation(operation: NSOperation) {
+        // Causing it to hang, when just one build is added it has a wait operation but it
         if isWaitingToLoad() {
             let waitOperation = WaitOperation()
             waitOperations.append(waitOperation)

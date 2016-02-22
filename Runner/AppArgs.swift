@@ -22,10 +22,12 @@ struct AppArgs {
     let partitionsCount: Int
     let currentDirectory: String
     let buildTests: Bool
+    let runTests: Bool
     let timeout: NSTimeInterval
     let buildDir: String
     let derivedDataPath: String
     let logsDir: String
+    let retryCount: Int
     
     init() {
         if let scheme = NSUserDefaults.standardUserDefaults().stringForKey("scheme") {
@@ -34,7 +36,23 @@ struct AppArgs {
             exitWithMessage("'-scheme' needs to be specified")
         }
         
-        buildTests = NSUserDefaults.standardUserDefaults().boolForKey("build-tests")
+        if let buildTests = NSUserDefaults.standardUserDefaults().objectForKey("build-tests") {
+            self.buildTests = buildTests.boolValue
+        } else {
+            buildTests = true
+        }
+
+        if let runTests = NSUserDefaults.standardUserDefaults().objectForKey("run-tests") {
+            self.runTests = runTests.boolValue
+        } else {
+            runTests = true
+        }
+        
+        if let retryCount = NSUserDefaults.standardUserDefaults().objectForKey("retry-count") {
+            self.retryCount = retryCount.integerValue
+        } else {
+            retryCount = 5 // Default
+        }
         
         if let timeout = NSUserDefaults.standardUserDefaults().objectForKey("timeout") {
             self.timeout = NSTimeInterval(timeout.doubleValue)
