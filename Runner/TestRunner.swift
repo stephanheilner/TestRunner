@@ -149,6 +149,9 @@ public class TestRunner: NSObject {
                     // Retry
                     let retryOperation = self.createOperation(deviceFamily, simulatorName: simulatorName, deviceID: retryDeviceID, tests: failedTests, retryCount: retryCount)
                     self.testRunnerQueue.addOperation(retryOperation)
+                } else {
+                    // Failed, kill all items in queue
+                    self.testRunnerQueue.cancelAllOperations()
                 }
             case .Running, .Stopped:
                 break
