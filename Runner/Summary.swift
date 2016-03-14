@@ -76,18 +76,24 @@ class Summary {
             }
             
             print("-------------------------------------------------------------------")
+            
+            // Get of list of test that never passed.
+            var failureTestSummaries = testSummaries.filter { !$0.passed }.uniqueBy { $0.testName }
             for testSummary in testSummaries {
-                if testSummary.passed {
-                    print(testSummary.testName, "Passed", String(format: "(%@)", testSummary.simulatorName))
-                } else {
-                    print("-------------------------------------------------------------------")
-                    print(testSummary.testName, "Failed", String(format: "(%@)", testSummary.simulatorName))
-                    for exception in testSummary.exceptions ?? [] {
-                        guard let line = exception["lineNumber"] as? Int, filePath = exception["filePathInProject"] as? String, reason = exception["reason"] as? String else { continue }
-                        print("")
-                        print("Reason:", reason)
-                        print(filePath, String(format: "(line %d)", line))
-                    }
+                for (index, failureSummary) in failureTestSummaries.enumerate() where testSummary.testName == failureSummary.testName && testSummary.passed {
+                    // Even though this test summary shows it failed, it retried and eventually passed, so remove it from the list.
+                    failureTestSummaries.removeAtIndex(index)
+                }
+            }
+            
+            for testSummary in failureTestSummaries {
+                print("-------------------------------------------------------------------")
+                print(testSummary.testName, "Failed", String(format: "(%@)", testSummary.simulatorName))
+                for exception in testSummary.exceptions ?? [] {
+                    guard let line = exception["lineNumber"] as? Int, filePath = exception["filePathInProject"] as? String, reason = exception["reason"] as? String else { continue }
+                    print("")
+                    print("Reason:", reason)
+                    print(filePath, String(format: "(line %d)", line))
                 }
             }
             print("-------------------------------------------------------------------")
