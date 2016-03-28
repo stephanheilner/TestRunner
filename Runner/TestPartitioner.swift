@@ -57,7 +57,9 @@ class TestPartitioner {
         task.launch()
         task.waitUntilExit()
         
-        guard task.terminationStatus == 0 else { return nil }
+        guard task.terminationStatus == 0 else {
+            return nil
+        }
 
         var tests: [String]?
         if let jsonObjects = JSON.jsonObjectFromStandardOutputData(task.standardOutputData) {
