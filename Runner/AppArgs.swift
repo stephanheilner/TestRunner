@@ -23,6 +23,7 @@ struct AppArgs {
     let currentDirectory: String
     let buildTests: Bool
     let runTests: Bool
+    let clean: Bool
     let timeout: NSTimeInterval
     let buildDir: String
     let derivedDataPath: String
@@ -34,6 +35,12 @@ struct AppArgs {
             self.scheme = scheme
         } else {
             exitWithMessage("'-scheme' needs to be specified")
+        }
+        
+        if let clean = NSUserDefaults.standardUserDefaults().objectForKey("clean") {
+            self.clean = clean.boolValue
+        } else {
+            clean = true
         }
         
         if let buildTests = NSUserDefaults.standardUserDefaults().objectForKey("build-tests") {
@@ -70,7 +77,7 @@ struct AppArgs {
             self.devices = devices
         } else {
             // Default
-            self.devices = "iPhone 5, iOS 9.2; iPad 2, iOS 9.2"
+            self.devices = "iPhone 5, iOS 9.3; iPad 2, iOS 9.3"
         }
 
         // Defaults to partition 0

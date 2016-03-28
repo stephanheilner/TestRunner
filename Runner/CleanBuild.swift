@@ -13,6 +13,8 @@ class CleanBuild {
     static let sharedInstance = CleanBuild()
     
     func clean() throws {
+        guard AppArgs.shared.clean else { return }
+        
         deleteFilesInDirectory(AppArgs.shared.derivedDataPath)
         
         let task = XCToolTask(arguments: ["clean"], logFilename: nil, outputFileLogType: nil, standardOutputLogType: .Text)

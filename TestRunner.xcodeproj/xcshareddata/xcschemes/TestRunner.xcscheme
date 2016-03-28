@@ -64,42 +64,54 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-workspace &quot;/Users/stephan/projects/ios/gospellibrary/GospelLibrary.xcworkspace&quot;"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-run-tests false"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-retry-count 2"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-project &quot;/Users/stephan/projects/ios/MyTestProject/MyTestProject.xcodeproj&quot;"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-timeout 30"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-build-tests false"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-target &quot;MyTestProjectTests&quot;"
+            argument = "-scheme &quot;GospelLibrary&quot;"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-target &quot;GospelLibraryIntegrationTests&quot;"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-target &quot;GospelLibraryUITests&quot;"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-partitions-count 6"
+            argument = "-project &quot;/Users/stephan/projects/ios/MyTestProject/MyTestProject.xcodeproj&quot;"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-scheme &quot;MyTestProject&quot;"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-target &quot;MyTestProjectTests&quot;"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-clean false"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-build-tests false"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-run-tests false"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-retry-count 0"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-timeout 600"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-partitions-count 7"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -107,32 +119,32 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-partition 0"
+            argument = "-partition 1"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-simulators-count 2"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-simulators-count 3"
+            argument = "-simulators-count 4"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-devices &quot;iPhone 4s, iOS 9.2&quot;"
+            argument = "-simulators-count 1"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-devices &quot;iPhone 5, iOS 9.3&quot;"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-devices &quot;iPad 2, iOS 9.3&quot;"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-devices &quot;iPhone 5, iOS 9.2;iPad 2, iOS 9.2&quot;"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-scheme &quot;MyTestProject&quot;"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-scheme &quot;GospelLibrary&quot;"
             isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-devices &quot;iPhone 5, iOS 9.3;iPad 2, iOS 9.3&quot;"
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

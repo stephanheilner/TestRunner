@@ -203,7 +203,7 @@ class DeviceController {
     func createTestDevices() -> [String: [(simulatorName: String, deviceID: String)]] {
         var devices = [String: [(simulatorName: String, deviceID: String)]]()
         
-        let devicesArg = AppArgs.shared.devices ?? "iPhone 5, iOS 9.2"
+        let devicesArg = AppArgs.shared.devices ?? "iPhone 5, iOS 9.3"
         let numberOfSimulators = (AppArgs.shared.simulatorsCount ?? 1)
         
         var simulatorNumber = 1

@@ -95,6 +95,10 @@ class TestRunnerOperation: NSOperation {
         task.launch()
         task.waitUntilExit()
         
+        if !loaded {
+            NSNotificationCenter.defaultCenter().postNotificationName(TestRunnerOperationQueue.SimulatorLoadedNotification, object: nil)
+        }
+        
         status = (task.terminationStatus == 0) ? .Success : .Failed
         completion?(status: status, simulatorName: simulatorName, failedTests: getFailedTests(), deviceID: deviceID, retryCount: retryCount)
 
