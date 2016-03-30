@@ -79,6 +79,13 @@ class XCToolTask {
             xctoolArguments += ["-workspace", workspace]
         }
         
+        if let toolchain = NSProcessInfo.processInfo().environment["TOOLCHAINS"] {
+            xctoolArguments += [
+                String(format: "TOOLCHAINS=%@", toolchain),
+                String(format: "XCODE_DEFAULT_TOOLCHAIN_OVERRIDE=%@", toolchain)
+            ]
+        }
+        
         var outputLogArgs = [String]()
         
         switch standardOutputLogType {
