@@ -84,6 +84,8 @@ class XCToolTask {
                 String(format: "TOOLCHAINS=%@", toolchain),
                 String(format: "XCODE_DEFAULT_TOOLCHAIN_OVERRIDE=%@", toolchain)
             ]
+            
+            NSLog("****************************** Toolchain: %@ ******************************", toolchain)
         }
         
         var outputLogArgs = [String]()
