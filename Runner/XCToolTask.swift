@@ -81,9 +81,8 @@ class XCToolTask {
         
         if let toolchain = NSProcessInfo.processInfo().environment["TOOLCHAINS"] {
             xctoolArguments += [
-                String(format: "TOOLCHAINS=%@", toolchain),
                 String(format: "DT_TOOLCHAIN_DIR=%@", toolchain),
-                String(format: "XCODE_DEFAULT_TOOLCHAIN_OVERRIDE=%@", toolchain)
+                String(format: "TOOLCHAIN_DIR=%@", toolchain)
             ]
         }
         
