@@ -64,6 +64,30 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-workspace &quot;/Users/stephan/projects/ios/gospellibrary/GospelLibrary.xcworkspace&quot;"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-scheme &quot;GospelLibrary&quot;"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-target &quot;GospelLibraryIntegrationTests&quot;"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-target &quot;GospelLibraryUITests&quot;"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-project &quot;/Users/stephan/projects/ios/MyTestProject/MyTestProject.xcodeproj&quot;"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-scheme &quot;MyTestProject&quot;"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-target &quot;MyTestProjectTests&quot;"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -72,7 +96,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-build-tests false"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-run-tests false"
@@ -83,28 +107,12 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-project &quot;/Users/stephan/projects/ios/MyTestProject/MyTestProject.xcodeproj&quot;"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
             argument = "-timeout 30"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-target &quot;MyTestProjectTests&quot;"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-target &quot;GospelLibraryIntegrationTests&quot;"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-target &quot;GospelLibraryUITests&quot;"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
             argument = "-partitions-count 6"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-partitions-count 2"
@@ -123,7 +131,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-devices &quot;iPhone 5, iOS 9.2&quot;"
+            argument = "-devices &quot;iPhone 5, iOS 9.3&quot;"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -134,30 +142,22 @@
             argument = "-devices &quot;iPhone 5, iOS 9.3;iPad 2, iOS 9.3&quot;"
             isEnabled = "NO">
          </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-scheme &quot;MyTestProject&quot;"
-            isEnabled = "YES">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-scheme &quot;GospelLibrary&quot;"
-            isEnabled = "NO">
-         </CommandLineArgument>
       </CommandLineArguments>
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "TOOLCHAINS"
             value = "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </EnvironmentVariable>
          <EnvironmentVariable
             key = "DEVELOPER_DIR"
-            value = "/Applications/Xcode7.2.app/Contents/Developer"
-            isEnabled = "YES">
+            value = "/Applications/Xcode7.2.1.app/Contents/Developer"
+            isEnabled = "NO">
          </EnvironmentVariable>
          <EnvironmentVariable
-            key = "XCODE_DEFAULT_TOOLCHAIN_OVERRIDE"
-            value = "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain"
-            isEnabled = "YES">
+            key = "DEVELOPER_DIR"
+            value = "/Applications/Xcode.app/Contents/Developer"
+            isEnabled = "NO">
          </EnvironmentVariable>
       </EnvironmentVariables>
       <AdditionalOptions>

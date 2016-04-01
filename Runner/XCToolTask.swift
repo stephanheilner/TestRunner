@@ -66,6 +66,9 @@ class XCToolTask {
         }
         return pipe
     }()
+    var running: Bool {
+        return task.running
+    }
     
     init(arguments: [String], logFilename: String?, outputFileLogType: LogType?, standardOutputLogType: LogType) {
         task = NSTask()
@@ -83,6 +86,12 @@ class XCToolTask {
             xctoolArguments += [
                 String(format: "DT_TOOLCHAIN_DIR=%@", toolchain),
                 String(format: "TOOLCHAIN_DIR=%@", toolchain)
+            ]
+        }
+        
+        if let developerDir = NSProcessInfo.processInfo().environment["DEVELOPER_DIR"] {
+            xctoolArguments += [
+                String(format: "DEVELOPER_DIR=%@", developerDir)
             ]
         }
         
@@ -110,6 +119,7 @@ class XCToolTask {
         xctoolArguments += ["-scheme", AppArgs.shared.scheme, "-sdk", "iphonesimulator", "CONFIGURATION_BUILD_DIR=\"\(AppArgs.shared.derivedDataPath)\"", "-derivedDataPath", AppArgs.shared.derivedDataPath] + outputLogArgs
         
         let shellCommand = (xctoolArguments + arguments).joinWithSeparator(" ")
+        
         task.arguments = ["-c", shellCommand]
         task.standardError = standardErrorPipe
         task.standardOutput = standardOutputPipe
@@ -133,7 +143,7 @@ class XCToolTask {
     func waitUntilExit() {
         task.waitUntilExit()
     }
-
+    
     func terminate() {
         task.terminate()
     }

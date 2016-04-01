@@ -95,6 +95,10 @@ class TestRunnerOperation: NSOperation {
         task.launch()
         task.waitUntilExit()
         
+        if let errorLog = String(data: task.standardErrorData, encoding: NSUTF8StringEncoding) {
+            NSLog("Build Failed: %@", errorLog)
+        }
+        
         if !loaded {
             NSNotificationCenter.defaultCenter().postNotificationName(TestRunnerOperationQueue.SimulatorLoadedNotification, object: nil)
         }
@@ -133,7 +137,7 @@ class TestRunnerOperation: NSOperation {
             }
         }
         
-        let launchTimeout: NSTimeInterval = 60
+        let launchTimeout: NSTimeInterval = 30
         let waitForLaunchTimeout = dispatch_time(DISPATCH_TIME_NOW, Int64(launchTimeout * Double(NSEC_PER_SEC)))
         dispatch_after(waitForLaunchTimeout, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             guard !self.loaded else { return }
@@ -156,7 +160,9 @@ extension TestRunnerOperation: XCToolTaskDelegate {
         let timeoutTime = dispatch_time(DISPATCH_TIME_NOW, Int64(AppArgs.shared.timeout * Double(NSEC_PER_SEC)))
         dispatch_after(timeoutTime, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             if counter == self.timeoutCounter {
-                task.terminate()
+                if !task.running {
+                    task.terminate()
+                }
             }
         }
         timeoutCounter++
