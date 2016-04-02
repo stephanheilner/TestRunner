@@ -160,9 +160,7 @@ extension TestRunnerOperation: XCToolTaskDelegate {
         let timeoutTime = dispatch_time(DISPATCH_TIME_NOW, Int64(AppArgs.shared.timeout * Double(NSEC_PER_SEC)))
         dispatch_after(timeoutTime, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             if counter == self.timeoutCounter {
-                if !task.running {
-                    task.terminate()
-                }
+                task.terminate()
             }
         }
         timeoutCounter++
