@@ -96,7 +96,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-build-tests false"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-run-tests false"
@@ -107,11 +107,11 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-timeout 30"
+            argument = "-timeout 600"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-partitions-count 6"
+            argument = "-partitions-count 7"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -119,20 +119,24 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-partition 0"
-            isEnabled = "NO">
+            argument = "-partition 1"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-simulators-count 4"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-simulators-count 2"
+            argument = "-simulators-count 1"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-devices &quot;iPhone 5, iOS 9.3&quot;"
-            isEnabled = "YES">
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-devices &quot;iPad 2, iOS 9.3&quot;"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-devices &quot;iPhone 5, iOS 9.2;iPad 2, iOS 9.2&quot;"
@@ -140,26 +144,9 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-devices &quot;iPhone 5, iOS 9.3;iPad 2, iOS 9.3&quot;"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
-      <EnvironmentVariables>
-         <EnvironmentVariable
-            key = "TOOLCHAINS"
-            value = "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain"
-            isEnabled = "NO">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "DEVELOPER_DIR"
-            value = "/Applications/Xcode7.2.1.app/Contents/Developer"
-            isEnabled = "NO">
-         </EnvironmentVariable>
-         <EnvironmentVariable
-            key = "DEVELOPER_DIR"
-            value = "/Applications/Xcode.app/Contents/Developer"
-            isEnabled = "NO">
-         </EnvironmentVariable>
-      </EnvironmentVariables>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>

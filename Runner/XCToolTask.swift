@@ -82,19 +82,6 @@ class XCToolTask {
             xctoolArguments += ["-workspace", workspace]
         }
         
-        if let toolchain = NSProcessInfo.processInfo().environment["TOOLCHAINS"] {
-            xctoolArguments += [
-                String(format: "DT_TOOLCHAIN_DIR=%@", toolchain),
-                String(format: "TOOLCHAIN_DIR=%@", toolchain)
-            ]
-        }
-        
-        if let developerDir = NSProcessInfo.processInfo().environment["DEVELOPER_DIR"] {
-            xctoolArguments += [
-                String(format: "DEVELOPER_DIR=%@", developerDir)
-            ]
-        }
-        
         var outputLogArgs = [String]()
         
         switch standardOutputLogType {
