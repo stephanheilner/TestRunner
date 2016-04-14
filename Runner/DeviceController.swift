@@ -249,7 +249,35 @@ class DeviceController {
         
         guard task.terminationStatus == 0 else { return nil }
         
-        return String(data: data, encoding: NSUTF8StringEncoding)?.trimmed()
+        if let deviceID = String(data: data, encoding: NSUTF8StringEncoding)?.trimmed() {
+            eraseTestDevice(deviceID)
+            return deviceID
+        }
+        return nil
+    }
+    
+    func eraseTestDevice(deviceID: String) -> Bool {
+        let task = NSTask()
+        task.launchPath = "/usr/bin/xcrun"
+        task.arguments = ["simctl", "erase", deviceID]
+        
+        let createDeviceOutput = NSPipe()
+        task.standardOutput = createDeviceOutput
+        let data = NSMutableData()
+        createDeviceOutput.fileHandleForReading.readabilityHandler = { handle in
+            data.appendData(handle.availableData)
+        }
+        
+        task.launch()
+        task.waitUntilExit()
+        
+        /*
+         open -n Simulator --args -CurrentDeviceUDID <DEVICE UDID>
+         */
+        
+        guard task.terminationStatus == 0 else { return false }
+        
+        return true
     }
     
     func killAndDeleteTestDevices() {
