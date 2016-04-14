@@ -13,8 +13,12 @@ class TestPartitioner {
     
     static let sharedInstance = TestPartitioner()
     
-    func loadTestsByPartition() -> [[Int: [String]]]? {
-        guard let allTests = listTests() where !allTests.isEmpty else { return nil }
+    func loadTestsByPartition(retries: Int = 5) -> [[Int: [String]]]? {
+        guard retries > 0 else { return nil }
+        
+        guard let allTests = listTests() where !allTests.isEmpty else {
+            return loadTestsByPartition(retries - 1)
+        }
         
         let partitionsCount = AppArgs.shared.partitionsCount ?? 1
         let numTestsPerPartition = Float(allTests.count) / Float(partitionsCount)
