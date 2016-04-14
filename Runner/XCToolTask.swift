@@ -119,9 +119,7 @@ class XCToolTask {
             "-scheme", AppArgs.shared.scheme,
             "-sdk", "iphonesimulator",
             "CONFIGURATION_BUILD_DIR=\"\(AppArgs.shared.derivedDataPath)\"",
-            "-derivedDataPath", AppArgs.shared.derivedDataPath,
-            "DYLD_INSERT_LIBRARIES=/usr/local/Cellar/xctool/0.2.10/libexec/lib/xcodebuild-fastsettings-shim.dylib",
-            "SHOW_ONLY_BUILD_SETTINGS_FOR_TARGET=\(AppArgs.shared.target)"
+            "-derivedDataPath", AppArgs.shared.derivedDataPath
         ] + outputLogArgs
         
         let shellCommand = (xctoolArguments + arguments).joinWithSeparator(" ")
