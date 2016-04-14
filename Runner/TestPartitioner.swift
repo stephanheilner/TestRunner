@@ -53,13 +53,23 @@ class TestPartitioner {
     }
     
     private func listTests() -> [String]? {
+        print("Listing tests...")
+        
         let task = XCToolTask(arguments: ["run-tests", "-only", AppArgs.shared.target, "-listTestsOnly"], logFilename: nil, outputFileLogType: .JSON, standardOutputLogType: .JSON)
         task.launch()
-        task.waitUntilExit()
         
-        guard task.terminationStatus == 0 else {
-            return nil
+        let launchTimeout: NSTimeInterval = 60
+        let waitForLaunchTimeout = dispatch_time(DISPATCH_TIME_NOW, Int64(launchTimeout * Double(NSEC_PER_SEC)))
+        dispatch_after(waitForLaunchTimeout, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+            if task.isRunning {
+                task.terminate()
+                print("Timed out getting list of tests")
+                return
+            }
         }
+        
+        task.waitUntilExit()
+        guard task.terminationStatus == 0 else { return nil }
 
         var tests: [String]?
         if let jsonObjects = JSON.jsonObjectFromStandardOutputData(task.standardOutputData) {
@@ -68,6 +78,7 @@ class TestPartitioner {
                 return String(format: "%@/%@", className, methodName)
             }.unique()
         }
+        
         return tests
     }
     

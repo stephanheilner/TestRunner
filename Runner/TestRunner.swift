@@ -93,10 +93,18 @@ public class TestRunner: NSObject {
                 return false
             }
             
+            for (deviceName, simulators) in devices {
+                for simulator in simulators {
+                    print("Created", deviceName, ":", simulator.simulatorName, "(", simulator.deviceID, ")")
+                }
+            }
+            
             guard let testsByPartition = TestPartitioner.sharedInstance.loadTestsByPartition() where !testsByPartition.isEmpty else {
                 NSLog("Unable to load list of tests")
                 return false
             }
+            
+            
             
             let partition = AppArgs.shared.partition
             let testsByDevice = testsByPartition[partition]

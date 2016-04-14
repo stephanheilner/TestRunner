@@ -42,6 +42,12 @@ class XCToolTask {
             return task.terminationStatus
         }
     }
+    
+    var isRunning: Bool {
+        get {
+            return task.running
+        }
+    }
 
     var terminationReason: NSTaskTerminationReason {
         get {

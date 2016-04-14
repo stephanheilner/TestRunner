@@ -112,6 +112,8 @@ class DeviceController {
     }
     
     func shutdownDeviceWithID(deviceID: String) {
+        print("Shutting down device with ID:", deviceID)
+        
         let task = NSTask()
         task.launchPath = "/usr/bin/xcrun"
         task.arguments = ["simctl", "shutdown", deviceID]
@@ -122,16 +124,6 @@ class DeviceController {
     }
 
     func deleteDeviceWithID(deviceID: String) {
-        shutdownDeviceWithID(deviceID)
-        
-        let task = NSTask()
-        task.launchPath = "/usr/bin/xcrun"
-        task.arguments = ["simctl", "delete", deviceID]
-        task.standardError = NSPipe()
-        task.standardOutput = NSPipe()
-        task.launch()
-        task.waitUntilExit()
-
         for application in NSWorkspace().runningApplications {
             if let name = application.localizedName where name == "Simulator" {
                 let task = NSTask()
@@ -151,11 +143,24 @@ class DeviceController {
                     let parts = processInfoString.componentsSeparatedByString(" ")
                     if !parts.isEmpty, let processDeviceID = parts.last?.trimmed() where deviceID == processDeviceID {
                         // Kill this Simulator instance
+                        print("Terminating Process:", application.localizedName ?? processDeviceID)
                         application.terminate()
                     }
                 }
             }
         }
+        
+        shutdownDeviceWithID(deviceID)
+
+        print("Deleted device with ID:", deviceID)
+        
+        let task = NSTask()
+        task.launchPath = "/usr/bin/xcrun"
+        task.arguments = ["simctl", "delete", deviceID]
+        task.standardError = NSPipe()
+        task.standardOutput = NSPipe()
+        task.launch()
+        task.waitUntilExit()
     }
     
     func resetDeviceWithID(deviceID: String, simulatorName: String) -> String? {
@@ -197,7 +202,6 @@ class DeviceController {
         }
         task.launch()
         task.waitUntilExit()
-
     }
     
     func createTestDevices() -> [String: [(simulatorName: String, deviceID: String)]] {
@@ -250,34 +254,11 @@ class DeviceController {
         guard task.terminationStatus == 0 else { return nil }
         
         if let deviceID = String(data: data, encoding: NSUTF8StringEncoding)?.trimmed() {
-            eraseTestDevice(deviceID)
+            print("Created", simulatorName, "with device ID: ", deviceID)
             return deviceID
         }
+        
         return nil
-    }
-    
-    func eraseTestDevice(deviceID: String) -> Bool {
-        let task = NSTask()
-        task.launchPath = "/usr/bin/xcrun"
-        task.arguments = ["simctl", "erase", deviceID]
-        
-        let createDeviceOutput = NSPipe()
-        task.standardOutput = createDeviceOutput
-        let data = NSMutableData()
-        createDeviceOutput.fileHandleForReading.readabilityHandler = { handle in
-            data.appendData(handle.availableData)
-        }
-        
-        task.launch()
-        task.waitUntilExit()
-        
-        /*
-         open -n Simulator --args -CurrentDeviceUDID <DEVICE UDID>
-         */
-        
-        guard task.terminationStatus == 0 else { return false }
-        
-        return true
     }
     
     func killAndDeleteTestDevices() {
