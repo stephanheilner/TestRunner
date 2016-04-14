@@ -205,6 +205,8 @@ class DeviceController {
     }
     
     func killallXcodebuild() {
+        return
+        
         print("\n=== KILLING xcodebuild ===")
         
         let task = NSTask()
