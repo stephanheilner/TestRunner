@@ -204,6 +204,27 @@ class DeviceController {
         task.waitUntilExit()
     }
     
+    func killallXcodebuild() {
+        print("\n=== KILLING xcodebuild ===")
+        
+        let task = NSTask()
+        task.launchPath = "/usr/bin/killall"
+        task.arguments = ["xcodebuild"]
+        
+        let standardOutputPipe = NSPipe()
+        task.standardOutput = standardOutputPipe
+        standardOutputPipe.fileHandleForReading.readabilityHandler = { handle in
+            TRLog(handle.availableData)
+        }
+        let standardErrorPipe = NSPipe()
+        task.standardError = standardErrorPipe
+        standardErrorPipe.fileHandleForReading.readabilityHandler = { handle in
+            TRLog(handle.availableData)
+        }
+        task.launch()
+        task.waitUntilExit()
+    }
+    
     func createTestDevices() -> [String: [(simulatorName: String, deviceID: String)]] {
         var devices = [String: [(simulatorName: String, deviceID: String)]]()
         

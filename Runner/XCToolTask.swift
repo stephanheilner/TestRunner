@@ -77,11 +77,16 @@ class XCToolTask {
     }
     
     init(arguments: [String], logFilename: String?, outputFileLogType: LogType?, standardOutputLogType: LogType) {
+        DeviceController.sharedController.killallXcodebuild()
+        
         task = NSTask()
-        task.launchPath = "/bin/sh"
+        task.launchPath = "/bin/bash"
+//        task.launchPath = "/usr/local/bin/xctool"
         task.currentDirectoryPath = AppArgs.shared.currentDirectory
-
+        task.environment = NSProcessInfo.processInfo().environment
+        
         var xctoolArguments = ["xctool"]
+//        var xctoolArguments: [String] = []
         if let project = AppArgs.shared.projectPath {
             xctoolArguments += ["-project", project]
         } else if let workspace = AppArgs.shared.workspacePath {
@@ -113,20 +118,10 @@ class XCToolTask {
         
         let shellCommand = (xctoolArguments + arguments).joinWithSeparator(" ")
         
-        task.arguments = ["-c", shellCommand]
+        task.arguments = ["-l", "-c", shellCommand]
+//        task.arguments = xctoolArguments
         task.standardError = standardErrorPipe
         task.standardOutput = standardOutputPipe
-        
-        var environment = NSProcessInfo.processInfo().environment
-        if let path = environment["PATH"] {
-            if !path.containsString("/usr/bin:") {
-                environment["PATH"] = "/usr/bin:" + path
-            }
-            if !path.containsString("/usr/local/bin:") {
-                environment["PATH"] = "/usr/local/bin:" + path
-            }
-        }
-        task.environment = environment
     }
 
     func launch() {

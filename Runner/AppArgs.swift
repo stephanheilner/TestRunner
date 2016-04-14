@@ -23,7 +23,6 @@ struct AppArgs {
     let currentDirectory: String
     let buildTests: Bool
     let runTests: Bool
-    let clean: Bool
     let timeout: NSTimeInterval
     let buildDir: String
     let derivedDataPath: String
@@ -35,12 +34,6 @@ struct AppArgs {
             self.scheme = scheme
         } else {
             exitWithMessage("'-scheme' needs to be specified")
-        }
-        
-        if let clean = NSUserDefaults.standardUserDefaults().objectForKey("clean") {
-            self.clean = clean.boolValue
-        } else {
-            clean = true
         }
         
         if let buildTests = NSUserDefaults.standardUserDefaults().objectForKey("build-tests") {

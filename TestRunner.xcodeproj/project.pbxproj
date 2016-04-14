@@ -12,7 +12,6 @@
 		D41519311C73D466001F6B55 /* WaitOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41519301C73D466001F6B55 /* WaitOperation.swift */; };
 		D46CDB6F1C7B79E60040D62A /* Summary.swift in Sources */ = {isa = PBXBuildFile; fileRef = D46CDB6E1C7B79E60040D62A /* Summary.swift */; };
 		D48D7E381C6BB3E800472A9A /* TestPartitioner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D48D7E371C6BB3E800472A9A /* TestPartitioner.swift */; };
-		D493A9B51C6B99B8006BD53F /* CleanBuild.swift in Sources */ = {isa = PBXBuildFile; fileRef = D493A9B41C6B99B8006BD53F /* CleanBuild.swift */; };
 		D493A9B71C6B9A1C006BD53F /* BuildTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D493A9B61C6B9A1C006BD53F /* BuildTests.swift */; };
 		D493A9B91C6B9A65006BD53F /* DeviceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D493A9B81C6B9A65006BD53F /* DeviceController.swift */; };
 		D49E313E1C6E508E009F8BD0 /* XCToolTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49E313D1C6E508E009F8BD0 /* XCToolTask.swift */; };
@@ -77,7 +76,6 @@
 		D41519301C73D466001F6B55 /* WaitOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaitOperation.swift; sourceTree = "<group>"; };
 		D46CDB6E1C7B79E60040D62A /* Summary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Summary.swift; sourceTree = "<group>"; };
 		D48D7E371C6BB3E800472A9A /* TestPartitioner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestPartitioner.swift; sourceTree = "<group>"; };
-		D493A9B41C6B99B8006BD53F /* CleanBuild.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CleanBuild.swift; sourceTree = "<group>"; };
 		D493A9B61C6B9A1C006BD53F /* BuildTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BuildTests.swift; sourceTree = "<group>"; };
 		D493A9B81C6B9A65006BD53F /* DeviceController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeviceController.swift; sourceTree = "<group>"; };
 		D49E313D1C6E508E009F8BD0 /* XCToolTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XCToolTask.swift; sourceTree = "<group>"; };
@@ -174,7 +172,6 @@
 			children = (
 				D4F093B21C6B627B0053249A /* AppArgs.swift */,
 				D493A9B61C6B9A1C006BD53F /* BuildTests.swift */,
-				D493A9B41C6B99B8006BD53F /* CleanBuild.swift */,
 				D493A9B81C6B9A65006BD53F /* DeviceController.swift */,
 				D4B1D54B1C6AA0CB006138F8 /* Info.plist */,
 				D4C679131C72D8640005FC67 /* JSON.swift */,
@@ -379,7 +376,6 @@
 				D4B1D5541C6AA107006138F8 /* TestRunnerOperation.swift in Sources */,
 				D41519311C73D466001F6B55 /* WaitOperation.swift in Sources */,
 				D4F093B31C6B627B0053249A /* AppArgs.swift in Sources */,
-				D493A9B51C6B99B8006BD53F /* CleanBuild.swift in Sources */,
 				D493A9B91C6B9A65006BD53F /* DeviceController.swift in Sources */,
 				D48D7E381C6BB3E800472A9A /* TestPartitioner.swift in Sources */,
 				D415192F1C73C829001F6B55 /* TestRunnerOperationQueue.swift in Sources */,

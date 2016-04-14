@@ -58,19 +58,6 @@ public class TestRunner: NSObject {
     func runTests() -> Bool {
         if AppArgs.shared.buildTests {
             do {
-                try CleanBuild.sharedInstance.clean()
-            } catch let failureError as FailureError {
-                switch failureError {
-                case let .Failed(log: log):
-                    NSLog("Clean Failed: %@", log)
-                }
-                return false
-            } catch {
-                NSLog("Unknown error while building tests")
-                return false
-            }
-            
-            do {
                 try BuildTests.sharedInstance.build()
             } catch let failureError as FailureError {
                 switch failureError {
@@ -85,7 +72,6 @@ public class TestRunner: NSObject {
         }
 
         if AppArgs.shared.runTests {
-            CleanBuild.sharedInstance.deleteFilesInDirectory(AppArgs.shared.logsDir)
             DeviceController.sharedController.killAndDeleteTestDevices()
             
             guard let devices = DeviceController.sharedController.resetAndCreateDevices() where !devices.isEmpty else {
