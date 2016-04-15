@@ -41,7 +41,8 @@ class BuildTests {
     private func listTests() -> [String: [String]]? {
         print("Listing tests...")
         
-        let task = XCToolTask(arguments: ["run-tests", "-listTestsOnly"], logFilename: nil, outputFileLogType: .Text, standardOutputLogType: .JSON)
+        let task = XCToolTask(arguments: ["run-tests", "-listTestsOnly"], logFilename: "listTests.json", outputFileLogType: .JSON, standardOutputLogType: .Text)
+        task.delegate = self
         task.launch()
         
         let launchTimeout: NSTimeInterval = 60
@@ -63,7 +64,7 @@ class BuildTests {
         var tests = [String]()
         var bundleTests: [String: [String]] = [:]
         
-        if let jsonObjects = JSON.jsonObjectFromStandardOutputData(task.standardOutputData) {
+        if let jsonObjects = JSON.jsonObjectsFromJSONStreamFile(AppArgs.shared.logsDir + "/listTests.json") {
             for jsonObject in jsonObjects {
                 if let name = jsonObject["bundleName"] as? String {
                     bundleName = name.stringByReplacingOccurrencesOfString(".xctest", withString: "")

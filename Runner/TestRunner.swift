@@ -111,9 +111,8 @@ public class TestRunner: NSObject {
             // Shutdown, Delete and Kill all Simulators
             DeviceController.sharedController.killAndDeleteTestDevices()
 
+            Summary.outputSummary(false)
         }
-        
-        Summary.outputSummary(false)
         
         return simulatorPassStatus.values.reduce(true, combine: { passedSoFar, passed in
             return passedSoFar && passed
