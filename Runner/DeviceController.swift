@@ -122,32 +122,6 @@ class DeviceController {
     }
 
     func deleteDeviceWithID(deviceID: String) {
-        for application in NSWorkspace().runningApplications {
-            if let name = application.localizedName where name == "Simulator" {
-                let task = NSTask()
-                task.launchPath = "/bin/ps"
-                task.arguments = ["aux", String(application.processIdentifier)]
-                
-                let standardOutputData = NSMutableData()
-                let pipe = NSPipe()
-                pipe.fileHandleForReading.readabilityHandler = { handle in
-                    standardOutputData.appendData(handle.availableData)
-                }
-                task.standardOutput = pipe
-                task.launch()
-                task.waitUntilExit()
-                
-                if task.terminationStatus == 0, let processInfoString = String(data: standardOutputData, encoding: NSUTF8StringEncoding) {
-                    let parts = processInfoString.componentsSeparatedByString(" ")
-                    if !parts.isEmpty, let processDeviceID = parts.last?.trimmed() where deviceID == processDeviceID {
-                        // Kill this Simulator instance
-                        print("Terminating Process:", application.localizedName ?? processDeviceID)
-                        application.terminate()
-                    }
-                }
-            }
-        }
-        
         shutdownDeviceWithID(deviceID)
 
         let task = NSTask()
@@ -159,8 +133,65 @@ class DeviceController {
         task.waitUntilExit()
         
         print("Deleted device with ID:", deviceID)
+        
+        killProcessesForDevice(deviceID)
     }
     
+    func getProcessComponents(processString: String) -> [String] {
+        return processString.componentsSeparatedByString(" ").filter { !$0.trimmed().isEmpty }
+    }
+    
+    func killProcessesForDevice(deviceID: String) {
+        let task = NSTask()
+        task.launchPath = "/bin/sh"
+        task.arguments = ["-c", "ps aux | grep \"\(deviceID)\""]
+        
+        let standardOutputData = NSMutableData()
+        let pipe = NSPipe()
+        pipe.fileHandleForReading.readabilityHandler = { handle in
+            standardOutputData.appendData(handle.availableData)
+        }
+        task.standardOutput = pipe
+        task.launch()
+        task.waitUntilExit()
+
+        if task.terminationStatus == 0, let processInfoString = String(data: standardOutputData, encoding: NSUTF8StringEncoding) {
+            for processString in processInfoString.componentsSeparatedByString("\n") {
+                let parts = getProcessComponents(processString)
+                if !parts.isEmpty && !parts.contains("grep") {
+                    killProcess(parts)
+                }
+            }
+        }
+    }
+    
+    func killProcess(processParts: [String]) {
+        for part in processParts {
+            guard let processID = Int(part) else { continue }
+        
+            print("\n=== KILLING PROCESS: \(processParts.joinWithSeparator(" ")) ===")
+            
+            let task = NSTask()
+            task.launchPath = "/bin/sh"
+            task.arguments = ["-c", "kill -9 \(processID)"]
+            
+            let standardOutputPipe = NSPipe()
+            task.standardOutput = standardOutputPipe
+            standardOutputPipe.fileHandleForReading.readabilityHandler = { handle in
+                TRLog(handle.availableData)
+            }
+            let standardErrorPipe = NSPipe()
+            task.standardError = standardErrorPipe
+            standardErrorPipe.fileHandleForReading.readabilityHandler = { handle in
+                TRLog(handle.availableData)
+            }
+            task.launch()
+            task.waitUntilExit()
+            
+            return
+        }
+    }
+
     func resetDeviceWithID(deviceID: String, simulatorName: String) -> String? {
         shutdownDeviceWithID(deviceID)
         

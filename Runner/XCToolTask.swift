@@ -78,11 +78,11 @@ class XCToolTask {
     
     init(arguments: [String], logFilename: String?, outputFileLogType: LogType?, standardOutputLogType: LogType) {
         task = NSTask()
-        task.launchPath = "/bin/bash"
+        task.launchPath = "/bin/sh"
         task.currentDirectoryPath = AppArgs.shared.currentDirectory
         task.environment = NSProcessInfo.processInfo().environment
         
-        var xctoolArguments = ["xctool"]
+        var xctoolArguments = ["/usr/local/bin/xctool"]
         if let project = AppArgs.shared.projectPath {
             xctoolArguments += ["-project", project]
         } else if let workspace = AppArgs.shared.workspacePath {
