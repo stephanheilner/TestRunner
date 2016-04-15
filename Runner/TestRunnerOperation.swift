@@ -87,7 +87,7 @@ class TestRunnerOperation: NSOperation {
             logFilename = String(format: "%@.json", simulatorName)
         }
         
-        let logMessage = String(format: "Running the following tests:\n\t%@", tests.joinWithSeparator("\n\t"))
+        let logMessage = String(format: "Running the following tests:\n\t%@\n\n", tests.joinWithSeparator("\n\t"))
         if let logData = logMessage.dataUsingEncoding(NSUTF8StringEncoding) {
             TRLog(logData, simulatorName: simulatorName)
         }

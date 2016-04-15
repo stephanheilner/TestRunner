@@ -120,8 +120,7 @@ class XCToolTask {
         
         let shellCommand = (xctoolArguments + arguments).joinWithSeparator(" ")
         
-        task.arguments = ["-l", "-c", shellCommand]
-//        task.arguments = xctoolArguments
+        task.arguments = ["-c", shellCommand]
         task.standardError = standardErrorPipe
         task.standardOutput = standardOutputPipe
     }
