@@ -18,7 +18,7 @@ class Summary {
         var suiteSummaries = [SuiteSummary]()
         
         do {
-            for filename in try NSFileManager.defaultManager().contentsOfDirectoryAtPath(AppArgs.shared.logsDir) {
+            for filename in try NSFileManager.defaultManager().contentsOfDirectoryAtPath(AppArgs.shared.logsDir) where filename.rangeOfString("Test Simulator") != nil {
                 var simulatorName = filename
                 
                 if let range = filename.rangeOfString(" (") {
@@ -29,20 +29,18 @@ class Summary {
                     simulatorRetries[simulatorName] = (simulatorRetries[simulatorName] ?? -1) + 1
                 }
                 
-                let jsonObjects = JSON.jsonObjectsFromJSONStreamFile(String(format: "%@/%@", AppArgs.shared.logsDir, filename)) ?? []
-
-                testSummaries += jsonObjects.flatMap { jsonObject -> TestSummary? in
-                    guard let event = jsonObject["event"] as? String where event == "end-test", let testName = jsonObject["test"] as? String, succeeded = jsonObject["succeeded"] as? Bool, duration = jsonObject["totalDuration"] as? NSTimeInterval else { return nil }
-                    let exceptions = jsonObject["exceptions"] as? [[String: AnyObject]]
-                    return TestSummary(simulatorName: simulatorName, testName: testName, passed: succeeded, duration: duration, exceptions: exceptions)
-                }
-                
-                for jsonObject in jsonObjects {
-                    if let event = jsonObject["event"] as? String where event == "end-test-suite", let testCaseCount = jsonObject["testCaseCount"] as? Int, duration = jsonObject["totalDuration"] as? NSTimeInterval, failureCount = jsonObject["totalFailureCount"] as? Int {
-                        suiteSummaries.append(SuiteSummary(testCaseCount: testCaseCount, duration: duration, failureCount: failureCount))
+                if let jsonObjects = JSON.jsonObjectsFromJSONStreamFile(String(format: "%@/%@", AppArgs.shared.logsDir, filename)) {
+                    testSummaries += jsonObjects.flatMap { jsonObject -> TestSummary? in
+                        guard let event = jsonObject["event"] as? String where event == "end-test", let testName = jsonObject["test"] as? String, succeeded = jsonObject["succeeded"] as? Bool, duration = jsonObject["totalDuration"] as? NSTimeInterval else { return nil }
+                        let exceptions = jsonObject["exceptions"] as? [[String: AnyObject]]
+                        return TestSummary(simulatorName: simulatorName, testName: testName, passed: succeeded, duration: duration, exceptions: exceptions)
+                    }
+                    for jsonObject in jsonObjects {
+                        if let event = jsonObject["event"] as? String where event == "end-test-suite", let testCaseCount = jsonObject["testCaseCount"] as? Int, duration = jsonObject["totalDuration"] as? NSTimeInterval, failureCount = jsonObject["totalFailureCount"] as? Int {
+                            suiteSummaries.append(SuiteSummary(testCaseCount: testCaseCount, duration: duration, failureCount: failureCount))
+                        }
                     }
                 }
-
             }
         } catch {}
 
