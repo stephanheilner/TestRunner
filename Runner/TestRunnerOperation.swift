@@ -74,8 +74,11 @@ class TestRunnerOperation: NSOperation {
         executing = true
         status = .Running
 
-        let onlyTests: String = "\(AppArgs.shared.target):" + tests.joinWithSeparator(",")
-        let arguments = ["-destination", "id=\(deviceID)", "run-tests", "-newSimulatorInstance", "-only", onlyTests]
+        var arguments = ["-destination", "id=\(deviceID)", "run-tests", "-newSimulatorInstance"]
+        if let target = AppArgs.shared.target {
+            let onlyTests: String = "\(target):" + tests.joinWithSeparator(",")
+            arguments += ["-only", onlyTests]
+        }
 
         let logFilename: String
         if retryCount > 0 {
@@ -91,6 +94,7 @@ class TestRunnerOperation: NSOperation {
         
         let task = XCToolTask(arguments: arguments, logFilename: logFilename, outputFileLogType: .JSON, standardOutputLogType: .Text)
         logFilePath = task.logFilePath
+        
         task.delegate = self
         task.launch()
         task.waitUntilExit()

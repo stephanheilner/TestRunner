@@ -112,8 +112,6 @@ class DeviceController {
     }
     
     func shutdownDeviceWithID(deviceID: String) {
-        print("\nShutting down device with ID:", deviceID)
-        
         let task = NSTask()
         task.launchPath = "/usr/bin/xcrun"
         task.arguments = ["simctl", "shutdown", deviceID]
@@ -152,8 +150,6 @@ class DeviceController {
         
         shutdownDeviceWithID(deviceID)
 
-        print("Deleted device with ID:", deviceID)
-        
         let task = NSTask()
         task.launchPath = "/usr/bin/xcrun"
         task.arguments = ["simctl", "delete", deviceID]
@@ -161,6 +157,8 @@ class DeviceController {
         task.standardOutput = NSPipe()
         task.launch()
         task.waitUntilExit()
+        
+        print("Deleted device with ID:", deviceID)
     }
     
     func resetDeviceWithID(deviceID: String, simulatorName: String) -> String? {
@@ -253,12 +251,7 @@ class DeviceController {
         
         guard task.terminationStatus == 0 else { return nil }
         
-        if let deviceID = String(data: data, encoding: NSUTF8StringEncoding)?.trimmed() {
-            print("Created", simulatorName, "with device ID: ", deviceID)
-            return deviceID
-        }
-        
-        return nil
+        return String(data: data, encoding: NSUTF8StringEncoding)?.trimmed()
     }
     
     func killAndDeleteTestDevices() {

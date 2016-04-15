@@ -90,8 +90,6 @@ public class TestRunner: NSObject {
                 return false
             }
             
-            
-            
             let partition = AppArgs.shared.partition
             let testsByDevice = testsByPartition[partition]
             

@@ -14,6 +14,7 @@ class BuildTests {
     
     func build() throws {
         deleteFilesInDirectory(AppArgs.shared.derivedDataPath)
+        deleteFilesInDirectory(AppArgs.shared.logsDir)
         
         let task = XCToolTask(arguments: ["clean", "build-tests"], logFilename: "build-tests.txt", outputFileLogType: .Text, standardOutputLogType: .Text)
         task.delegate = self
