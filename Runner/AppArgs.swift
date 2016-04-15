@@ -15,7 +15,7 @@ struct AppArgs {
     var projectPath: String?
     var workspacePath: String?
     let scheme: String
-    let target: String
+    var target: String?
     let partition: Int
     let devices: String
     let simulatorsCount: Int
@@ -62,8 +62,6 @@ struct AppArgs {
         
         if let target = NSUserDefaults.standardUserDefaults().stringForKey("target") {
             self.target = target
-        } else {
-            exitWithMessage("'-target' needs to be specified")
         }
 
         if let devices = NSUserDefaults.standardUserDefaults().stringForKey("devices") {

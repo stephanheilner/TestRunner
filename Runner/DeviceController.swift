@@ -112,7 +112,7 @@ class DeviceController {
     }
     
     func shutdownDeviceWithID(deviceID: String) {
-        print("Shutting down device with ID:", deviceID)
+        print("\nShutting down device with ID:", deviceID)
         
         let task = NSTask()
         task.launchPath = "/usr/bin/xcrun"
@@ -189,29 +189,6 @@ class DeviceController {
         let task = NSTask()
         task.launchPath = "/usr/bin/killall"
         task.arguments = ["Simulator"]
-        
-        let standardOutputPipe = NSPipe()
-        task.standardOutput = standardOutputPipe
-        standardOutputPipe.fileHandleForReading.readabilityHandler = { handle in
-            TRLog(handle.availableData)
-        }
-        let standardErrorPipe = NSPipe()
-        task.standardError = standardErrorPipe
-        standardErrorPipe.fileHandleForReading.readabilityHandler = { handle in
-            TRLog(handle.availableData)
-        }
-        task.launch()
-        task.waitUntilExit()
-    }
-    
-    func killallXcodebuild() {
-        return
-        
-        print("\n=== KILLING xcodebuild ===")
-        
-        let task = NSTask()
-        task.launchPath = "/usr/bin/killall"
-        task.arguments = ["xcodebuild"]
         
         let standardOutputPipe = NSPipe()
         task.standardOutput = standardOutputPipe

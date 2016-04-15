@@ -16,7 +16,18 @@ class TestPartitioner {
     func loadTestsByPartition(retries: Int = 5) -> [[Int: [String]]]? {
         guard retries > 0 else { return nil }
         
-        guard let allTests = listTests() where !allTests.isEmpty else {
+        var tests: [String]?
+        do {
+            if let data = try NSData(contentsOfFile: AppArgs.shared.logsDir + "/testsByTarget.json") {
+                if let targetTests = try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [String: [String]] {
+                    if let target = AppArgs.shared.target {
+                        tests = targetTests[target]
+                    }
+                }
+            }
+        } catch {}
+        
+        guard let allTests = tests where !allTests.isEmpty else {
             return loadTestsByPartition(retries - 1)
         }
         
@@ -54,36 +65,6 @@ class TestPartitioner {
         }
         
         return testsByPartition
-    }
-    
-    private func listTests() -> [String]? {
-        print("Listing tests...")
-        
-        let task = XCToolTask(arguments: ["run-tests", "-only", AppArgs.shared.target, "-listTestsOnly"], logFilename: nil, outputFileLogType: .JSON, standardOutputLogType: .JSON)
-        task.launch()
-        
-        let launchTimeout: NSTimeInterval = 60
-        let waitForLaunchTimeout = dispatch_time(DISPATCH_TIME_NOW, Int64(launchTimeout * Double(NSEC_PER_SEC)))
-        dispatch_after(waitForLaunchTimeout, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            if task.isRunning {
-                task.terminate()
-                print("Timed out getting list of tests")
-                return
-            }
-        }
-        
-        task.waitUntilExit()
-        guard task.terminationStatus == 0 else { return nil }
-
-        var tests: [String]?
-        if let jsonObjects = JSON.jsonObjectFromStandardOutputData(task.standardOutputData) {
-            tests = jsonObjects.flatMap { jsonObject -> String? in
-                guard let className = jsonObject["className"] as? String, methodName = jsonObject["methodName"] as? String else { return nil }
-                return String(format: "%@/%@", className, methodName)
-            }.unique()
-        }
-        
-        return tests
     }
     
 }
