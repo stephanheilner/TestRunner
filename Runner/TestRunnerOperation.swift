@@ -137,8 +137,7 @@ class TestRunnerOperation: NSOperation {
             }
         }
         
-        let launchTimeout: NSTimeInterval = 60
-        let waitForLaunchTimeout = dispatch_time(DISPATCH_TIME_NOW, Int64(launchTimeout * Double(NSEC_PER_SEC)))
+        let waitForLaunchTimeout = dispatch_time(DISPATCH_TIME_NOW, Int64(AppArgs.shared.launchTimeout * Double(NSEC_PER_SEC)))
         dispatch_after(waitForLaunchTimeout, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             guard !self.loaded else { return }
             
