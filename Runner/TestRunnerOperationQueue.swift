@@ -41,6 +41,8 @@ class TestRunnerOperationQueue: NSOperationQueue {
     func simulatorLoaded(notification: NSNotification) {
         guard let waitOperation = waitOperations.shift() as? WaitOperation else { return }
         
+        NSThread.sleepForTimeInterval(5)
+        
         waitOperation.executing = false
         waitOperation.finished = true
     }
