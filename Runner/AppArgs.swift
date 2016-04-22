@@ -64,7 +64,7 @@ struct AppArgs {
         if let launchTimeout = NSUserDefaults.standardUserDefaults().objectForKey("launch-timeout") {
             self.launchTimeout = NSTimeInterval(launchTimeout.doubleValue)
         } else {
-            launchTimeout = NSTimeInterval(60) // Default
+            launchTimeout = NSTimeInterval(30) // Default
         }
         
         if let target = NSUserDefaults.standardUserDefaults().stringForKey("target") {

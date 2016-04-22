@@ -131,6 +131,10 @@ class TestRunnerOperation: NSOperation {
             if let logFilePath = task.logFilePath where JSON.hasBeginTestSuiteEvent(logFilePath) {
                 guard !self.loaded else { return }
                 
+                if let data = "TIMED OUT Running Tests".dataUsingEncoding(NSUTF8StringEncoding) {
+                    TRLog(data, simulatorName: self.simulatorName)
+                }
+                
                 self.loaded = true
                 NSNotificationCenter.defaultCenter().postNotificationName(TestRunnerOperationQueue.SimulatorLoadedNotification, object: nil)
                 return
@@ -140,6 +144,10 @@ class TestRunnerOperation: NSOperation {
         let waitForLaunchTimeout = dispatch_time(DISPATCH_TIME_NOW, Int64(AppArgs.shared.launchTimeout * Double(NSEC_PER_SEC)))
         dispatch_after(waitForLaunchTimeout, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             guard !self.loaded else { return }
+            
+            if let data = "TIMED OUT Launching Simulator".dataUsingEncoding(NSUTF8StringEncoding) {
+                TRLog(data, simulatorName: self.simulatorName)
+            }
             
             // If not launched after 60 seconds, just mark as launched, something probably went wrong
             self.loaded = true
