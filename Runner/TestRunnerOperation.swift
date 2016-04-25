@@ -46,21 +46,20 @@ class TestRunnerOperation: NSOperation {
     private var _finished: Bool
     
     private let simulatorName: String
-    private let retryCount: Int
     private var logFilePath: String?
     private var status: TestRunnerStatus = .Stopped
     private var lastCheck = NSDate().timeIntervalSince1970
     private var timeoutCounter = 0
     
     var loaded = false
-    var completion: ((status: TestRunnerStatus, simulatorName: String, failedTests: [String], deviceID: String, retryCount: Int) -> Void)?
+    var completion: ((status: TestRunnerStatus, simulatorName: String, attemptedTests: [String], succeededTests: [String], deviceID: String) -> Void)?
     
-    init(deviceFamily: String, simulatorName: String, deviceID: String, tests: [String], retryCount: Int) {
+    init(deviceFamily: String, simulatorName: String, deviceID: String, tests: [String], alreadyLoaded: Bool) {
         self.deviceFamily = deviceFamily
         self.simulatorName = simulatorName
         self.deviceID = deviceID
         self.tests = tests
-        self.retryCount = retryCount
+        loaded = alreadyLoaded
         
         _executing = false
         _finished = false
@@ -74,23 +73,18 @@ class TestRunnerOperation: NSOperation {
         executing = true
         status = .Running
 
-        var arguments = ["-destination", "id=\(deviceID)", "run-tests", "-newSimulatorInstance"]
+        var arguments = ["-destination", "id=\(deviceID)", "run-tests"]
+        if !loaded {
+            arguments.append("-newSimulatorInstance")
+        }
         if let target = AppArgs.shared.target {
             let onlyTests: String = "\(target):" + tests.joinWithSeparator(",")
             arguments += ["-only", onlyTests]
         }
 
-        let logFilename: String
-        if retryCount > 0 {
-            logFilename = String(format: "%@ (%d).json", simulatorName, retryCount+1)
-        } else {
-            logFilename = String(format: "%@.json", simulatorName)
-        }
+        let logFilename = String(format: "%@.json", simulatorName)
         
-        let logMessage = String(format: "Running the following tests:\n\t%@\n\n", tests.joinWithSeparator("\n\t"))
-        if let logData = logMessage.dataUsingEncoding(NSUTF8StringEncoding) {
-            TRLog(logData, simulatorName: simulatorName)
-        }
+        TRLog(String(format: "Running the following tests:\n\t%@\n\n", tests.joinWithSeparator("\n\t")), simulatorName: simulatorName)
         
         let task = XCToolTask(arguments: arguments, logFilename: logFilename, outputFileLogType: .JSON, standardOutputLogType: .Text)
         logFilePath = task.logFilePath
@@ -103,21 +97,23 @@ class TestRunnerOperation: NSOperation {
             NSNotificationCenter.defaultCenter().postNotificationName(TestRunnerOperationQueue.SimulatorLoadedNotification, object: nil)
         }
         
-        status = (task.terminationStatus == 0) ? .Success : .Failed
-        completion?(status: status, simulatorName: simulatorName, failedTests: getFailedTests(), deviceID: deviceID, retryCount: retryCount)
+        let succeededTests = getSucceededTests() ?? []
+        status = (task.terminationStatus == 0 && succeededTests.sort() == tests.sort()) ? .Success : .Failed
+        completion?(status: status, simulatorName: simulatorName, attemptedTests: tests, succeededTests: succeededTests, deviceID: deviceID)
 
         executing = false
         finished = true
     }
     
-    func getFailedTests() -> [String] {
-        guard let logFilePath = logFilePath, jsonObjects = JSON.jsonObjectsFromJSONStreamFile(logFilePath) else { return [] }
+    func getSucceededTests() -> [String]? {
+        guard let logFilePath = logFilePath, jsonObjects = JSON.jsonObjectsFromJSONStreamFile(logFilePath) else { return nil }
 
         let succeededTests = Set<String>(jsonObjects.flatMap { jsonObject -> String? in
             guard let succeeded = jsonObject["succeeded"] as? Bool where succeeded, let className = jsonObject["className"] as? String, methodName = jsonObject["methodName"] as? String else { return nil }
             return String(format: "%@/%@", className, methodName)
         })
-        return tests.filter { !succeededTests.contains($0) }
+        
+        return Array(succeededTests)
     }
 
     func notifyIfLaunched(task: XCToolTask) {
@@ -131,9 +127,7 @@ class TestRunnerOperation: NSOperation {
             if let logFilePath = task.logFilePath where JSON.hasBeginTestSuiteEvent(logFilePath) {
                 guard !self.loaded else { return }
                 
-                if let data = "TIMED OUT Running Tests".dataUsingEncoding(NSUTF8StringEncoding) {
-                    TRLog(data, simulatorName: self.simulatorName)
-                }
+                TRLog("TIMED OUT Running Tests", simulatorName: self.simulatorName)
                 
                 self.loaded = true
                 NSNotificationCenter.defaultCenter().postNotificationName(TestRunnerOperationQueue.SimulatorLoadedNotification, object: nil)
@@ -145,9 +139,7 @@ class TestRunnerOperation: NSOperation {
         dispatch_after(waitForLaunchTimeout, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             guard !self.loaded else { return }
             
-            if let data = "TIMED OUT Launching Simulator".dataUsingEncoding(NSUTF8StringEncoding) {
-                TRLog(data, simulatorName: self.simulatorName)
-            }
+            TRLog("TIMED OUT Launching Simulator after \(Int64(AppArgs.shared.launchTimeout * Double(NSEC_PER_SEC))) seconds", simulatorName: self.simulatorName)
             
             // If not launched after 60 seconds, just mark as launched, something probably went wrong
             self.loaded = true

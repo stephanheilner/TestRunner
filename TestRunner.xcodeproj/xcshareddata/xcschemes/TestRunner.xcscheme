@@ -79,7 +79,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-project &quot;/Users/stephan/projects/ios/MyTestProject/MyTestProject.xcodeproj&quot;"
+            argument = "-project &quot;${PROJECT_DIR}/MyTestProject/MyTestProject.xcodeproj&quot;"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -92,15 +92,15 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-build-tests false"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-run-tests false"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-retry-count 0"
-            isEnabled = "NO">
+            argument = "-retry-count 5"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-timeout 120"
