@@ -65,7 +65,6 @@ public class TestRunner: NSObject {
     
     let testRunnerQueue = TestRunnerOperationQueue()
     private var allTests: [String]?
-    private var testsToRun = [String]()
     private var succeededTests = [String]()
     private var failedTests = [String: Int]()
     private var finished = false
@@ -106,7 +105,6 @@ public class TestRunner: NSObject {
             }
             
             self.allTests = allTests
-            testsToRun = allTests
             
             for (deviceFamily, deviceInfos) in devices {
                 for (index, deviceInfo) in deviceInfos.enumerate() {
@@ -146,27 +144,30 @@ public class TestRunner: NSObject {
         return passed
     }
     
+    func cleanup() {
+        self.testRunnerQueue.cancelAllOperations()
+        DeviceController.sharedController.killAndDeleteTestDevices()
+        dataSynchronizationQueue.waitUntilAllOperationsAreFinished()
+        logQueue.waitUntilAllOperationsAreFinished()
+    }
+    
     func getNextTests() -> [String] {
-        // Return the next three tests to run, or if they are all already running, double up on the remaining tests
-        testsToRun = testsToRun.filter { !succeededTests.contains($0) }
-        guard !testsToRun.isEmpty else { return allTests?.filter { !succeededTests.contains($0) } ?? [] }
-        
-        let nextTests = testsToRun.prefix(3)
-        testsToRun = Array(testsToRun.dropFirst(3))
-        
-        return Array(nextTests)
+        // Temporarily have all simulators run all tests because most are hanging at this point.
+        return allTests?.filter { !succeededTests.contains($0) } ?? []
     }
     
     func createOperation(deviceFamily: String, simulatorName: String, deviceID: String, tests: [String], alreadyLoaded: Bool = false) -> TestRunnerOperation {
         let operation = TestRunnerOperation(deviceFamily: deviceFamily, simulatorName: simulatorName, deviceID: deviceID, tests: tests, alreadyLoaded: alreadyLoaded)
         operation.completion = { status, simulatorName, attemptedTests, succeededTests, deviceID in
+            dataSynchronizationQueue.addOperationWithBlock {
+                self.succeededTests += succeededTests
+            }
             switch status {
             case .Success:
                 TRLog("Tests PASSED\n", simulatorName: simulatorName)
                 
                 var nextTests = [String]()
                 dataSynchronizationQueue.addOperationWithBlock {
-                    self.succeededTests += succeededTests
                     nextTests = self.getNextTests()
                 }
                 
@@ -174,7 +175,7 @@ public class TestRunner: NSObject {
                 dataSynchronizationQueue.waitUntilAllOperationsAreFinished()
                 
                 guard !self.allTestsPassed() else {
-                    self.testRunnerQueue.cancelAllOperations()
+                    self.cleanup()
                     return
                 }
                 
@@ -190,8 +191,6 @@ public class TestRunner: NSObject {
                 var failedForRealzies = false
                 var nextTests = [String]()
                 dataSynchronizationQueue.addOperationWithBlock {
-                    self.testsToRun += failedTests
-                    
                     for failure in failedTests {
                         self.failedTests[failure] = (self.failedTests[failure] ?? 0) + 1
                         let failedCount = self.failedTests[failure]
@@ -209,7 +208,7 @@ public class TestRunner: NSObject {
                 dataSynchronizationQueue.waitUntilAllOperationsAreFinished()
                 
                 guard !self.allTestsPassed() else {
-                    self.testRunnerQueue.cancelAllOperations()
+                    self.cleanup()
                     return
                 }
                 
