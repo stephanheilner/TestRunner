@@ -141,8 +141,33 @@ class DeviceController {
         return processString.componentsSeparatedByString(" ").filter { !$0.trimmed().isEmpty }
     }
     
-    func killCoreSimulatorService() {
+    func killCodeSignHelper() {
+        print("\n*************************\nKILLING CodeSigningHelper\n*************************\n")
         
+        let task = NSTask()
+        task.launchPath = "/bin/sh"
+        task.arguments = ["-c", "ps aux | grep CodeSigningHelper"]
+        
+        let standardOutputData = NSMutableData()
+        let pipe = NSPipe()
+        pipe.fileHandleForReading.readabilityHandler = { handle in
+            standardOutputData.appendData(handle.availableData)
+        }
+        task.standardOutput = pipe
+        task.launch()
+        task.waitUntilExit()
+        
+        if task.terminationStatus == 0, let processInfoString = String(data: standardOutputData, encoding: NSUTF8StringEncoding) {
+            for processString in processInfoString.componentsSeparatedByString("\n") {
+                let parts = getProcessComponents(processString)
+                if !parts.isEmpty && !parts.contains("grep") {
+                    killProcess(parts)
+                }
+            }
+        }
+    }
+    
+    func killCoreSimulatorService() {
         print("\n*************************\nKILLING CoreSimulatorService\n*************************\n")
         
         let task = NSTask()
@@ -166,6 +191,8 @@ class DeviceController {
                 }
             }
         }
+        
+        killCodeSignHelper()
     }
     
     
@@ -200,8 +227,10 @@ class DeviceController {
             print("\n=== KILLING PROCESS: \(processParts.joinWithSeparator(" ")) ===")
             
             let task = NSTask()
-            task.launchPath = "/bin/sh"
-            task.arguments = ["-c", "kill -9 \(processID)"]
+//            task.launchPath = "/bin/sh"
+//            task.arguments = ["-c", "kill -9 \(processID)"]
+            task.launchPath = "/usr/bin/sudo"
+            task.arguments = ["kill -9 \(processID)"]
             
             let standardOutputPipe = NSPipe()
             task.standardOutput = standardOutputPipe
