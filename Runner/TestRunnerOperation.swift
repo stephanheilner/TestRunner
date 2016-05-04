@@ -151,6 +151,8 @@ class TestRunnerOperation: NSOperation {
                 TRLog(data, simulatorName: self.simulatorName)
             }
             
+             DeviceController.sharedController.killCoreSimulatorService()
+            
             // If not launched after 60 seconds, just mark as launched, something probably went wrong
             self.loaded = true
             NSNotificationCenter.defaultCenter().postNotificationName(TestRunnerOperationQueue.SimulatorLoadedNotification, object: nil)
