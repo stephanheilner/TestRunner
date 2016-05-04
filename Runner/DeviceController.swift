@@ -146,7 +146,7 @@ class DeviceController {
         
         let task = NSTask()
         task.launchPath = "/bin/sh"
-        task.arguments = ["-c", "ps aux | grep CodeSigningHelper"]
+        task.arguments = ["-c", "ps aux | grep com.apple.CodeSigningHelper"]
         
         let standardOutputData = NSMutableData()
         let pipe = NSPipe()
@@ -169,6 +169,8 @@ class DeviceController {
     
     func killCoreSimulatorService() {
         print("\n*************************\nKILLING CoreSimulatorService\n*************************\n")
+        
+        printCurrentUser()
         
         let task = NSTask()
         task.launchPath = "/bin/sh"
@@ -195,6 +197,24 @@ class DeviceController {
         killCodeSignHelper()
     }
     
+    func printCurrentUser() {
+        let task = NSTask()
+        task.launchPath = "/bin/sh"
+        task.arguments = ["-c", "echo $USER"]
+        
+        let standardOutputData = NSMutableData()
+        let pipe = NSPipe()
+        pipe.fileHandleForReading.readabilityHandler = { handle in
+            standardOutputData.appendData(handle.availableData)
+        }
+        task.standardOutput = pipe
+        task.launch()
+        task.waitUntilExit()
+        
+        if task.terminationStatus == 0, let logInfo = String(data: standardOutputData, encoding: NSUTF8StringEncoding) {
+            print("CURRENT USER:", logInfo)
+        }
+    }
     
     func killProcessesForDevice(deviceID: String) {
         let task = NSTask()
