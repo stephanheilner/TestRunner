@@ -142,6 +142,9 @@ class DeviceController {
     }
     
     func killCoreSimulatorService() {
+        
+        print("\n*************************\nKILLING CoreSimulatorService\n*************************\n")
+        
         let task = NSTask()
         task.launchPath = "/bin/sh"
         task.arguments = ["-c", "ps aux | grep CoreSimulatorService"]
@@ -154,8 +157,6 @@ class DeviceController {
         task.standardOutput = pipe
         task.launch()
         task.waitUntilExit()
-
-        print("KILLING CoreSimulatorService")
         
         if task.terminationStatus == 0, let processInfoString = String(data: standardOutputData, encoding: NSUTF8StringEncoding) {
             for processString in processInfoString.componentsSeparatedByString("\n") {
