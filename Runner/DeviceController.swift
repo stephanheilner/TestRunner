@@ -141,6 +141,33 @@ class DeviceController {
         return processString.componentsSeparatedByString(" ").filter { !$0.trimmed().isEmpty }
     }
     
+    func killCoreSimulatorService() {
+        let task = NSTask()
+        task.launchPath = "/bin/sh"
+        task.arguments = ["-c", "ps aux | grep CoreSimulatorService"]
+        
+        let standardOutputData = NSMutableData()
+        let pipe = NSPipe()
+        pipe.fileHandleForReading.readabilityHandler = { handle in
+            standardOutputData.appendData(handle.availableData)
+        }
+        task.standardOutput = pipe
+        task.launch()
+        task.waitUntilExit()
+
+        print("KILLING CoreSimulatorService")
+        
+        if task.terminationStatus == 0, let processInfoString = String(data: standardOutputData, encoding: NSUTF8StringEncoding) {
+            for processString in processInfoString.componentsSeparatedByString("\n") {
+                let parts = getProcessComponents(processString)
+                if !parts.isEmpty && !parts.contains("grep") {
+                    killProcess(parts)
+                }
+            }
+        }
+    }
+    
+    
     func killProcessesForDevice(deviceID: String) {
         let task = NSTask()
         task.launchPath = "/bin/sh"

@@ -135,6 +135,8 @@ class TestRunnerOperation: NSOperation {
                     TRLog(data, simulatorName: self.simulatorName)
                 }
                 
+                DeviceController.sharedController.killCoreSimulatorService()
+                
                 self.loaded = true
                 NSNotificationCenter.defaultCenter().postNotificationName(TestRunnerOperationQueue.SimulatorLoadedNotification, object: nil)
                 return
