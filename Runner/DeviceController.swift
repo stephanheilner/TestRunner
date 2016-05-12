@@ -35,7 +35,7 @@ class DeviceController {
         }
         return runtimes
     }()
-
+    
     private let testDevicePrefix = "Test Simulator"
     private lazy var simulatorNameFormat: String = {
         return self.testDevicePrefix + " %d, %@, %@" // number, device type, runtime
@@ -65,10 +65,10 @@ class DeviceController {
         
         for (key, values) in jsonObject where key == "devices" {
             guard let deviceValues = values as? [String: AnyObject] else { continue }
-
+            
             for (_, devices) in deviceValues {
                 guard let devices = devices as? [AnyObject] else { continue }
-
+                
                 for device in devices {
                     if let name = device["name"] as? String where name.hasPrefix(testDevicePrefix), let udid = device["udid"] as? String {
                         testDeviceIDs.append(udid)
@@ -111,19 +111,9 @@ class DeviceController {
         deviceIDs.forEach { deleteDeviceWithID($0) }
     }
     
-    func shutdownDeviceWithID(deviceID: String) {
-        let task = NSTask()
-        task.launchPath = "/usr/bin/xcrun"
-        task.arguments = ["simctl", "shutdown", deviceID]
-        task.standardError = NSPipe()
-        task.standardOutput = NSPipe()
-        task.launch()
-        task.waitUntilExit()
-    }
-
     func deleteDeviceWithID(deviceID: String) {
-        shutdownDeviceWithID(deviceID)
-
+        killProcessesForDevice(deviceID)
+        
         let task = NSTask()
         task.launchPath = "/usr/bin/xcrun"
         task.arguments = ["simctl", "delete", deviceID]
@@ -170,8 +160,6 @@ class DeviceController {
     func killCoreSimulatorService() {
         print("\n*************************\nKILLING CoreSimulatorService\n*************************\n")
         
-        printCurrentUser()
-        
         let task = NSTask()
         task.launchPath = "/bin/sh"
         task.arguments = ["-c", "ps aux | grep CoreSimulatorService"]
@@ -197,25 +185,6 @@ class DeviceController {
         killCodeSignHelper()
     }
     
-    func printCurrentUser() {
-        let task = NSTask()
-        task.launchPath = "/bin/sh"
-        task.arguments = ["-c", "echo $USER"]
-        
-        let standardOutputData = NSMutableData()
-        let pipe = NSPipe()
-        pipe.fileHandleForReading.readabilityHandler = { handle in
-            standardOutputData.appendData(handle.availableData)
-        }
-        task.standardOutput = pipe
-        task.launch()
-        task.waitUntilExit()
-        
-        if task.terminationStatus == 0, let logInfo = String(data: standardOutputData, encoding: NSUTF8StringEncoding) {
-            print("CURRENT USER:", logInfo)
-        }
-    }
-    
     func killProcessesForDevice(deviceID: String) {
         let task = NSTask()
         task.launchPath = "/bin/sh"
@@ -229,7 +198,7 @@ class DeviceController {
         task.standardOutput = pipe
         task.launch()
         task.waitUntilExit()
-
+        
         if task.terminationStatus == 0, let processInfoString = String(data: standardOutputData, encoding: NSUTF8StringEncoding) {
             for processString in processInfoString.componentsSeparatedByString("\n") {
                 let parts = getProcessComponents(processString)
@@ -243,14 +212,14 @@ class DeviceController {
     func killProcess(processParts: [String]) {
         for part in processParts {
             guard let processID = Int(part) else { continue }
-        
+            
             print("\n=== KILLING PROCESS: \(processParts.joinWithSeparator(" ")) ===")
             
             let task = NSTask()
-//            task.launchPath = "/bin/sh"
-//            task.arguments = ["-c", "kill -9 \(processID)"]
-            task.launchPath = "/usr/bin/sudo"
-            task.arguments = ["kill -9 \(processID)"]
+            task.launchPath = "/bin/sh"
+            task.arguments = ["-c", "kill -9 \(processID)"]
+            //            task.launchPath = "/usr/bin/sudo"
+            //            task.arguments = ["kill -9 \(processID)"]
             
             let standardOutputPipe = NSPipe()
             task.standardOutput = standardOutputPipe
@@ -268,9 +237,9 @@ class DeviceController {
             return
         }
     }
-
+    
     func resetDeviceWithID(deviceID: String, simulatorName: String) -> String? {
-        shutdownDeviceWithID(deviceID)
+        killProcessesForDevice(deviceID)
         
         let parts = simulatorName.componentsSeparatedByString(",")
         if let deviceTypeID = deviceTypes[parts[1].trimmed()], runtimeID = runtimes[parts[2].trimmed()] {
@@ -341,7 +310,7 @@ class DeviceController {
         
         return devices
     }
-        
+    
     func createTestDevice(simulatorName: String, deviceTypeID: String, runtimeID: String) -> String? {
         let task = NSTask()
         task.launchPath = "/usr/bin/xcrun"
