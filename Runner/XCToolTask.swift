@@ -116,6 +116,7 @@ class XCToolTask {
             "-sdk", "iphonesimulator",
             "CONFIGURATION_BUILD_DIR=\"\(AppArgs.shared.derivedDataPath)\"",
             "CODE_SIGN_IDENTITY=\"\"",
+            "CODE_SIGN_ENTITLEMENTS=\"\"",
             "CODE_SIGNING_REQUIRED=NO",
             "-derivedDataPath", AppArgs.shared.derivedDataPath
         ] + outputLogArgs

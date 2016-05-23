@@ -11,6 +11,8 @@ import Foundation
 enum TestRunnerStatus: Int {
     case Stopped
     case Running
+    case TestTimeout
+    case LaunchTimeout
     case Success
     case Failed
 }
@@ -47,20 +49,22 @@ class TestRunnerOperation: NSOperation {
     
     private let simulatorName: String
     private let retryCount: Int
+    private let launchRetryCount: Int
     private var logFilePath: String?
     private var status: TestRunnerStatus = .Stopped
     private var lastCheck = NSDate().timeIntervalSince1970
     private var timeoutCounter = 0
     
-    var loaded = false
-    var completion: ((status: TestRunnerStatus, simulatorName: String, failedTests: [String], deviceID: String, retryCount: Int) -> Void)?
+    var simulatorLaunched = false
+    var completion: ((status: TestRunnerStatus, simulatorName: String, failedTests: [String], deviceID: String, retryCount: Int, launchRetryCount: Int) -> Void)?
     
-    init(deviceFamily: String, simulatorName: String, deviceID: String, tests: [String], retryCount: Int) {
+    init(deviceFamily: String, simulatorName: String, deviceID: String, tests: [String], retryCount: Int, launchRetryCount: Int) {
         self.deviceFamily = deviceFamily
         self.simulatorName = simulatorName
         self.deviceID = deviceID
         self.tests = tests
         self.retryCount = retryCount
+        self.launchRetryCount = launchRetryCount
         
         _executing = false
         _finished = false
@@ -72,7 +76,7 @@ class TestRunnerOperation: NSOperation {
         super.start()
         
         executing = true
-        status = .Running
+        self.status = .Running
 
         var arguments = ["-destination", "id=\(deviceID)", "run-tests", "-newSimulatorInstance"]
         if let target = AppArgs.shared.target {
@@ -99,15 +103,26 @@ class TestRunnerOperation: NSOperation {
         task.launch()
         task.waitUntilExit()
         
-        if !loaded {
-            NSNotificationCenter.defaultCenter().postNotificationName(TestRunnerOperationQueue.SimulatorLoadedNotification, object: nil)
-        }
-        
-        status = (task.terminationStatus == 0) ? .Success : .Failed
-        completion?(status: status, simulatorName: simulatorName, failedTests: getFailedTests(), deviceID: deviceID, retryCount: retryCount)
+        let status: TestRunnerStatus = task.terminationStatus == 0 ? .Success : .Failed
 
+        finishOperation(status: status)
+    }
+    
+    func finishOperation(status status: TestRunnerStatus) {
+        simulatorDidLaunch()
+        
+        completion?(status: status, simulatorName: simulatorName, failedTests: getFailedTests(), deviceID: deviceID, retryCount: retryCount, launchRetryCount: launchRetryCount)
+        
         executing = false
         finished = true
+    }
+    
+    func simulatorDidLaunch() {
+        guard !simulatorLaunched else { return }
+        
+        simulatorLaunched = true
+        
+        NSNotificationCenter.defaultCenter().postNotificationName(TestRunnerOperationQueue.SimulatorLoadedNotification, object: nil)
     }
     
     func getFailedTests() -> [String] {
@@ -121,7 +136,7 @@ class TestRunnerOperation: NSOperation {
     }
 
     func notifyIfLaunched(task: XCToolTask) {
-        guard !loaded else { return }
+        guard !simulatorLaunched else { return }
         
         let now = NSDate().timeIntervalSince1970
         guard (lastCheck + 2) < now else { return }
@@ -129,33 +144,22 @@ class TestRunnerOperation: NSOperation {
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
             if let logFilePath = task.logFilePath where JSON.hasBeginTestSuiteEvent(logFilePath) {
-                guard !self.loaded else { return }
+                self.simulatorDidLaunch()
                 
-                if let data = "TIMED OUT Running Tests".dataUsingEncoding(NSUTF8StringEncoding) {
-                    TRLog(data, simulatorName: self.simulatorName)
-                }
-                
-                DeviceController.sharedController.killCoreSimulatorService()
-                
-                self.loaded = true
-                NSNotificationCenter.defaultCenter().postNotificationName(TestRunnerOperationQueue.SimulatorLoadedNotification, object: nil)
                 return
             }
         }
         
         let waitForLaunchTimeout = dispatch_time(DISPATCH_TIME_NOW, Int64(AppArgs.shared.launchTimeout * Double(NSEC_PER_SEC)))
         dispatch_after(waitForLaunchTimeout, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            guard !self.loaded else { return }
+            guard !self.simulatorLaunched else { return }
             
             if let data = "TIMED OUT Launching Simulator".dataUsingEncoding(NSUTF8StringEncoding) {
                 TRLog(data, simulatorName: self.simulatorName)
             }
             
-             DeviceController.sharedController.killCoreSimulatorService()
+            self.finishOperation(status: .LaunchTimeout)
             
-            // If not launched after 60 seconds, just mark as launched, something probably went wrong
-            self.loaded = true
-            NSNotificationCenter.defaultCenter().postNotificationName(TestRunnerOperationQueue.SimulatorLoadedNotification, object: nil)
             return
         }
     }
@@ -167,14 +171,17 @@ extension TestRunnerOperation: XCToolTaskDelegate {
     func outputDataReceived(task: XCToolTask, data: NSData) {
         guard data.length > 0 else { return }
 
-        let counter = timeoutCounter + 2
+        let counter = timeoutCounter
+        
         let timeoutTime = dispatch_time(DISPATCH_TIME_NOW, Int64(AppArgs.shared.timeout * Double(NSEC_PER_SEC)))
         dispatch_after(timeoutTime, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            if counter == self.timeoutCounter {
-                task.terminate()
+            guard counter < self.timeoutCounter else {
+                self.finishOperation(status: .TestTimeout)
+                return
             }
         }
-        timeoutCounter++
+        
+        timeoutCounter += 1
         
         TRLog(data, simulatorName: simulatorName)
 

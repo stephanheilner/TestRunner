@@ -29,6 +29,7 @@ struct AppArgs {
     let derivedDataPath: String
     let logsDir: String
     let retryCount: Int
+    let launchRetryCount: Int
     
     init() {
         if let scheme = NSUserDefaults.standardUserDefaults().stringForKey("scheme") {
@@ -53,6 +54,12 @@ struct AppArgs {
             self.retryCount = retryCount.integerValue
         } else {
             retryCount = 5 // Default
+        }
+        
+        if let launchRetryCount = NSUserDefaults.standardUserDefaults().objectForKey("launch-retry-count") {
+            self.launchRetryCount = launchRetryCount.integerValue
+        } else {
+            launchRetryCount = 10 // Default
         }
         
         if let timeout = NSUserDefaults.standardUserDefaults().objectForKey("timeout") {

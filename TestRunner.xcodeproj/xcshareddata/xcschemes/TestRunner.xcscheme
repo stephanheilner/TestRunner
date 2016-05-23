@@ -67,6 +67,10 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "launch-timeout 30"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-scheme &quot;GospelLibrary&quot;"
             isEnabled = "NO">
          </CommandLineArgument>
@@ -79,7 +83,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-project &quot;/Users/stephan/projects/ios/MyTestProject/MyTestProject.xcodeproj&quot;"
+            argument = "-project &quot;/Users/stephan/projects/ios/TestRunner/MyTestProject/MyTestProject.xcodeproj&quot;"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -92,7 +96,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-build-tests false"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-run-tests false"
@@ -104,7 +108,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-timeout 120"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-partitions-count 7"
@@ -123,12 +127,12 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-simulators-count 3"
+            argument = "-simulators-count 2"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-devices &quot;iPhone 5, iOS 9.3&quot;"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-devices &quot;iPad 2, iOS 9.3&quot;"
@@ -140,7 +144,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-devices &quot;iPhone 5, iOS 9.3;iPad 2, iOS 9.3&quot;"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
       </CommandLineArguments>
       <AdditionalOptions>

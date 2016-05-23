@@ -32,7 +32,7 @@ class TestRunnerOperationQueue: NSOperationQueue {
     }
     
     private func isWaitingToLoad() -> Bool {
-        for case let operation as TestRunnerOperation in operations where !operation.loaded {
+        for case let operation as TestRunnerOperation in operations where !operation.simulatorLaunched {
             return true
         }
         return false
@@ -40,8 +40,6 @@ class TestRunnerOperationQueue: NSOperationQueue {
     
     func simulatorLoaded(notification: NSNotification) {
         guard let waitOperation = waitOperations.shift() as? WaitOperation else { return }
-        
-        NSThread.sleepForTimeInterval(5)
         
         waitOperation.executing = false
         waitOperation.finished = true

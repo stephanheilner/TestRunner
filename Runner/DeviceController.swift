@@ -112,7 +112,10 @@ class DeviceController {
     }
     
     func deleteDeviceWithID(deviceID: String) {
+        shutdownDeviceWithID(deviceID)
         killProcessesForDevice(deviceID)
+        
+        print("\n=== DELETING DEVICE \n\(deviceID) ===")
         
         let task = NSTask()
         task.launchPath = "/usr/bin/xcrun"
@@ -121,68 +124,22 @@ class DeviceController {
         task.standardOutput = NSPipe()
         task.launch()
         task.waitUntilExit()
+    }
+    
+    func shutdownDeviceWithID(deviceID: String) {
+        print("\n=== SHUTDOWN DEVICE \n\(deviceID) ===")
         
-        print("Deleted device with ID:", deviceID)
-        
-        killProcessesForDevice(deviceID)
+        let task = NSTask()
+        task.launchPath = "/usr/bin/xcrun"
+        task.arguments = ["simctl", "shutdown", deviceID]
+        task.standardError = NSPipe()
+        task.standardOutput = NSPipe()
+        task.launch()
+        task.waitUntilExit()
     }
     
     func getProcessComponents(processString: String) -> [String] {
         return processString.componentsSeparatedByString(" ").filter { !$0.trimmed().isEmpty }
-    }
-    
-    func killCodeSignHelper() {
-        print("\n*************************\nKILLING CodeSigningHelper\n*************************\n")
-        
-        let task = NSTask()
-        task.launchPath = "/bin/sh"
-        task.arguments = ["-c", "ps aux | grep com.apple.CodeSigningHelper"]
-        
-        let standardOutputData = NSMutableData()
-        let pipe = NSPipe()
-        pipe.fileHandleForReading.readabilityHandler = { handle in
-            standardOutputData.appendData(handle.availableData)
-        }
-        task.standardOutput = pipe
-        task.launch()
-        task.waitUntilExit()
-        
-        if task.terminationStatus == 0, let processInfoString = String(data: standardOutputData, encoding: NSUTF8StringEncoding) {
-            for processString in processInfoString.componentsSeparatedByString("\n") {
-                let parts = getProcessComponents(processString)
-                if !parts.isEmpty && !parts.contains("grep") {
-                    killProcess(parts)
-                }
-            }
-        }
-    }
-    
-    func killCoreSimulatorService() {
-        print("\n*************************\nKILLING CoreSimulatorService\n*************************\n")
-        
-        let task = NSTask()
-        task.launchPath = "/bin/sh"
-        task.arguments = ["-c", "ps aux | grep CoreSimulatorService"]
-        
-        let standardOutputData = NSMutableData()
-        let pipe = NSPipe()
-        pipe.fileHandleForReading.readabilityHandler = { handle in
-            standardOutputData.appendData(handle.availableData)
-        }
-        task.standardOutput = pipe
-        task.launch()
-        task.waitUntilExit()
-        
-        if task.terminationStatus == 0, let processInfoString = String(data: standardOutputData, encoding: NSUTF8StringEncoding) {
-            for processString in processInfoString.componentsSeparatedByString("\n") {
-                let parts = getProcessComponents(processString)
-                if !parts.isEmpty && !parts.contains("grep") {
-                    killProcess(parts)
-                }
-            }
-        }
-        
-        killCodeSignHelper()
     }
     
     func killProcessesForDevice(deviceID: String) {
@@ -213,13 +170,11 @@ class DeviceController {
         for part in processParts {
             guard let processID = Int(part) else { continue }
             
-            print("\n=== KILLING PROCESS: \(processParts.joinWithSeparator(" ")) ===")
+            print("\n=== KILLING PROCESS ===\n\(processParts.joinWithSeparator(" "))")
             
             let task = NSTask()
             task.launchPath = "/bin/sh"
             task.arguments = ["-c", "kill -9 \(processID)"]
-            //            task.launchPath = "/usr/bin/sudo"
-            //            task.arguments = ["kill -9 \(processID)"]
             
             let standardOutputPipe = NSPipe()
             task.standardOutput = standardOutputPipe
@@ -264,6 +219,48 @@ class DeviceController {
         let task = NSTask()
         task.launchPath = "/usr/bin/killall"
         task.arguments = ["Simulator"]
+        
+        let standardOutputPipe = NSPipe()
+        task.standardOutput = standardOutputPipe
+        standardOutputPipe.fileHandleForReading.readabilityHandler = { handle in
+            TRLog(handle.availableData)
+        }
+        let standardErrorPipe = NSPipe()
+        task.standardError = standardErrorPipe
+        standardErrorPipe.fileHandleForReading.readabilityHandler = { handle in
+            TRLog(handle.availableData)
+        }
+        task.launch()
+        task.waitUntilExit()
+    }
+    
+    
+    func killallXctool() {
+        print("\n=== KILLING xctool ===")
+        
+        let task = NSTask()
+        task.launchPath = "/usr/bin/killall"
+        task.arguments = ["xctool"]
+        
+        let standardOutputPipe = NSPipe()
+        task.standardOutput = standardOutputPipe
+        standardOutputPipe.fileHandleForReading.readabilityHandler = { handle in
+            TRLog(handle.availableData)
+        }
+        let standardErrorPipe = NSPipe()
+        task.standardError = standardErrorPipe
+        standardErrorPipe.fileHandleForReading.readabilityHandler = { handle in
+            TRLog(handle.availableData)
+        }
+        task.launch()
+        task.waitUntilExit()
+    }
+    func killallXcodebuild() {
+        print("\n=== KILLING xcodebuild ===")
+        
+        let task = NSTask()
+        task.launchPath = "/usr/bin/killall"
+        task.arguments = ["xcodebuild"]
         
         let standardOutputPipe = NSPipe()
         task.standardOutput = standardOutputPipe
@@ -332,6 +329,8 @@ class DeviceController {
     }
     
     func killAndDeleteTestDevices() {
+        killallXctool()
+        killallXcodebuild()
         killallSimulators()
         deleteTestDevices()
         print("\n")

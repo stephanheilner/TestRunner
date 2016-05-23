@@ -97,7 +97,7 @@ public class TestRunner: NSObject {
                 for (index, deviceInfo) in deviceInfos.enumerate() {
                     guard let tests = testsByDevice[index] else { continue }
                     
-                    let operation = createOperation(deviceFamily, simulatorName: deviceInfo.simulatorName, deviceID: deviceInfo.deviceID, tests: tests, retryCount: 0)
+                    let operation = createOperation(deviceFamily, simulatorName: deviceInfo.simulatorName, deviceID: deviceInfo.deviceID, tests: tests)
                     
                     // Wait for loaded to finish
                     testRunnerQueue.addOperation(operation)
@@ -117,9 +117,9 @@ public class TestRunner: NSObject {
         })
     }
     
-    func createOperation(deviceFamily: String, simulatorName: String, deviceID: String, tests: [String], retryCount: Int) -> TestRunnerOperation {
-        let operation = TestRunnerOperation(deviceFamily: deviceFamily, simulatorName: simulatorName, deviceID: deviceID, tests: tests, retryCount: retryCount)
-        operation.completion = { status, simulatorName, failedTests, deviceID, retryCount in
+    func createOperation(deviceFamily: String, simulatorName: String, deviceID: String, tests: [String], retryCount: Int = 0, launchRetryCount: Int = 0) -> TestRunnerOperation {
+        let operation = TestRunnerOperation(deviceFamily: deviceFamily, simulatorName: simulatorName, deviceID: deviceID, tests: tests, retryCount: retryCount, launchRetryCount: launchRetryCount)
+        operation.completion = { status, simulatorName, failedTests, deviceID, retryCount, launchRetryCount in
             switch status {
             case .Success:
                 NSLog("Tests PASSED on %@\n", simulatorName)
@@ -127,7 +127,7 @@ public class TestRunner: NSObject {
                 
                 self.simulatorPassStatus[simulatorName] = true
                 
-            case .Failed:
+            case .Failed, .TestTimeout:
                 let retryCount = retryCount + 1
                 NSLog("\n\nTests FAILED (Attempt %d of %d) on %@\n", retryCount, AppArgs.shared.retryCount, simulatorName)
                 
@@ -139,6 +139,23 @@ public class TestRunner: NSObject {
                     
                     // Retry
                     let retryOperation = self.createOperation(deviceFamily, simulatorName: simulatorName, deviceID: retryDeviceID, tests: failedTests, retryCount: retryCount)
+                    self.testRunnerQueue.addOperation(retryOperation)
+                } else {
+                    // Failed, kill all items in queue
+                    self.testRunnerQueue.cancelAllOperations()
+                }
+            case .LaunchTimeout:
+                let launchRetryCount = launchRetryCount + 1
+                NSLog("\n\nSimulator Launch Timeout (Attempt %d of %d) on %@\n", launchRetryCount, AppArgs.shared.launchRetryCount, simulatorName)
+                
+                self.simulatorPassStatus[simulatorName] = false
+                
+                if launchRetryCount < AppArgs.shared.launchRetryCount {
+                    // Create new device for retry
+                    let retryDeviceID = DeviceController.sharedController.resetDeviceWithID(deviceID, simulatorName: simulatorName) ?? deviceID
+                    
+                    // Retry
+                    let retryOperation = self.createOperation(deviceFamily, simulatorName: simulatorName, deviceID: retryDeviceID, tests: failedTests, retryCount: retryCount, launchRetryCount: launchRetryCount)
                     self.testRunnerQueue.addOperation(retryOperation)
                 } else {
                     // Failed, kill all items in queue

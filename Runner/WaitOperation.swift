@@ -35,7 +35,7 @@ class WaitOperation: NSOperation {
     private var _finished: Bool
     
     override init() {
-        _executing = false
+        _executing = true
         _finished = false
         
         super.init()
