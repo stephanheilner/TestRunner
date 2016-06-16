@@ -110,15 +110,17 @@ class XCToolTask {
             }
         }
         
+        
+        
         let envVars = [
             "CONFIGURATION_TEMP_DIR": "\(AppArgs.shared.derivedDataPath)",
-            "PROJECT_TEMP_ROOT": "\(AppArgs.shared.buildDir)/\(NSUUID().UUIDString)",
-            "PROJECT_TEMP_DIR": "\(AppArgs.shared.buildDir)/\(NSUUID().UUIDString)",
+            "PROJECT_TEMP_ROOT": "\(AppArgs.shared.buildDir)/project",
+            "PROJECT_TEMP_DIR": "\(AppArgs.shared.buildDir)/project/\(NSUUID().UUIDString)",
             "TARGET_TEMP_DIR": "\(AppArgs.shared.buildDir)/\(NSUUID().UUIDString)",
-            "TEMP_DIR": "\(AppArgs.shared.buildDir)/\(NSUUID().UUIDString)",
-            "TEMP_FILES_DIR": "\(AppArgs.shared.buildDir)/\(NSUUID().UUIDString)",
-            "TEMP_FILE_DIR": "\(AppArgs.shared.buildDir)/\(NSUUID().UUIDString)",
-            "TEMP_ROOT": "\(AppArgs.shared.buildDir)/\(NSUUID().UUIDString)",
+            "TEMP_DIR": "\(AppArgs.shared.buildDir)/temp/\(NSUUID().UUIDString)",
+            "TEMP_FILES_DIR": "\(AppArgs.shared.buildDir)/temp/\(NSUUID().UUIDString)",
+            "TEMP_FILE_DIR": "\(AppArgs.shared.buildDir)/temp/\(NSUUID().UUIDString)",
+            "TEMP_ROOT": "\(AppArgs.shared.buildDir)/temp",
             "AD_HOC_CODE_SIGNING_ALLOWED": "NO",
             "CODE_SIGNING_ALLOWED": "NO",
             "CODE_SIGNING_REQUIRED": "NO"
