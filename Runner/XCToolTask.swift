@@ -110,16 +110,27 @@ class XCToolTask {
             }
         }
         
+        let envVars = [
+            "CONFIGURATION_TEMP_DIR": "\(AppArgs.shared.derivedDataPath)",
+            "PROJECT_TEMP_ROOT": "\(AppArgs.shared.buildDir)/\(NSUUID().UUIDString)",
+            "PROJECT_TEMP_DIR": "\(AppArgs.shared.buildDir)/\(NSUUID().UUIDString)",
+            "TARGET_TEMP_DIR": "\(AppArgs.shared.buildDir)/\(NSUUID().UUIDString)",
+            "TEMP_DIR": "\(AppArgs.shared.buildDir)/\(NSUUID().UUIDString)",
+            "TEMP_FILES_DIR": "\(AppArgs.shared.buildDir)/\(NSUUID().UUIDString)",
+            "TEMP_FILE_DIR": "\(AppArgs.shared.buildDir)/\(NSUUID().UUIDString)",
+            "TEMP_ROOT": "\(AppArgs.shared.buildDir)/\(NSUUID().UUIDString)",
+            "AD_HOC_CODE_SIGNING_ALLOWED": "NO",
+            "CODE_SIGNING_ALLOWED": "NO",
+            "CODE_SIGNING_REQUIRED": "NO"
+        ].toArray { key, value -> String in
+            return String(format: "%@=\"%@\"", key, value)
+        }
         
         xctoolArguments += [
             "-scheme", AppArgs.shared.scheme,
             "-sdk", "iphonesimulator",
-            "CONFIGURATION_BUILD_DIR=\"\(AppArgs.shared.derivedDataPath)\"",
-            "CODE_SIGN_IDENTITY=\"\"",
-            "CODE_SIGN_ENTITLEMENTS=\"\"",
-            "CODE_SIGNING_REQUIRED=NO",
             "-derivedDataPath", AppArgs.shared.derivedDataPath
-        ] + outputLogArgs
+            ] + outputLogArgs + envVars
         
         let shellCommand = (xctoolArguments + arguments).joinWithSeparator(" ")
         
