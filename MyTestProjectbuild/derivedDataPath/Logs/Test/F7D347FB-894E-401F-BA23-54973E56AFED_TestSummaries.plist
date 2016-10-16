@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>FormatVersion</key>
+	<string>1.2</string>
+	<key>RunDestination</key>
+	<dict>
+		<key>LocalComputer</key>
+		<dict>
+			<key>BusSpeedInMHz</key>
+			<integer>100</integer>
+			<key>CPUCount</key>
+			<integer>1</integer>
+			<key>CPUKind</key>
+			<string>Intel Core i7</string>
+			<key>CPUSpeedInMHz</key>
+			<integer>2600</integer>
+			<key>Identifier</key>
+			<string>E4FA60AF-D377-57B4-998E-DA096CC2FF70</string>
+			<key>IsConcreteDevice</key>
+			<true/>
+			<key>LogicalCPUCoresPerPackage</key>
+			<integer>8</integer>
+			<key>ModelCode</key>
+			<string>MacBookPro11,3</string>
+			<key>ModelName</key>
+			<string>MacBook Pro</string>
+			<key>ModelUTI</key>
+			<string>com.apple.macbookpro-15-retina-display</string>
+			<key>Name</key>
+			<string>My Mac</string>
+			<key>NativeArchitecture</key>
+			<string>x86_64h</string>
+			<key>OperatingSystemVersion</key>
+			<string>10.12</string>
+			<key>OperatingSystemVersionWithBuildNumber</key>
+			<string>10.12 (16A319)</string>
+			<key>PhysicalCPUCoresPerPackage</key>
+			<integer>4</integer>
+			<key>Platform</key>
+			<dict>
+				<key>Identifier</key>
+				<string>com.apple.platform.macosx</string>
+				<key>Name</key>
+				<string>macOS</string>
+			</dict>
+			<key>RAMSizeInMegabytes</key>
+			<integer>16384</integer>
+		</dict>
+		<key>Name</key>
+		<string>Test Simulator 1, iPhone 5, iOS 10.0</string>
+		<key>TargetArchitecture</key>
+		<string>i386</string>
+		<key>TargetDevice</key>
+		<dict>
+			<key>Identifier</key>
+			<string>661DE42D-FCE3-4CEA-A517-3BB97B532C7C</string>
+			<key>IsConcreteDevice</key>
+			<true/>
+			<key>ModelCode</key>
+			<string>iPhone5,1</string>
+			<key>ModelName</key>
+			<string>iPhone 5</string>
+			<key>ModelUTI</key>
+			<string>com.apple.iphone-5-a1428-black</string>
+			<key>Name</key>
+			<string>Test Simulator 1, iPhone 5, iOS 10.0</string>
+			<key>NativeArchitecture</key>
+			<string>i386</string>
+			<key>OperatingSystemVersion</key>
+			<string>10.0</string>
+			<key>OperatingSystemVersionWithBuildNumber</key>
+			<string>10.0 (14A345)</string>
+			<key>Platform</key>
+			<dict>
+				<key>Identifier</key>
+				<string>com.apple.platform.iphonesimulator</string>
+				<key>Name</key>
+				<string>iOS Simulator</string>
+			</dict>
+		</dict>
+		<key>TargetSDK</key>
+		<dict>
+			<key>Identifier</key>
+			<string>iphonesimulator10.0</string>
+			<key>IsInternal</key>
+			<false/>
+			<key>Name</key>
+			<string>Simulator - iOS 10.0</string>
+			<key>OperatingSystemVersion</key>
+			<string>10.0</string>
+		</dict>
+	</dict>
+	<key>TestableSummaries</key>
+	<array>
+		<dict>
+			<key>ProjectPath</key>
+			<string>MyTestProject.xcodeproj</string>
+			<key>TargetName</key>
+			<string>MyTestProjectTests</string>
+			<key>TestName</key>
+			<string>MyTestProjectTests</string>
+			<key>TestObjectClass</key>
+			<string>IDESchemeActionTestableSummary</string>
+			<key>Tests</key>
+			<array/>
+		</dict>
+	</array>
+</dict>
+</plist>

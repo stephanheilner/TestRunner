@@ -8,27 +8,23 @@
 
 import Cocoa
 
-enum LogType: String {
-    case JSON = "json-stream"
-    case Text = "pretty"
-}
 
 protocol XcodebuildTaskDelegate {
 
-    func outputDataReceived(task: XcodebuildTask, data: NSData)
+    func outputDataReceived(_ task: XcodebuildTask, data: Data)
     
 }
 
 class XcodebuildTask {
     
-    private let task: NSTask
+    fileprivate let task: Process
     
     let standardOutputData = NSMutableData()
     let standardErrorData = NSMutableData()
     var delegate: XcodebuildTaskDelegate?
     var logFilePath: String?
     
-    var terminationHandler: (NSTask -> Void)? {
+    var terminationHandler: ((Process) -> Void)? {
         set {
             task.terminationHandler = newValue
         }
@@ -45,73 +41,71 @@ class XcodebuildTask {
     
     var isRunning: Bool {
         get {
-            return task.running
+            return task.isRunning
         }
     }
 
-    var terminationReason: NSTaskTerminationReason {
+    var terminationReason: Process.TerminationReason {
         get {
             return task.terminationReason
         }
     }
     
-    lazy var standardErrorPipe: NSPipe = {
-        let pipe = NSPipe()
+    lazy var standardErrorPipe: Pipe = {
+        let pipe = Pipe()
         pipe.fileHandleForReading.readabilityHandler = { handle in
-            self.standardErrorData.appendData(handle.availableData)
+            self.standardErrorData.append(handle.availableData)
         }
         return pipe
     }()
     
-    lazy var standardOutputPipe: NSPipe = {
-        let pipe = NSPipe()
+    lazy var standardOutputPipe: Pipe = {
+        let pipe = Pipe()
         pipe.fileHandleForReading.readabilityHandler = { handle in
             let data = handle.availableData
+            self.standardOutputData.append(data)
             self.delegate?.outputDataReceived(self, data: data)
-            self.standardOutputData.appendData(data)
         }
         return pipe
     }()
     var running: Bool {
-        return task.running
+        return task.isRunning
     }
     
-    init(args: [String], logFilename: String? = nil, outputFileLogType: LogType? = nil, standardOutputLogType: LogType, environmentVars: [String: String]? = nil) {
-        task = NSTask()
+    init(actions: [String], deviceID: String? = nil, tests: [String]? = nil, logFilePath: String? = nil) {
+        task = Process()
         task.launchPath = "/bin/sh"
         task.currentDirectoryPath = AppArgs.shared.currentDirectory
-        task.environment = NSProcessInfo.processInfo().environment
+        task.environment = ProcessInfo.processInfo.environment
         
-        var arguments = ["/usr/bin/xcodebuild"]
+        var arguments = ["xcodebuild"] + actions
+        
         if let project = AppArgs.shared.projectPath {
             arguments += ["-project", project]
         } else if let workspace = AppArgs.shared.workspacePath {
             arguments += ["-workspace", workspace]
         }
-        
-        var outputLogArgs = [String]()
-
-//        if let logFilename = logFilename {
-//            let logFilePath = String(format: "%@/%@", AppArgs.shared.logsDir, logFilename)
-//            self.logFilePath = logFilePath
-//            
-//            outputLogArgs += ["|", "tee", logFilePath]
-//        }
-//        
-//        switch standardOutputLogType {
-//        case .JSON:
-            outputLogArgs += ["|", "/usr/local/bin/xcpretty", "-r", "json-compilation-database"]
-//        case .Text:
-//            outputLogArgs += ["|", "/usr/local/bin/xcpretty"]
-//        }
-        
         arguments += ["-scheme", AppArgs.shared.scheme]
         arguments += ["-sdk", "iphonesimulator"]
         arguments += ["-derivedDataPath", AppArgs.shared.derivedDataPath]
         
-        let envVars = environmentVars?.map { "-\($0)=\"\($1)\" " } ?? []
-        let shellCommand = (arguments + envVars + args + outputLogArgs).joinWithSeparator(" ")
-        print(shellCommand)
+        if let deviceID = deviceID {
+            arguments += ["-destination", "'id=\(deviceID)'"]
+        }
+        
+        if let tests = tests {
+            arguments += tests.map { "-only-testing:\($0)" }
+        }
+        
+        var output: [String] = []
+        if let logFilePath = logFilePath {
+            output = ["|", "tee", "\"\(logFilePath)\""]
+        } else {
+            output = ["|", "LC_ALL='en_US.UTF-8'", "/usr/local/bin/xcpretty"]
+        }
+
+        let shellCommand = (arguments + output).joined(separator: " ")
+        print("\n\n\(shellCommand)\n\n")
         
         task.arguments = ["-c", shellCommand]
         task.standardError = standardErrorPipe
@@ -129,4 +123,5 @@ class XcodebuildTask {
     func terminate() {
         task.terminate()
     }
+    
 }
