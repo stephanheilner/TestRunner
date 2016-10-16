@@ -1,0 +1,6 @@
+version: "Apple Swift version 3.0 (swiftlang-800.0.46.2 clang-800.0.38)"
+options: "2ef1e4d935683ce00fd9115581de70cd"
+build_time: [528913002, 550436000]
+inputs:
+  "/Users/stephan/projects/ios/TestRunner/MyTestProject/MyTestProjectTests/XCTestCase+ListTests.swift": [528262174, 0]
+  "/Users/stephan/projects/ios/TestRunner/MyTestProject/MyTestProjectTests/MyTestProjectTests.swift": [527723828, 0]

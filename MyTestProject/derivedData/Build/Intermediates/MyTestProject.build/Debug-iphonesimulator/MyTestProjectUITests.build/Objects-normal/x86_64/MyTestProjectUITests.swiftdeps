@@ -1,0 +1,192 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "MyTestProjectUITests"
+provides-nominal:
+- "C20MyTestProjectUITests20MyTestProjectUITests"
+provides-member:
+- ["C20MyTestProjectUITests20MyTestProjectUITests", ""]
+provides-dynamic-lookup:
+- "tearDown"
+- "setUp"
+- "testExample"
+depends-top-level:
+- "XCTestCase"
+- "MyTestProjectUITests"
+- !private "BooleanLiteralType"
+- !private "XCUIApplication"
+- "AssignmentPrecedence"
+depends-member:
+- !private ["Ps9AnyObject", "XCUIApplication"]
+- !private ["Ps9AnyObject", "continueAfterFailure"]
+- !private ["Ps9AnyObject", "init"]
+- !private ["Ps9AnyObject", "launch"]
+- ["Ps9AnyObject", "setUp"]
+- ["Ps9AnyObject", "tearDown"]
+- ["Ps9AnyObject", "testExample"]
+- ["Ps9AnyObject", ""]
+- ["Sb", "deinit"]
+- !private ["Ps7CVarArg", "XCUIApplication"]
+- !private ["Ps7CVarArg", "continueAfterFailure"]
+- !private ["Ps7CVarArg", "init"]
+- !private ["Ps7CVarArg", "launch"]
+- ["Ps7CVarArg", "setUp"]
+- ["Ps7CVarArg", "tearDown"]
+- ["Ps7CVarArg", "testExample"]
+- ["Ps7CVarArg", ""]
+- !private ["Ps28CustomDebugStringConvertible", "XCUIApplication"]
+- !private ["Ps28CustomDebugStringConvertible", "continueAfterFailure"]
+- !private ["Ps28CustomDebugStringConvertible", "init"]
+- !private ["Ps28CustomDebugStringConvertible", "launch"]
+- ["Ps28CustomDebugStringConvertible", "setUp"]
+- ["Ps28CustomDebugStringConvertible", "tearDown"]
+- ["Ps28CustomDebugStringConvertible", "testExample"]
+- ["Ps28CustomDebugStringConvertible", ""]
+- !private ["Ps23CustomStringConvertible", "XCUIApplication"]
+- !private ["Ps23CustomStringConvertible", "continueAfterFailure"]
+- !private ["Ps23CustomStringConvertible", "init"]
+- !private ["Ps23CustomStringConvertible", "launch"]
+- ["Ps23CustomStringConvertible", "setUp"]
+- ["Ps23CustomStringConvertible", "tearDown"]
+- ["Ps23CustomStringConvertible", "testExample"]
+- ["Ps23CustomStringConvertible", ""]
+- !private ["Ps9Equatable", "XCUIApplication"]
+- !private ["Ps9Equatable", "continueAfterFailure"]
+- !private ["Ps9Equatable", "init"]
+- !private ["Ps9Equatable", "launch"]
+- ["Ps9Equatable", "setUp"]
+- ["Ps9Equatable", "tearDown"]
+- ["Ps9Equatable", "testExample"]
+- ["Ps9Equatable", ""]
+- !private ["Ps8Hashable", "XCUIApplication"]
+- !private ["Ps8Hashable", "continueAfterFailure"]
+- !private ["Ps8Hashable", "init"]
+- !private ["Ps8Hashable", "launch"]
+- ["Ps8Hashable", "setUp"]
+- ["Ps8Hashable", "tearDown"]
+- ["Ps8Hashable", "testExample"]
+- ["Ps8Hashable", ""]
+- !private ["C20MyTestProjectUITests20MyTestProjectUITests", "XCUIApplication"]
+- !private ["C20MyTestProjectUITests20MyTestProjectUITests", "continueAfterFailure"]
+- ["C20MyTestProjectUITests20MyTestProjectUITests", "deinit"]
+- ["C20MyTestProjectUITests20MyTestProjectUITests", "init"]
+- ["C20MyTestProjectUITests20MyTestProjectUITests", "setUp"]
+- ["C20MyTestProjectUITests20MyTestProjectUITests", "tearDown"]
+- ["C20MyTestProjectUITests20MyTestProjectUITests", "testExample"]
+- !private ["CSo8NSObject", "XCUIApplication"]
+- !private ["CSo8NSObject", "continueAfterFailure"]
+- ["CSo8NSObject", "init"]
+- !private ["CSo8NSObject", "launch"]
+- ["CSo8NSObject", "setUp"]
+- ["CSo8NSObject", "tearDown"]
+- ["CSo8NSObject", "testExample"]
+- !private ["PSo16NSObjectProtocol", "XCUIApplication"]
+- !private ["PSo16NSObjectProtocol", "continueAfterFailure"]
+- !private ["PSo16NSObjectProtocol", "init"]
+- !private ["PSo16NSObjectProtocol", "launch"]
+- ["PSo16NSObjectProtocol", "setUp"]
+- ["PSo16NSObjectProtocol", "tearDown"]
+- ["PSo16NSObjectProtocol", "testExample"]
+- ["PSo16NSObjectProtocol", ""]
+- ["Sq", "deinit"]
+- ["V10ObjectiveC8Selector", "deinit"]
+- !private ["CSo6XCTest", "XCUIApplication"]
+- !private ["CSo6XCTest", "continueAfterFailure"]
+- ["CSo6XCTest", "init"]
+- ["CSo6XCTest", "setUp"]
+- ["CSo6XCTest", "tearDown"]
+- ["CSo6XCTest", "testExample"]
+- !private ["CSo10XCTestCase", "XCUIApplication"]
+- !private ["CSo10XCTestCase", "continueAfterFailure"]
+- ["CSo10XCTestCase", "deinit"]
+- ["CSo10XCTestCase", "init"]
+- ["CSo10XCTestCase", "setUp"]
+- ["CSo10XCTestCase", "tearDown"]
+- ["CSo10XCTestCase", "testExample"]
+- ["CSo10XCTestCase", ""]
+- !private ["PSo17XCTestObservation", "XCUIApplication"]
+- !private ["PSo17XCTestObservation", "continueAfterFailure"]
+- !private ["PSo17XCTestObservation", "init"]
+- ["PSo17XCTestObservation", "setUp"]
+- ["PSo17XCTestObservation", "tearDown"]
+- ["PSo17XCTestObservation", "testExample"]
+- ["PSo17XCTestObservation", ""]
+- ["CSo15XCUIApplication", "deinit"]
+- !private ["CSo15XCUIApplication", "init"]
+- !private ["CSo15XCUIApplication", "launch"]
+- !private ["CSo11XCUIElement", "init"]
+- !private ["CSo11XCUIElement", "launch"]
+- !private ["PSo21XCUIElementAttributes", "init"]
+- !private ["PSo21XCUIElementAttributes", "launch"]
+- !private ["PSo28XCUIElementTypeQueryProvider", "init"]
+- !private ["PSo28XCUIElementTypeQueryProvider", "launch"]
+- !private ["Ps9_Hashable", "XCUIApplication"]
+- !private ["Ps9_Hashable", "continueAfterFailure"]
+- !private ["Ps9_Hashable", "init"]
+- !private ["Ps9_Hashable", "launch"]
+- ["Ps9_Hashable", "setUp"]
+- ["Ps9_Hashable", "tearDown"]
+- ["Ps9_Hashable", "testExample"]
+- ["Ps9_Hashable", ""]
+depends-nominal:
+- "Ps9AnyObject"
+- "Sb"
+- "Ps7CVarArg"
+- "Ps28CustomDebugStringConvertible"
+- "Ps23CustomStringConvertible"
+- "Ps9Equatable"
+- "Ps8Hashable"
+- "C20MyTestProjectUITests20MyTestProjectUITests"
+- "CSo8NSObject"
+- "PSo16NSObjectProtocol"
+- "Sq"
+- "V10ObjectiveC8Selector"
+- "CSo6XCTest"
+- "CSo10XCTestCase"
+- "PSo17XCTestObservation"
+- "CSo15XCUIApplication"
+- !private "CSo11XCUIElement"
+- !private "PSo21XCUIElementAttributes"
+- !private "PSo28XCUIElementTypeQueryProvider"
+- "Ps9_Hashable"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator/x86_64/Swift.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator/x86_64/SwiftOnoneSupport.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator/x86_64/XCTest.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator/x86_64/CoreGraphics.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator/x86_64/Darwin.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator/x86_64/Dispatch.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator/x86_64/ObjectiveC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCUIRemote.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCUIKeyboardKeys.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCUIElementQuery.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCUICoordinate.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCUIDevice.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCUIElementTypeQueryProvider.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCUIElementTypes.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCUIElementAttributes.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCUIElement.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCUIApplication.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestSuiteRun.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestSuite.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestProbe.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestObservation.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestObservationCenter.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestObserver.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestLog.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestExpectation.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestRun.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestCaseRun.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestCase+AsynchronousTesting.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestCase.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestAssertionsImpl.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestAssertions.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCAbstractTest.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestErrors.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestDefines.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTest.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Modules/module.modulemap"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator/x86_64/Foundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator/x86_64/UIKit.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator/x86_64/CoreImage.swiftmodule"
+interface-hash: "69aaceb036801868dcbf6f9898e0daa4"

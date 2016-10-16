@@ -1,0 +1,115 @@
+15:44:44.998 xcodebuild[78252:3903588] Beginning test session MyTestProjectTests-C7A69013-25A0-4350-AD77-ADFADDAE2A96 at 2016-09-29 15:44:44.997 with Xcode 8A218a on target <DVTiPhoneSimulator: 0x7fa331bc8190> {
+		SimDevice: SimDevice : Test Simulator 1, iPhone 5, iOS 10.0 (661DE42D-FCE3-4CEA-A517-3BB97B532C7C) : state={ Booted } deviceType={ SimDeviceType : com.apple.CoreSimulator.SimDeviceType.iPhone-5 } runtime={ SimRuntime : 10.0 (14A345) - com.apple.CoreSimulator.SimRuntime.iOS-10-0 }
+} (10.0 (14A345))
+15:44:44.998 xcodebuild[78252:3903588] 	/Applications/Xcode.app/Contents/Developer/usr/bin/xcodebuild
+-project
+MyTestProject.xcodeproj
+-scheme
+MyTestProject
+-sdk
+iphonesimulator
+CONFIGURATION_BUILD_DIR=/Users/stephan/projects/ios/TestRunner/MyTestProjectbuild/derivedDataPath
+-derivedDataPath
+/Users/stephan/projects/ios/TestRunner/MyTestProjectbuild/derivedDataPath
+-destination
+id=661DE42D-FCE3-4CEA-A517-3BB97B532C7C
+test-without-building
+-only-testing:MyTestProjectTests/MyTestProjectTests/test01
+15:44:44.998 xcodebuild[78252:3903588] Launching with Xcode.IDEFoundation.Launcher.PosixSpawn
+15:44:44.999 xcodebuild[78252:3903588] Initializing test infrastructure.
+15:44:44.999 xcodebuild[78252:3903609] 661DE42D-FCE3-4CEA-A517-3BB97B532C7C: Registered for sim device notification, got token 4
+15:44:44.999 xcodebuild[78252:3903609] 661DE42D-FCE3-4CEA-A517-3BB97B532C7C: Unregistering for sim device notification with token 4
+15:44:44.999 xcodebuild[78252:3903609] Sim Test Simulator 1, iPhone 5, iOS 10.0 is booted (state = 3)
+15:44:45.000 xcodebuild[78252:3903609] Calling -[SimDevice getenv:error:] for TESTMANAGERD_SIM_SOCK
+15:44:45.000 xcodebuild[78252:3903609] Returning /private/tmp/com.apple.launchd.fQpDE0WMzG/com.apple.testmanagerd.unix-domain.socket for TESTMANAGERD_SIM_SOCK
+15:44:45.000 xcodebuild[78252:3903609] Sim Test Simulator 1, iPhone 5, iOS 10.0 has testmanagerd socket at /private/tmp/com.apple.launchd.fQpDE0WMzG/com.apple.testmanagerd.unix-domain.socket
+15:44:45.000 xcodebuild[78252:3903609] Connected socket 39 to testmanagerd for Sim Test Simulator 1, iPhone 5, iOS 10.0
+15:44:45.000 xcodebuild[78252:3903609] Creating the test bundle connection.
+15:44:45.002 xcodebuild[78252:3903609] Listening for proxy connection request from the test bundle (all platforms)
+15:44:45.002 xcodebuild[78252:3903609] Resuming the connection.
+15:44:45.003 xcodebuild[78252:3903609] Test connection requires daemon assistance.
+15:44:45.004 xcodebuild[78252:3903588] Received Ready from iOSSimulator
+15:44:45.004 xcodebuild[78252:3903588] Sending notification: NSConcreteNotification 0x7fa331cb7b60 {name = com.apple.iphonesimulator.startSession; userInfo = {
+    deviceUDID = "661DE42D-FCE3-4CEA-A517-3BB97B532C7C";
+}}
+15:44:45.005 xcodebuild[78252:3903588] Starting test session with ID C7A69013-25A0-4350-AD77-ADFADDAE2A96
+15:44:45.005 xcodebuild[78252:3903588] Checking test manager availability..., will wait up to 120s
+15:44:45.007 xcodebuild[78252:3903588] Launch session started, setting a disallow-finish-token on the run operation.
+15:44:45.011 xcodebuild[78252:3903588] Received Ready from iOSSimulator
+15:44:45.011 xcodebuild[78252:3903588] Sending notification: NSConcreteNotification 0x7fa3318a6120 {name = com.apple.iphonesimulator.startSession; userInfo = {
+    deviceUDID = "661DE42D-FCE3-4CEA-A517-3BB97B532C7C";
+}}
+15:44:45.012 xcodebuild[78252:3903588] Adding console adaptor <IDEConsoleAdaptor: 0x7fa331c05de0 'target'> for test session C7A69013-25A0-4350-AD77-ADFADDAE2A96.
+15:44:45.014 xcodebuild[78252:3903654] 661DE42D-FCE3-4CEA-A517-3BB97B532C7C: Registered for sim device notification, got token 5
+15:44:45.014 xcodebuild[78252:3903656] 661DE42D-FCE3-4CEA-A517-3BB97B532C7C: Unregistering for sim device notification with token 5
+15:44:45.014 xcodebuild[78252:3903588] Received Ready from iOSSimulator
+15:44:45.015 xcodebuild[78252:3903588] Sending notification: NSConcreteNotification 0x7fa32d914530 {name = com.apple.iphonesimulator.startSession; userInfo = {
+    deviceUDID = "661DE42D-FCE3-4CEA-A517-3BB97B532C7C";
+}}
+15:44:45.015 xcodebuild[78252:3903655] 661DE42D-FCE3-4CEA-A517-3BB97B532C7C: Installing app at path: /Users/stephan/projects/ios/TestRunner/MyTestProjectbuild/derivedDataPath/MyTestProject.app and options: {
+    CFBundleIdentifier = "org.test.MyTestProject";
+}
+15:44:45.401 xcodebuild[78252:3903657] testmanagerd handled session request.
+15:44:45.401 xcodebuild[78252:3903588] Waiting for test process to launch.
+15:44:48.787 xcodebuild[78252:3903655] 661DE42D-FCE3-4CEA-A517-3BB97B532C7C: Installed app at path: /Users/stephan/projects/ios/TestRunner/MyTestProjectbuild/derivedDataPath/MyTestProject.app and options: {
+    CFBundleIdentifier = "org.test.MyTestProject";
+}
+15:44:48.792 xcodebuild[78252:3903655] 661DE42D-FCE3-4CEA-A517-3BB97B532C7C: Registered for sim device notification, got token 6
+15:44:48.792 xcodebuild[78252:3903610] 661DE42D-FCE3-4CEA-A517-3BB97B532C7C: Unregistering for sim device notification with token 6
+15:44:48.793 xcodebuild[78252:3903588] Received Ready from iOSSimulator
+15:44:48.793 xcodebuild[78252:3903588] Sending notification: NSConcreteNotification 0x7fa331d2bcb0 {name = com.apple.iphonesimulator.startSession; userInfo = {
+    deviceUDID = "661DE42D-FCE3-4CEA-A517-3BB97B532C7C";
+}}
+15:44:48.900 xcodebuild[78252:3903655] 661DE42D-FCE3-4CEA-A517-3BB97B532C7C: Launching app with identifier: org.test.MyTestProject and options: {
+    arguments =     (
+        "-NSTreatUnknownArgumentsAsOpen",
+        NO,
+        "-ApplePersistenceIgnoreState",
+        YES
+    );
+    environment =     {
+        "DTX_CONNECTION_SERVICES_PATH" = "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/Developer/Library/PrivateFrameworks/DTXConnectionServices.framework";
+        "DYLD_FRAMEWORK_PATH" = "/Users/stephan/projects/ios/TestRunner/MyTestProjectbuild/derivedDataPath:/Users/stephan/projects/ios/TestRunner/MyTestProjectbuild/derivedDataPath:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks";
+        "DYLD_INSERT_LIBRARIES" = "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/IDEBundleInjection.framework/IDEBundleInjection";
+        "DYLD_LIBRARY_PATH" = "/Users/stephan/projects/ios/TestRunner/MyTestProjectbuild/derivedDataPath:/Users/stephan/projects/ios/TestRunner/MyTestProjectbuild/derivedDataPath:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks";
+        NSUnbufferedIO = YES;
+        "OS_ACTIVITY_DT_MODE" = YES;
+        XCInjectBundleInto = "/Users/stephan/projects/ios/TestRunner/MyTestProjectbuild/derivedDataPath/MyTestProject.app/MyTestProject";
+        "XCODE_DBG_XPC_EXCLUSIONS" = "com.apple.dt.xctestSymbolicator";
+        XCTestConfigurationFilePath = "/var/folders/ng/m2pthdwj50gcj4nwv453d_5r0000gn/T/com.apple.dt.XCTest/C7A69013-25A0-4350-AD77-ADFADDAE2A96/remote-container/tmp/MyTestProjectTests-C7A69013-25A0-4350-AD77-ADFADDAE2A96.xctestconfiguration";
+        "__XCODE_BUILT_PRODUCTS_DIR_PATHS" = "/Users/stephan/projects/ios/TestRunner/MyTestProjectbuild/derivedDataPath";
+        "__XPC_DYLD_FRAMEWORK_PATH" = "/Users/stephan/projects/ios/TestRunner/MyTestProjectbuild/derivedDataPath";
+        "__XPC_DYLD_LIBRARY_PATH" = "/Users/stephan/projects/ios/TestRunner/MyTestProjectbuild/derivedDataPath";
+    };
+    stderr = "/dev/ttys001";
+    stdout = "/dev/ttys001";
+    "wait_for_debugger" = 0;
+}
+15:44:48.926 xcodebuild[78252:3904001] 661DE42D-FCE3-4CEA-A517-3BB97B532C7C: Failed to launch app with identifier: org.test.MyTestProject and options: {
+    arguments =     (
+        "-NSTreatUnknownArgumentsAsOpen",
+        NO,
+        "-ApplePersistenceIgnoreState",
+        YES
+    );
+    environment =     {
+        "DTX_CONNECTION_SERVICES_PATH" = "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator.sdk/Developer/Library/PrivateFrameworks/DTXConnectionServices.framework";
+        "DYLD_FRAMEWORK_PATH" = "/Users/stephan/projects/ios/TestRunner/MyTestProjectbuild/derivedDataPath:/Users/stephan/projects/ios/TestRunner/MyTestProjectbuild/derivedDataPath:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks";
+        "DYLD_INSERT_LIBRARIES" = "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/PrivateFrameworks/IDEBundleInjection.framework/IDEBundleInjection";
+        "DYLD_LIBRARY_PATH" = "/Users/stephan/projects/ios/TestRunner/MyTestProjectbuild/derivedDataPath:/Users/stephan/projects/ios/TestRunner/MyTestProjectbuild/derivedDataPath:/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks";
+        NSUnbufferedIO = YES;
+        "OS_ACTIVITY_DT_MODE" = YES;
+        XCInjectBundleInto = "/Users/stephan/projects/ios/TestRunner/MyTestProjectbuild/derivedDataPath/MyTestProject.app/MyTestProject";
+        "XCODE_DBG_XPC_EXCLUSIONS" = "com.apple.dt.xctestSymbolicator";
+        XCTestConfigurationFilePath = "/var/folders/ng/m2pthdwj50gcj4nwv453d_5r0000gn/T/com.apple.dt.XCTest/C7A69013-25A0-4350-AD77-ADFADDAE2A96/remote-container/tmp/MyTestProjectTests-C7A69013-25A0-4350-AD77-ADFADDAE2A96.xctestconfiguration";
+        "__XCODE_BUILT_PRODUCTS_DIR_PATHS" = "/Users/stephan/projects/ios/TestRunner/MyTestProjectbuild/derivedDataPath";
+        "__XPC_DYLD_FRAMEWORK_PATH" = "/Users/stephan/projects/ios/TestRunner/MyTestProjectbuild/derivedDataPath";
+        "__XPC_DYLD_LIBRARY_PATH" = "/Users/stephan/projects/ios/TestRunner/MyTestProjectbuild/derivedDataPath";
+    };
+    stderr = "/dev/ttys001";
+    stdout = "/dev/ttys001";
+    "wait_for_debugger" = 0;
+} (error = Error Domain=FBSOpenApplicationServiceErrorDomain Code=1 "The request to open "org.test.MyTestProject" failed." UserInfo={NSLocalizedDescription=The request to open "org.test.MyTestProject" failed., BSErrorCodeDescription=RequestDenied, NSUnderlyingError=0x7fa331c4efb0 {Error Domain=FBSOpenApplicationErrorDomain Code=1 "(null)" UserInfo={BSErrorCodeDescription=Unspecified}}, NSLocalizedFailureReason=The request was denied by service delegate (SBMainWorkspace) for reason: Unspecified.})
+15:44:48.927 xcodebuild[78252:3903588] Launch session expired.
+15:44:48.927 xcodebuild[78252:3903588] Test operation failure: Launch session expired before checking in.
+15:44:48.927 xcodebuild[78252:3903588] _finishWithError:Error Domain=IDETestOperationsObserverErrorDomain Code=4 "Launch session expired before checking in." UserInfo={NSLocalizedDescription=Launch session expired before checking in.} didCancel: 1

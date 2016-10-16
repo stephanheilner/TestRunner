@@ -1,0 +1,759 @@
+### Swift dependencies file v0 ###
+provides-top-level:
+- "MyTestProjectTests"
+provides-nominal:
+- "C23MyTestProjectUnitTests218MyTestProjectTests"
+provides-member:
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", ""]
+provides-dynamic-lookup:
+- "test113"
+- "test102"
+- "test129"
+- "test110"
+- "test124"
+- "test105"
+- "slowTest"
+- "test118"
+- "test111"
+- "test123"
+- "test119"
+- "test108"
+- "test121"
+- "test103"
+- "test116"
+- "test126"
+- "test109"
+- "test120"
+- "test125"
+- "test106"
+- "test117"
+- "test114"
+- "test128"
+- "test130"
+- "test122"
+- "test104"
+- "test115"
+- "test127"
+- "LoopCount"
+- "test112"
+- "test101"
+- "test107"
+depends-top-level:
+- "MyTestProjectTests"
+- !private "StringLiteralType"
+- "String"
+- !private "Thread"
+- "XCTestCase"
+- !private "..<"
+- "IntegerLiteralType"
+- "FloatLiteralType"
+depends-member:
+- ["Ps9AnyObject", "LoopCount"]
+- !private ["Ps9AnyObject", "Thread"]
+- !private ["Ps9AnyObject", "init"]
+- !private ["Ps9AnyObject", "sleep"]
+- ["Ps9AnyObject", "slowTest"]
+- ["Ps9AnyObject", "test101"]
+- ["Ps9AnyObject", "test102"]
+- ["Ps9AnyObject", "test103"]
+- ["Ps9AnyObject", "test104"]
+- ["Ps9AnyObject", "test105"]
+- ["Ps9AnyObject", "test106"]
+- ["Ps9AnyObject", "test107"]
+- ["Ps9AnyObject", "test108"]
+- ["Ps9AnyObject", "test109"]
+- ["Ps9AnyObject", "test110"]
+- ["Ps9AnyObject", "test111"]
+- ["Ps9AnyObject", "test112"]
+- ["Ps9AnyObject", "test113"]
+- ["Ps9AnyObject", "test114"]
+- ["Ps9AnyObject", "test115"]
+- ["Ps9AnyObject", "test116"]
+- ["Ps9AnyObject", "test117"]
+- ["Ps9AnyObject", "test118"]
+- ["Ps9AnyObject", "test119"]
+- ["Ps9AnyObject", "test120"]
+- ["Ps9AnyObject", "test121"]
+- ["Ps9AnyObject", "test122"]
+- ["Ps9AnyObject", "test123"]
+- ["Ps9AnyObject", "test124"]
+- ["Ps9AnyObject", "test125"]
+- ["Ps9AnyObject", "test126"]
+- ["Ps9AnyObject", "test127"]
+- ["Ps9AnyObject", "test128"]
+- ["Ps9AnyObject", "test129"]
+- ["Ps9AnyObject", "test130"]
+- ["Ps9AnyObject", ""]
+- !private ["Ps23BidirectionalCollection", "Iterator"]
+- !private ["Ps23BidirectionalCollection", "_Element"]
+- !private ["Ps22BidirectionalIndexable", "Iterator"]
+- !private ["Ps22BidirectionalIndexable", "_Element"]
+- !private ["Ps17BitwiseOperations", "IntegerLiteralType"]
+- !private ["Ps17BitwiseOperations", "Stride"]
+- !private ["Ps17BitwiseOperations", "_DisabledRangeIndex"]
+- !private ["Ps7CVarArg", "IntegerLiteralType"]
+- ["Ps7CVarArg", "LoopCount"]
+- !private ["Ps7CVarArg", "Stride"]
+- !private ["Ps7CVarArg", "Thread"]
+- !private ["Ps7CVarArg", "_DisabledRangeIndex"]
+- !private ["Ps7CVarArg", "init"]
+- !private ["Ps7CVarArg", "sleep"]
+- ["Ps7CVarArg", "slowTest"]
+- ["Ps7CVarArg", "test101"]
+- ["Ps7CVarArg", "test102"]
+- ["Ps7CVarArg", "test103"]
+- ["Ps7CVarArg", "test104"]
+- ["Ps7CVarArg", "test105"]
+- ["Ps7CVarArg", "test106"]
+- ["Ps7CVarArg", "test107"]
+- ["Ps7CVarArg", "test108"]
+- ["Ps7CVarArg", "test109"]
+- ["Ps7CVarArg", "test110"]
+- ["Ps7CVarArg", "test111"]
+- ["Ps7CVarArg", "test112"]
+- ["Ps7CVarArg", "test113"]
+- ["Ps7CVarArg", "test114"]
+- ["Ps7CVarArg", "test115"]
+- ["Ps7CVarArg", "test116"]
+- ["Ps7CVarArg", "test117"]
+- ["Ps7CVarArg", "test118"]
+- ["Ps7CVarArg", "test119"]
+- ["Ps7CVarArg", "test120"]
+- ["Ps7CVarArg", "test121"]
+- ["Ps7CVarArg", "test122"]
+- ["Ps7CVarArg", "test123"]
+- ["Ps7CVarArg", "test124"]
+- ["Ps7CVarArg", "test125"]
+- ["Ps7CVarArg", "test126"]
+- ["Ps7CVarArg", "test127"]
+- ["Ps7CVarArg", "test128"]
+- ["Ps7CVarArg", "test129"]
+- ["Ps7CVarArg", "test130"]
+- ["Ps7CVarArg", ""]
+- !private ["Ps10Collection", "Iterator"]
+- !private ["Ps10Collection", "_Element"]
+- !private ["Ps10Comparable", "IntegerLiteralType"]
+- !private ["Ps10Comparable", "Stride"]
+- !private ["Ps10Comparable", "_DisabledRangeIndex"]
+- !private ["Ps10Comparable", "init"]
+- !private ["Vs14CountableRange", "Iterator"]
+- !private ["Vs14CountableRange", "_Element"]
+- ["Vs14CountableRange", "deinit"]
+- !private ["Ps28CustomDebugStringConvertible", "Iterator"]
+- ["Ps28CustomDebugStringConvertible", "LoopCount"]
+- !private ["Ps28CustomDebugStringConvertible", "Thread"]
+- !private ["Ps28CustomDebugStringConvertible", "_Element"]
+- !private ["Ps28CustomDebugStringConvertible", "init"]
+- !private ["Ps28CustomDebugStringConvertible", "sleep"]
+- ["Ps28CustomDebugStringConvertible", "slowTest"]
+- ["Ps28CustomDebugStringConvertible", "test101"]
+- ["Ps28CustomDebugStringConvertible", "test102"]
+- ["Ps28CustomDebugStringConvertible", "test103"]
+- ["Ps28CustomDebugStringConvertible", "test104"]
+- ["Ps28CustomDebugStringConvertible", "test105"]
+- ["Ps28CustomDebugStringConvertible", "test106"]
+- ["Ps28CustomDebugStringConvertible", "test107"]
+- ["Ps28CustomDebugStringConvertible", "test108"]
+- ["Ps28CustomDebugStringConvertible", "test109"]
+- ["Ps28CustomDebugStringConvertible", "test110"]
+- ["Ps28CustomDebugStringConvertible", "test111"]
+- ["Ps28CustomDebugStringConvertible", "test112"]
+- ["Ps28CustomDebugStringConvertible", "test113"]
+- ["Ps28CustomDebugStringConvertible", "test114"]
+- ["Ps28CustomDebugStringConvertible", "test115"]
+- ["Ps28CustomDebugStringConvertible", "test116"]
+- ["Ps28CustomDebugStringConvertible", "test117"]
+- ["Ps28CustomDebugStringConvertible", "test118"]
+- ["Ps28CustomDebugStringConvertible", "test119"]
+- ["Ps28CustomDebugStringConvertible", "test120"]
+- ["Ps28CustomDebugStringConvertible", "test121"]
+- ["Ps28CustomDebugStringConvertible", "test122"]
+- ["Ps28CustomDebugStringConvertible", "test123"]
+- ["Ps28CustomDebugStringConvertible", "test124"]
+- ["Ps28CustomDebugStringConvertible", "test125"]
+- ["Ps28CustomDebugStringConvertible", "test126"]
+- ["Ps28CustomDebugStringConvertible", "test127"]
+- ["Ps28CustomDebugStringConvertible", "test128"]
+- ["Ps28CustomDebugStringConvertible", "test129"]
+- ["Ps28CustomDebugStringConvertible", "test130"]
+- ["Ps28CustomDebugStringConvertible", ""]
+- !private ["Ps29CustomPlaygroundQuickLookable", "IntegerLiteralType"]
+- !private ["Ps29CustomPlaygroundQuickLookable", "Stride"]
+- !private ["Ps29CustomPlaygroundQuickLookable", "_DisabledRangeIndex"]
+- !private ["Ps29CustomPlaygroundQuickLookable", "init"]
+- !private ["Ps17CustomReflectable", "IntegerLiteralType"]
+- !private ["Ps17CustomReflectable", "Iterator"]
+- !private ["Ps17CustomReflectable", "Stride"]
+- !private ["Ps17CustomReflectable", "_DisabledRangeIndex"]
+- !private ["Ps17CustomReflectable", "_Element"]
+- !private ["Ps17CustomReflectable", "init"]
+- !private ["Ps23CustomStringConvertible", "IntegerLiteralType"]
+- !private ["Ps23CustomStringConvertible", "Iterator"]
+- ["Ps23CustomStringConvertible", "LoopCount"]
+- !private ["Ps23CustomStringConvertible", "Stride"]
+- !private ["Ps23CustomStringConvertible", "Thread"]
+- !private ["Ps23CustomStringConvertible", "_DisabledRangeIndex"]
+- !private ["Ps23CustomStringConvertible", "_Element"]
+- !private ["Ps23CustomStringConvertible", "init"]
+- !private ["Ps23CustomStringConvertible", "sleep"]
+- ["Ps23CustomStringConvertible", "slowTest"]
+- ["Ps23CustomStringConvertible", "test101"]
+- ["Ps23CustomStringConvertible", "test102"]
+- ["Ps23CustomStringConvertible", "test103"]
+- ["Ps23CustomStringConvertible", "test104"]
+- ["Ps23CustomStringConvertible", "test105"]
+- ["Ps23CustomStringConvertible", "test106"]
+- ["Ps23CustomStringConvertible", "test107"]
+- ["Ps23CustomStringConvertible", "test108"]
+- ["Ps23CustomStringConvertible", "test109"]
+- ["Ps23CustomStringConvertible", "test110"]
+- ["Ps23CustomStringConvertible", "test111"]
+- ["Ps23CustomStringConvertible", "test112"]
+- ["Ps23CustomStringConvertible", "test113"]
+- ["Ps23CustomStringConvertible", "test114"]
+- ["Ps23CustomStringConvertible", "test115"]
+- ["Ps23CustomStringConvertible", "test116"]
+- ["Ps23CustomStringConvertible", "test117"]
+- ["Ps23CustomStringConvertible", "test118"]
+- ["Ps23CustomStringConvertible", "test119"]
+- ["Ps23CustomStringConvertible", "test120"]
+- ["Ps23CustomStringConvertible", "test121"]
+- ["Ps23CustomStringConvertible", "test122"]
+- ["Ps23CustomStringConvertible", "test123"]
+- ["Ps23CustomStringConvertible", "test124"]
+- ["Ps23CustomStringConvertible", "test125"]
+- ["Ps23CustomStringConvertible", "test126"]
+- ["Ps23CustomStringConvertible", "test127"]
+- ["Ps23CustomStringConvertible", "test128"]
+- ["Ps23CustomStringConvertible", "test129"]
+- ["Ps23CustomStringConvertible", "test130"]
+- ["Ps23CustomStringConvertible", ""]
+- ["Sd", "deinit"]
+- !private ["Ps9Equatable", "IntegerLiteralType"]
+- !private ["Ps9Equatable", "Iterator"]
+- ["Ps9Equatable", "LoopCount"]
+- !private ["Ps9Equatable", "Stride"]
+- !private ["Ps9Equatable", "Thread"]
+- !private ["Ps9Equatable", "_DisabledRangeIndex"]
+- !private ["Ps9Equatable", "_Element"]
+- !private ["Ps9Equatable", "init"]
+- !private ["Ps9Equatable", "sleep"]
+- ["Ps9Equatable", "slowTest"]
+- ["Ps9Equatable", "test101"]
+- ["Ps9Equatable", "test102"]
+- ["Ps9Equatable", "test103"]
+- ["Ps9Equatable", "test104"]
+- ["Ps9Equatable", "test105"]
+- ["Ps9Equatable", "test106"]
+- ["Ps9Equatable", "test107"]
+- ["Ps9Equatable", "test108"]
+- ["Ps9Equatable", "test109"]
+- ["Ps9Equatable", "test110"]
+- ["Ps9Equatable", "test111"]
+- ["Ps9Equatable", "test112"]
+- ["Ps9Equatable", "test113"]
+- ["Ps9Equatable", "test114"]
+- ["Ps9Equatable", "test115"]
+- ["Ps9Equatable", "test116"]
+- ["Ps9Equatable", "test117"]
+- ["Ps9Equatable", "test118"]
+- ["Ps9Equatable", "test119"]
+- ["Ps9Equatable", "test120"]
+- ["Ps9Equatable", "test121"]
+- ["Ps9Equatable", "test122"]
+- ["Ps9Equatable", "test123"]
+- ["Ps9Equatable", "test124"]
+- ["Ps9Equatable", "test125"]
+- ["Ps9Equatable", "test126"]
+- ["Ps9Equatable", "test127"]
+- ["Ps9Equatable", "test128"]
+- ["Ps9Equatable", "test129"]
+- ["Ps9Equatable", "test130"]
+- ["Ps9Equatable", ""]
+- !private ["Ps43ExpressibleByExtendedGraphemeClusterLiteral", "init"]
+- !private ["Ps27ExpressibleByIntegerLiteral", "IntegerLiteralType"]
+- !private ["Ps27ExpressibleByIntegerLiteral", "Stride"]
+- !private ["Ps27ExpressibleByIntegerLiteral", "_DisabledRangeIndex"]
+- !private ["Ps32ExpressibleByStringInterpolation", "init"]
+- !private ["Ps26ExpressibleByStringLiteral", "init"]
+- !private ["Ps33ExpressibleByUnicodeScalarLiteral", "init"]
+- !private ["Ps8Hashable", "IntegerLiteralType"]
+- ["Ps8Hashable", "LoopCount"]
+- !private ["Ps8Hashable", "Stride"]
+- !private ["Ps8Hashable", "Thread"]
+- !private ["Ps8Hashable", "_DisabledRangeIndex"]
+- !private ["Ps8Hashable", "init"]
+- !private ["Ps8Hashable", "sleep"]
+- ["Ps8Hashable", "slowTest"]
+- ["Ps8Hashable", "test101"]
+- ["Ps8Hashable", "test102"]
+- ["Ps8Hashable", "test103"]
+- ["Ps8Hashable", "test104"]
+- ["Ps8Hashable", "test105"]
+- ["Ps8Hashable", "test106"]
+- ["Ps8Hashable", "test107"]
+- ["Ps8Hashable", "test108"]
+- ["Ps8Hashable", "test109"]
+- ["Ps8Hashable", "test110"]
+- ["Ps8Hashable", "test111"]
+- ["Ps8Hashable", "test112"]
+- ["Ps8Hashable", "test113"]
+- ["Ps8Hashable", "test114"]
+- ["Ps8Hashable", "test115"]
+- ["Ps8Hashable", "test116"]
+- ["Ps8Hashable", "test117"]
+- ["Ps8Hashable", "test118"]
+- ["Ps8Hashable", "test119"]
+- ["Ps8Hashable", "test120"]
+- ["Ps8Hashable", "test121"]
+- ["Ps8Hashable", "test122"]
+- ["Ps8Hashable", "test123"]
+- ["Ps8Hashable", "test124"]
+- ["Ps8Hashable", "test125"]
+- ["Ps8Hashable", "test126"]
+- ["Ps8Hashable", "test127"]
+- ["Ps8Hashable", "test128"]
+- ["Ps8Hashable", "test129"]
+- ["Ps8Hashable", "test130"]
+- ["Ps8Hashable", ""]
+- !private ["Ps9Indexable", "Iterator"]
+- !private ["Ps9Indexable", "_Element"]
+- !private ["Ps13IndexableBase", "Iterator"]
+- !private ["Ps13IndexableBase", "_Element"]
+- !private ["Vs16IndexingIterator", "Element"]
+- !private ["Si", "IntegerLiteralType"]
+- !private ["Si", "Stride"]
+- !private ["Si", "_DisabledRangeIndex"]
+- ["Si", "deinit"]
+- !private ["Ps7Integer", "IntegerLiteralType"]
+- !private ["Ps7Integer", "Stride"]
+- !private ["Ps7Integer", "_DisabledRangeIndex"]
+- !private ["Ps17IntegerArithmetic", "IntegerLiteralType"]
+- !private ["Ps17IntegerArithmetic", "Stride"]
+- !private ["Ps17IntegerArithmetic", "_DisabledRangeIndex"]
+- !private ["Ps16IteratorProtocol", "Element"]
+- !private ["Ps25LosslessStringConvertible", "init"]
+- !private ["Ps10MirrorPath", "IntegerLiteralType"]
+- !private ["Ps10MirrorPath", "Stride"]
+- !private ["Ps10MirrorPath", "_DisabledRangeIndex"]
+- !private ["Ps10MirrorPath", "init"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "LoopCount"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "String"]
+- !private ["C23MyTestProjectUnitTests218MyTestProjectTests", "Thread"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "deinit"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "init"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "slowTest"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test101"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test102"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test103"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test104"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test105"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test106"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test107"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test108"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test109"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test110"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test111"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test112"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test113"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test114"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test115"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test116"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test117"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test118"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test119"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test120"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test121"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test122"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test123"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test124"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test125"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test126"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test127"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test128"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test129"]
+- ["C23MyTestProjectUnitTests218MyTestProjectTests", "test130"]
+- !private ["PSo8NSCoding", "init"]
+- !private ["PSo9NSCopying", "init"]
+- !private ["PSo16NSMutableCopying", "init"]
+- ["CSo8NSObject", "LoopCount"]
+- ["CSo8NSObject", "String"]
+- !private ["CSo8NSObject", "Thread"]
+- ["CSo8NSObject", "init"]
+- !private ["CSo8NSObject", "sleep"]
+- ["CSo8NSObject", "slowTest"]
+- ["CSo8NSObject", "test101"]
+- ["CSo8NSObject", "test102"]
+- ["CSo8NSObject", "test103"]
+- ["CSo8NSObject", "test104"]
+- ["CSo8NSObject", "test105"]
+- ["CSo8NSObject", "test106"]
+- ["CSo8NSObject", "test107"]
+- ["CSo8NSObject", "test108"]
+- ["CSo8NSObject", "test109"]
+- ["CSo8NSObject", "test110"]
+- ["CSo8NSObject", "test111"]
+- ["CSo8NSObject", "test112"]
+- ["CSo8NSObject", "test113"]
+- ["CSo8NSObject", "test114"]
+- ["CSo8NSObject", "test115"]
+- ["CSo8NSObject", "test116"]
+- ["CSo8NSObject", "test117"]
+- ["CSo8NSObject", "test118"]
+- ["CSo8NSObject", "test119"]
+- ["CSo8NSObject", "test120"]
+- ["CSo8NSObject", "test121"]
+- ["CSo8NSObject", "test122"]
+- ["CSo8NSObject", "test123"]
+- ["CSo8NSObject", "test124"]
+- ["CSo8NSObject", "test125"]
+- ["CSo8NSObject", "test126"]
+- ["CSo8NSObject", "test127"]
+- ["CSo8NSObject", "test128"]
+- ["CSo8NSObject", "test129"]
+- ["CSo8NSObject", "test130"]
+- ["PSo16NSObjectProtocol", "LoopCount"]
+- !private ["PSo16NSObjectProtocol", "Thread"]
+- !private ["PSo16NSObjectProtocol", "init"]
+- !private ["PSo16NSObjectProtocol", "sleep"]
+- ["PSo16NSObjectProtocol", "slowTest"]
+- ["PSo16NSObjectProtocol", "test101"]
+- ["PSo16NSObjectProtocol", "test102"]
+- ["PSo16NSObjectProtocol", "test103"]
+- ["PSo16NSObjectProtocol", "test104"]
+- ["PSo16NSObjectProtocol", "test105"]
+- ["PSo16NSObjectProtocol", "test106"]
+- ["PSo16NSObjectProtocol", "test107"]
+- ["PSo16NSObjectProtocol", "test108"]
+- ["PSo16NSObjectProtocol", "test109"]
+- ["PSo16NSObjectProtocol", "test110"]
+- ["PSo16NSObjectProtocol", "test111"]
+- ["PSo16NSObjectProtocol", "test112"]
+- ["PSo16NSObjectProtocol", "test113"]
+- ["PSo16NSObjectProtocol", "test114"]
+- ["PSo16NSObjectProtocol", "test115"]
+- ["PSo16NSObjectProtocol", "test116"]
+- ["PSo16NSObjectProtocol", "test117"]
+- ["PSo16NSObjectProtocol", "test118"]
+- ["PSo16NSObjectProtocol", "test119"]
+- ["PSo16NSObjectProtocol", "test120"]
+- ["PSo16NSObjectProtocol", "test121"]
+- ["PSo16NSObjectProtocol", "test122"]
+- ["PSo16NSObjectProtocol", "test123"]
+- ["PSo16NSObjectProtocol", "test124"]
+- ["PSo16NSObjectProtocol", "test125"]
+- ["PSo16NSObjectProtocol", "test126"]
+- ["PSo16NSObjectProtocol", "test127"]
+- ["PSo16NSObjectProtocol", "test128"]
+- ["PSo16NSObjectProtocol", "test129"]
+- ["PSo16NSObjectProtocol", "test130"]
+- ["PSo16NSObjectProtocol", ""]
+- !private ["PSo14NSSecureCoding", "init"]
+- !private ["CSo8NSString", "init"]
+- ["Sq", "deinit"]
+- !private ["Ps22RandomAccessCollection", "Iterator"]
+- !private ["Ps22RandomAccessCollection", "_Element"]
+- !private ["Ps21RandomAccessIndexable", "Iterator"]
+- !private ["Ps21RandomAccessIndexable", "_Element"]
+- !private ["Vs5Range", "deinit"]
+- ["V10ObjectiveC8Selector", "deinit"]
+- !private ["Ps8Sequence", "Element"]
+- !private ["Ps8Sequence", "Iterator"]
+- !private ["Ps8Sequence", "_Element"]
+- !private ["Ps13SignedInteger", "IntegerLiteralType"]
+- !private ["Ps13SignedInteger", "Stride"]
+- !private ["Ps13SignedInteger", "_DisabledRangeIndex"]
+- !private ["Ps12SignedNumber", "IntegerLiteralType"]
+- !private ["Ps12SignedNumber", "Stride"]
+- !private ["Ps12SignedNumber", "_DisabledRangeIndex"]
+- !private ["Ps10Strideable", "IntegerLiteralType"]
+- !private ["Ps10Strideable", "Stride"]
+- !private ["Ps10Strideable", "_DisabledRangeIndex"]
+- ["SS", "deinit"]
+- !private ["SS", "init"]
+- !private ["Ps16TextOutputStream", "init"]
+- !private ["Ps20TextOutputStreamable", "init"]
+- !private ["CSo6Thread", "sleep"]
+- ["CSo6XCTest", "LoopCount"]
+- ["CSo6XCTest", "String"]
+- !private ["CSo6XCTest", "Thread"]
+- ["CSo6XCTest", "init"]
+- ["CSo6XCTest", "slowTest"]
+- ["CSo6XCTest", "test101"]
+- ["CSo6XCTest", "test102"]
+- ["CSo6XCTest", "test103"]
+- ["CSo6XCTest", "test104"]
+- ["CSo6XCTest", "test105"]
+- ["CSo6XCTest", "test106"]
+- ["CSo6XCTest", "test107"]
+- ["CSo6XCTest", "test108"]
+- ["CSo6XCTest", "test109"]
+- ["CSo6XCTest", "test110"]
+- ["CSo6XCTest", "test111"]
+- ["CSo6XCTest", "test112"]
+- ["CSo6XCTest", "test113"]
+- ["CSo6XCTest", "test114"]
+- ["CSo6XCTest", "test115"]
+- ["CSo6XCTest", "test116"]
+- ["CSo6XCTest", "test117"]
+- ["CSo6XCTest", "test118"]
+- ["CSo6XCTest", "test119"]
+- ["CSo6XCTest", "test120"]
+- ["CSo6XCTest", "test121"]
+- ["CSo6XCTest", "test122"]
+- ["CSo6XCTest", "test123"]
+- ["CSo6XCTest", "test124"]
+- ["CSo6XCTest", "test125"]
+- ["CSo6XCTest", "test126"]
+- ["CSo6XCTest", "test127"]
+- ["CSo6XCTest", "test128"]
+- ["CSo6XCTest", "test129"]
+- ["CSo6XCTest", "test130"]
+- ["CSo10XCTestCase", "LoopCount"]
+- ["CSo10XCTestCase", "String"]
+- !private ["CSo10XCTestCase", "Thread"]
+- ["CSo10XCTestCase", "deinit"]
+- ["CSo10XCTestCase", "init"]
+- ["CSo10XCTestCase", "slowTest"]
+- ["CSo10XCTestCase", "test101"]
+- ["CSo10XCTestCase", "test102"]
+- ["CSo10XCTestCase", "test103"]
+- ["CSo10XCTestCase", "test104"]
+- ["CSo10XCTestCase", "test105"]
+- ["CSo10XCTestCase", "test106"]
+- ["CSo10XCTestCase", "test107"]
+- ["CSo10XCTestCase", "test108"]
+- ["CSo10XCTestCase", "test109"]
+- ["CSo10XCTestCase", "test110"]
+- ["CSo10XCTestCase", "test111"]
+- ["CSo10XCTestCase", "test112"]
+- ["CSo10XCTestCase", "test113"]
+- ["CSo10XCTestCase", "test114"]
+- ["CSo10XCTestCase", "test115"]
+- ["CSo10XCTestCase", "test116"]
+- ["CSo10XCTestCase", "test117"]
+- ["CSo10XCTestCase", "test118"]
+- ["CSo10XCTestCase", "test119"]
+- ["CSo10XCTestCase", "test120"]
+- ["CSo10XCTestCase", "test121"]
+- ["CSo10XCTestCase", "test122"]
+- ["CSo10XCTestCase", "test123"]
+- ["CSo10XCTestCase", "test124"]
+- ["CSo10XCTestCase", "test125"]
+- ["CSo10XCTestCase", "test126"]
+- ["CSo10XCTestCase", "test127"]
+- ["CSo10XCTestCase", "test128"]
+- ["CSo10XCTestCase", "test129"]
+- ["CSo10XCTestCase", "test130"]
+- ["CSo10XCTestCase", ""]
+- ["PSo17XCTestObservation", "LoopCount"]
+- !private ["PSo17XCTestObservation", "Thread"]
+- !private ["PSo17XCTestObservation", "init"]
+- ["PSo17XCTestObservation", "slowTest"]
+- ["PSo17XCTestObservation", "test101"]
+- ["PSo17XCTestObservation", "test102"]
+- ["PSo17XCTestObservation", "test103"]
+- ["PSo17XCTestObservation", "test104"]
+- ["PSo17XCTestObservation", "test105"]
+- ["PSo17XCTestObservation", "test106"]
+- ["PSo17XCTestObservation", "test107"]
+- ["PSo17XCTestObservation", "test108"]
+- ["PSo17XCTestObservation", "test109"]
+- ["PSo17XCTestObservation", "test110"]
+- ["PSo17XCTestObservation", "test111"]
+- ["PSo17XCTestObservation", "test112"]
+- ["PSo17XCTestObservation", "test113"]
+- ["PSo17XCTestObservation", "test114"]
+- ["PSo17XCTestObservation", "test115"]
+- ["PSo17XCTestObservation", "test116"]
+- ["PSo17XCTestObservation", "test117"]
+- ["PSo17XCTestObservation", "test118"]
+- ["PSo17XCTestObservation", "test119"]
+- ["PSo17XCTestObservation", "test120"]
+- ["PSo17XCTestObservation", "test121"]
+- ["PSo17XCTestObservation", "test122"]
+- ["PSo17XCTestObservation", "test123"]
+- ["PSo17XCTestObservation", "test124"]
+- ["PSo17XCTestObservation", "test125"]
+- ["PSo17XCTestObservation", "test126"]
+- ["PSo17XCTestObservation", "test127"]
+- ["PSo17XCTestObservation", "test128"]
+- ["PSo17XCTestObservation", "test129"]
+- ["PSo17XCTestObservation", "test130"]
+- ["PSo17XCTestObservation", ""]
+- !private ["Ps51_ExpressibleByBuiltinExtendedGraphemeClusterLiteral", "init"]
+- !private ["Ps35_ExpressibleByBuiltinIntegerLiteral", "IntegerLiteralType"]
+- !private ["Ps35_ExpressibleByBuiltinIntegerLiteral", "Stride"]
+- !private ["Ps35_ExpressibleByBuiltinIntegerLiteral", "_DisabledRangeIndex"]
+- !private ["Ps34_ExpressibleByBuiltinStringLiteral", "init"]
+- !private ["Ps39_ExpressibleByBuiltinUTF16StringLiteral", "init"]
+- !private ["Ps41_ExpressibleByBuiltinUnicodeScalarLiteral", "init"]
+- !private ["Ps35_HasCustomAnyHashableRepresentation", "init"]
+- !private ["Ps9_Hashable", "IntegerLiteralType"]
+- ["Ps9_Hashable", "LoopCount"]
+- !private ["Ps9_Hashable", "Stride"]
+- !private ["Ps9_Hashable", "Thread"]
+- !private ["Ps9_Hashable", "_DisabledRangeIndex"]
+- !private ["Ps9_Hashable", "init"]
+- !private ["Ps9_Hashable", "sleep"]
+- ["Ps9_Hashable", "slowTest"]
+- ["Ps9_Hashable", "test101"]
+- ["Ps9_Hashable", "test102"]
+- ["Ps9_Hashable", "test103"]
+- ["Ps9_Hashable", "test104"]
+- ["Ps9_Hashable", "test105"]
+- ["Ps9_Hashable", "test106"]
+- ["Ps9_Hashable", "test107"]
+- ["Ps9_Hashable", "test108"]
+- ["Ps9_Hashable", "test109"]
+- ["Ps9_Hashable", "test110"]
+- ["Ps9_Hashable", "test111"]
+- ["Ps9_Hashable", "test112"]
+- ["Ps9_Hashable", "test113"]
+- ["Ps9_Hashable", "test114"]
+- ["Ps9_Hashable", "test115"]
+- ["Ps9_Hashable", "test116"]
+- ["Ps9_Hashable", "test117"]
+- ["Ps9_Hashable", "test118"]
+- ["Ps9_Hashable", "test119"]
+- ["Ps9_Hashable", "test120"]
+- ["Ps9_Hashable", "test121"]
+- ["Ps9_Hashable", "test122"]
+- ["Ps9_Hashable", "test123"]
+- ["Ps9_Hashable", "test124"]
+- ["Ps9_Hashable", "test125"]
+- ["Ps9_Hashable", "test126"]
+- ["Ps9_Hashable", "test127"]
+- ["Ps9_Hashable", "test128"]
+- ["Ps9_Hashable", "test129"]
+- ["Ps9_Hashable", "test130"]
+- ["Ps9_Hashable", ""]
+- !private ["Ps14_Incrementable", "IntegerLiteralType"]
+- !private ["Ps14_Incrementable", "Stride"]
+- !private ["Ps14_Incrementable", "_DisabledRangeIndex"]
+- !private ["Ps8_Integer", "IntegerLiteralType"]
+- !private ["Ps8_Integer", "Stride"]
+- !private ["Ps8_Integer", "_DisabledRangeIndex"]
+- !private ["Ps18_IntegerArithmetic", "IntegerLiteralType"]
+- !private ["Ps18_IntegerArithmetic", "Stride"]
+- !private ["Ps18_IntegerArithmetic", "_DisabledRangeIndex"]
+- !private ["Ps21_ObjectiveCBridgeable", "IntegerLiteralType"]
+- !private ["Ps21_ObjectiveCBridgeable", "Stride"]
+- !private ["Ps21_ObjectiveCBridgeable", "_DisabledRangeIndex"]
+- !private ["Ps21_ObjectiveCBridgeable", "init"]
+- !private ["Ps14_SignedInteger", "IntegerLiteralType"]
+- !private ["Ps14_SignedInteger", "Stride"]
+- !private ["Ps14_SignedInteger", "_DisabledRangeIndex"]
+- !private ["Ps11_Strideable", "IntegerLiteralType"]
+- !private ["Ps11_Strideable", "Stride"]
+- !private ["Ps11_Strideable", "_DisabledRangeIndex"]
+depends-nominal:
+- "Ps9AnyObject"
+- !private "Ps23BidirectionalCollection"
+- !private "Ps22BidirectionalIndexable"
+- !private "Ps17BitwiseOperations"
+- "Ps7CVarArg"
+- !private "Ps10Collection"
+- !private "Ps10Comparable"
+- "Vs14CountableRange"
+- "Ps28CustomDebugStringConvertible"
+- !private "Ps29CustomPlaygroundQuickLookable"
+- !private "Ps17CustomReflectable"
+- "Ps23CustomStringConvertible"
+- "Sd"
+- "Ps9Equatable"
+- !private "Ps43ExpressibleByExtendedGraphemeClusterLiteral"
+- !private "Ps27ExpressibleByIntegerLiteral"
+- !private "Ps32ExpressibleByStringInterpolation"
+- !private "Ps26ExpressibleByStringLiteral"
+- !private "Ps33ExpressibleByUnicodeScalarLiteral"
+- "Ps8Hashable"
+- !private "Ps9Indexable"
+- !private "Ps13IndexableBase"
+- !private "Vs16IndexingIterator"
+- "Si"
+- !private "Ps7Integer"
+- !private "Ps17IntegerArithmetic"
+- !private "Ps16IteratorProtocol"
+- !private "Ps25LosslessStringConvertible"
+- !private "Ps10MirrorPath"
+- "C23MyTestProjectUnitTests218MyTestProjectTests"
+- !private "PSo8NSCoding"
+- !private "PSo9NSCopying"
+- !private "PSo16NSMutableCopying"
+- "CSo8NSObject"
+- "PSo16NSObjectProtocol"
+- !private "PSo14NSSecureCoding"
+- !private "CSo8NSString"
+- "Sq"
+- !private "Ps22RandomAccessCollection"
+- !private "Ps21RandomAccessIndexable"
+- !private "Vs5Range"
+- "V10ObjectiveC8Selector"
+- !private "Ps8Sequence"
+- !private "Ps13SignedInteger"
+- !private "Ps12SignedNumber"
+- !private "Ps10Strideable"
+- "SS"
+- !private "Ps16TextOutputStream"
+- !private "Ps20TextOutputStreamable"
+- !private "CSo6Thread"
+- "CSo6XCTest"
+- "CSo10XCTestCase"
+- "PSo17XCTestObservation"
+- !private "Ps51_ExpressibleByBuiltinExtendedGraphemeClusterLiteral"
+- !private "Ps35_ExpressibleByBuiltinIntegerLiteral"
+- !private "Ps34_ExpressibleByBuiltinStringLiteral"
+- !private "Ps39_ExpressibleByBuiltinUTF16StringLiteral"
+- !private "Ps41_ExpressibleByBuiltinUnicodeScalarLiteral"
+- !private "Ps35_HasCustomAnyHashableRepresentation"
+- "Ps9_Hashable"
+- !private "Ps14_Incrementable"
+- !private "Ps8_Integer"
+- !private "Ps18_IntegerArithmetic"
+- !private "Ps21_ObjectiveCBridgeable"
+- !private "Ps14_SignedInteger"
+- !private "Ps11_Strideable"
+depends-dynamic-lookup:
+depends-external:
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator/x86_64/Swift.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator/x86_64/SwiftOnoneSupport.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator/x86_64/XCTest.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator/x86_64/CoreGraphics.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator/x86_64/Darwin.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator/x86_64/Dispatch.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator/x86_64/ObjectiveC.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCUIRemote.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCUIKeyboardKeys.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCUIElementQuery.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCUICoordinate.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCUIDevice.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCUIElementTypeQueryProvider.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCUIElementTypes.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCUIElementAttributes.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCUIElement.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCUIApplication.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestSuiteRun.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestSuite.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestProbe.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestObservation.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestObservationCenter.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestObserver.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestLog.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestExpectation.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestRun.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestCaseRun.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestCase+AsynchronousTesting.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestCase.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestAssertionsImpl.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestAssertions.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCAbstractTest.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestErrors.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTestDefines.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Headers/XCTest.h"
+- "/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Library/Frameworks/XCTest.framework/Modules/module.modulemap"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator/x86_64/Foundation.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator/x86_64/UIKit.swiftmodule"
+- "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/iphonesimulator/x86_64/CoreImage.swiftmodule"
+- "/Users/stephan/projects/ios/TestRunner/MyTestProject/clean/Build/Products/Debug-iphonesimulator/MyTestProject.swiftmodule/x86_64.swiftmodule"
+interface-hash: "185111b2916147a9d00cd6b0e85cfeb7"
