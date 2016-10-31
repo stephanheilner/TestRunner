@@ -12,12 +12,15 @@ enum TestRunnerStatus: Int {
     case Stopped
     case Running
     case TestTimeout
-    case LaunchTimeout
     case Success
     case Failed
 }
 
 class TestRunnerOperation: NSOperation {
+    
+    private static let TestCaseStartedRegex = try! NSRegularExpression(pattern: "Test Case '(.*)' started.", options: [])
+    private static let TestCasePassedRegex = try! NSRegularExpression(pattern: "Test Case '(.*)' passed (.*)", options: [])
+    private static let TestSuiteStartedRegex = try! NSRegularExpression(pattern: "Test Suite '(.*).xctest' started", options: [])
     
     private let deviceFamily: String
     private let deviceID: String
@@ -50,7 +53,7 @@ class TestRunnerOperation: NSOperation {
     private let simulatorName: String
     private let retryCount: Int
     private let launchRetryCount: Int
-    private var logFilePath: String?
+    private let logFilePath: String
     private var status: TestRunnerStatus = .Stopped
     private var lastCheck = NSDate().timeIntervalSince1970
     private var timeoutCounter = 0
@@ -65,6 +68,7 @@ class TestRunnerOperation: NSOperation {
         self.tests = tests
         self.retryCount = retryCount
         self.launchRetryCount = launchRetryCount
+        self.logFilePath = String(format: "%@/%@-%d.log", AppArgs.shared.logsDir, deviceID, retryCount + 1)
         
         _executing = false
         _finished = false
@@ -78,22 +82,12 @@ class TestRunnerOperation: NSOperation {
         executing = true
         self.status = .Running
 
-        let arguments = ["-destination", "id=\(deviceID)", "test", "\(tests.map { "-only-testing:\($0)" }.joinWithSeparator(" "))"]
-        
-        let logFilename: String
-        if retryCount > 0 {
-            logFilename = String(format: "%@ (%d).json", simulatorName, retryCount+1)
-        } else {
-            logFilename = String(format: "%@.json", simulatorName)
-        }
-        
         let logMessage = String(format: "Running the following tests:\n\t%@\n\n", tests.joinWithSeparator("\n\t"))
         if let logData = logMessage.dataUsingEncoding(NSUTF8StringEncoding) {
             TRLog(logData, simulatorName: simulatorName)
         }
         
-        let task = XcodebuildTask(args: arguments, logFilename: logFilename, outputFileLogType: .JSON, standardOutputLogType: .Text)
-        logFilePath = task.logFilePath
+        let task = XcodebuildTask(actions: ["test-without-building"], deviceID: deviceID, tests: tests, logFilePath: logFilePath)
         
         task.delegate = self
         task.launch()
@@ -107,7 +101,13 @@ class TestRunnerOperation: NSOperation {
     func finishOperation(status status: TestRunnerStatus) {
         simulatorDidLaunch()
         
-        completion?(status: status, simulatorName: simulatorName, failedTests: getFailedTests(), deviceID: deviceID, retryCount: retryCount, launchRetryCount: launchRetryCount)
+        var status = status
+        
+        let failedTests = getFailedTests()
+        if !failedTests.isEmpty {
+            status = .Failed
+        }
+        completion?(status: status, simulatorName: simulatorName, failedTests: failedTests, deviceID: deviceID, retryCount: retryCount, launchRetryCount: launchRetryCount)
         
         executing = false
         finished = true
@@ -122,16 +122,57 @@ class TestRunnerOperation: NSOperation {
     }
     
     func getFailedTests() -> [String] {
-        guard let logFilePath = logFilePath, jsonObjects = JSON.jsonObjectsFromJSONStreamFile(logFilePath) else { return [] }
+        var tests = [String]()
 
-        let succeededTests = Set<String>(jsonObjects.flatMap { jsonObject -> String? in
-            guard let succeeded = jsonObject["succeeded"] as? Bool where succeeded, let className = jsonObject["className"] as? String, methodName = jsonObject["methodName"] as? String else { return nil }
-            return String(format: "%@/%@", className, methodName)
-        })
-        return tests.filter { !succeededTests.contains($0) }
+        do {
+            let log = try String(contentsOfFile: logFilePath, encoding: NSUTF8StringEncoding)
+            let range = NSRange(location: 0, length: log.length)
+            
+            var failedTests = Set<String>()
+            
+            for match in TestRunnerOperation.TestCaseStartedRegex.matchesInString(log, options: [], range: range) {
+                let nameRange = match.rangeAtIndex(1)
+                let startIndex = log.startIndex.advancedBy(nameRange.location)
+                let testCase = log.substringWithRange(startIndex..<startIndex.advancedBy(nameRange.length))
+                failedTests.insert(testCase)
+            }
+            
+            for match in TestRunnerOperation.TestCasePassedRegex.matchesInString(log, options: [], range: range) {
+                let nameRange = match.rangeAtIndex(1)
+                let startIndex = log.startIndex.advancedBy(nameRange.location)
+                let testCase = log.substringWithRange(startIndex..<startIndex.advancedBy(nameRange.length))
+                failedTests.remove(testCase)
+            }
+            
+            if let match = TestRunnerOperation.TestSuiteStartedRegex.matchesInString(log, options: [], range: range).first {
+                let nameRange = match.rangeAtIndex(1)
+                let startIndex = log.startIndex.advancedBy(nameRange.location)
+                let testSuiteName = log.substringWithRange(startIndex..<startIndex.advancedBy(nameRange.length))
+                
+                for testCase in failedTests {
+                    var testName: String?
+                    var testClass: String?
+                    
+                    if let testNameRange = testCase.rangeOfString(" ", options: .BackwardsSearch, range: nil, locale: nil) {
+                        testName = testCase.substringWithRange(testNameRange.endIndex..<testCase.endIndex.advancedBy(-1))
+                        testClass = testCase.substringWithRange(testCase.startIndex.advancedBy(2)..<testNameRange.startIndex)
+                    }
+                    
+                    if let testTargetRange = testClass?.rangeOfString(".", options: .LiteralSearch, range: nil, locale: nil) {
+                        testClass = testClass?.substringFromIndex(testTargetRange.endIndex)
+                    }
+                    
+                    if let testName = testName, testClass = testClass {
+                        tests.append("\(testSuiteName)/\(testClass)/\(testName)")
+                    }
+                }
+            }
+        } catch {}
+        
+        return tests
     }
 
-    func notifyIfLaunched(task: XcodebuildTask) {
+    func notifyIfLaunched(data: NSData) {
         guard !simulatorLaunched else { return }
         
         let now = NSDate().timeIntervalSince1970
@@ -139,24 +180,12 @@ class TestRunnerOperation: NSOperation {
         lastCheck = now
         
         dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            if let logFilePath = task.logFilePath where JSON.hasBeginTestSuiteEvent(logFilePath) {
-                self.simulatorDidLaunch()
-                
-                return
-            }
-        }
-        
-        let waitForLaunchTimeout = dispatch_time(DISPATCH_TIME_NOW, Int64(AppArgs.shared.launchTimeout * Double(NSEC_PER_SEC)))
-        dispatch_after(waitForLaunchTimeout, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
-            guard !self.simulatorLaunched else { return }
-            
-            if let data = "TIMED OUT Launching Simulator".dataUsingEncoding(NSUTF8StringEncoding) {
-                TRLog(data, simulatorName: self.simulatorName)
-            }
-            
-            self.finishOperation(status: .LaunchTimeout)
-            
-            return
+            do {
+                let log = try String(contentsOfFile: self.logFilePath, encoding: NSUTF8StringEncoding)
+                if TestRunnerOperation.TestSuiteStartedRegex.numberOfMatchesInString(log, options: [], range: NSRange(location: 0, length: log.length)) > 0 {
+                    self.simulatorDidLaunch()
+                }
+            } catch {}
         }
     }
     
@@ -167,6 +196,8 @@ extension TestRunnerOperation: XcodebuildTaskDelegate {
     func outputDataReceived(task: XcodebuildTask, data: NSData) {
         guard data.length > 0 else { return }
 
+        TRLog(data, simulatorName: simulatorName)
+
         let counter = timeoutCounter
         
         let timeoutTime = dispatch_time(DISPATCH_TIME_NOW, Int64(AppArgs.shared.timeout * Double(NSEC_PER_SEC)))
@@ -176,12 +207,9 @@ extension TestRunnerOperation: XcodebuildTaskDelegate {
                 return
             }
         }
-        
         timeoutCounter += 1
         
-        TRLog(data, simulatorName: simulatorName)
-
-        notifyIfLaunched(task)
+        notifyIfLaunched(data)
     }
     
 }

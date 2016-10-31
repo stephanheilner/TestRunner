@@ -65,7 +65,8 @@ public class TestRunner: NSObject {
     func runTests() -> Bool {
         if AppArgs.shared.buildTests {
             do {
-                try BuildTests.sharedInstance.build()
+                try BuildTests.sharedInstance.build(listTests: false)
+                try BuildTests.sharedInstance.build(listTests: true)
             } catch let failureError as FailureError {
                 switch failureError {
                 case let .Failed(log: log):
@@ -140,29 +141,12 @@ public class TestRunner: NSObject {
                 
                 self.simulatorPassStatus[simulatorName] = false
                 
-                if retryCount < AppArgs.shared.retryCount {
+                if retryCount < AppArgs.shared.retryCount && !failedTests.isEmpty {
                     // Create new device for retry
                     let retryDeviceID = DeviceController.sharedController.resetDeviceWithID(deviceID, simulatorName: simulatorName) ?? deviceID
                     
                     // Retry
                     let retryOperation = self.createOperation(deviceFamily, simulatorName: simulatorName, deviceID: retryDeviceID, tests: failedTests, retryCount: retryCount)
-                    self.testRunnerQueue.addOperation(retryOperation)
-                } else {
-                    // Failed, kill all items in queue
-                    self.testRunnerQueue.cancelAllOperations()
-                }
-            case .LaunchTimeout:
-                let launchRetryCount = launchRetryCount + 1
-                NSLog("\n\nSimulator Launch Timeout (Attempt %d of %d) on %@\n", launchRetryCount, AppArgs.shared.launchRetryCount, simulatorName)
-                
-                self.simulatorPassStatus[simulatorName] = false
-                
-                if launchRetryCount < AppArgs.shared.launchRetryCount {
-                    // Create new device for retry
-                    let retryDeviceID = DeviceController.sharedController.resetDeviceWithID(deviceID, simulatorName: simulatorName) ?? deviceID
-                    
-                    // Retry
-                    let retryOperation = self.createOperation(deviceFamily, simulatorName: simulatorName, deviceID: retryDeviceID, tests: failedTests, retryCount: retryCount, launchRetryCount: launchRetryCount)
                     self.testRunnerQueue.addOperation(retryOperation)
                 } else {
                     // Failed, kill all items in queue

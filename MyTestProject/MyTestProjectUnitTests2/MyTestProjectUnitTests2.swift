@@ -14,7 +14,7 @@ class MyTestProjectTests: XCTestCase {
     
     func slowTest(_ name: String) {
         for _ in 0..<LoopCount {
-            Thread.sleep(forTimeInterval: 5)
+            Thread.sleep(forTimeInterval: 0.2)
         }
     }
     
@@ -28,6 +28,7 @@ class MyTestProjectTests: XCTestCase {
     
     func test103() {
         slowTest("test103")
+        XCTAssertTrue(false, "Force this to fail")
     }
     
     func test104() {

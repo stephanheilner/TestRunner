@@ -18,16 +18,10 @@ class TestPartitioner {
         
         var tests: [String]?
         do {
-            if let data = NSData(contentsOfFile: AppArgs.shared.derivedDataPath + "/tests.json") {
+            if let data = NSData(contentsOfFile: AppArgs.shared.logsDir + "/tests.json") {
                 let targetTests = try NSJSONSerialization.JSONObjectWithData(data, options: [])
                 if let target = AppArgs.shared.target {
-                    tests = (targetTests[target] as? [[String: String]])?.flatMap { info -> String? in
-                        guard let className = info["class"], testName = info["function"] else { return nil }
-                        
-                        return "\(target)/\(className)/\(testName)"
-                    }
-                } else {
-                    print("yo")
+                    tests = targetTests[target] as? [String]
                 }
             }
         } catch {

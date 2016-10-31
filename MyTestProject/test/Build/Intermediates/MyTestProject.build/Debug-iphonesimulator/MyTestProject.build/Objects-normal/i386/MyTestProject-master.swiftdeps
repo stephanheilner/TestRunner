@@ -1,6 +1,0 @@
-version: "Apple Swift version 3.0 (swiftlang-800.0.46.2 clang-800.0.38)"
-options: "fbf12a688194c0f16847bd92586518b5"
-build_time: [528262550, 931934000]
-inputs:
-  "/Users/stephan/projects/ios/TestRunner/MyTestProject/MyTestProject/ViewController.swift": [527030701, 0]
-  "/Users/stephan/projects/ios/TestRunner/MyTestProject/MyTestProject/AppDelegate.swift": [527723808, 0]

@@ -246,21 +246,21 @@
 					D402D15E1C1230D500F74D0A = {
 						CreatedOnToolsVersion = 7.1.1;
 						DevelopmentTeam = 5XJ2TN9APQ;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0810;
 					};
 					D402D1721C1230D500F74D0A = {
 						CreatedOnToolsVersion = 7.1.1;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0810;
 						TestTargetID = D402D15E1C1230D500F74D0A;
 					};
 					D47FA7D11C656118007A92AF = {
 						CreatedOnToolsVersion = 7.2;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0810;
 						TestTargetID = D402D15E1C1230D500F74D0A;
 					};
 					D4AE8E1D1CC0746900AC9469 = {
 						CreatedOnToolsVersion = 7.3;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0810;
 						TestTargetID = D402D15E1C1230D500F74D0A;
 					};
 				};
@@ -433,6 +433,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LIST_TESTS = "${LIST_TESTS}";
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -475,6 +476,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
+				LIST_TESTS = "${LIST_TESTS}";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -493,6 +495,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.test.MyTestProject;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -505,6 +508,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.test.MyTestProject;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -512,15 +516,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"LIST_TESTS=${LIST_TESTS}",
-				);
 				INFOPLIST_FILE = MyTestProjectTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIST_TESTS = build/derivedData/tests.json;
 				PRODUCT_BUNDLE_IDENTIFIER = org.test.MyTestProjectTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MyTestProject.app/MyTestProject";
 			};
 			name = Debug;
@@ -534,6 +535,7 @@
 				LIST_TESTS = build/derivedData/tests.json;
 				PRODUCT_BUNDLE_IDENTIFIER = org.test.MyTestProjectTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MyTestProject.app/MyTestProject";
 			};
 			name = Release;
@@ -541,15 +543,12 @@
 		D47FA7D91C656118007A92AF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"LIST_TESTS=${LIST_TESTS}",
-				);
 				INFOPLIST_FILE = MyTestProjectUITests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIST_TESTS = build/derivedData/tests.json;
 				PRODUCT_BUNDLE_IDENTIFIER = org.lds.MyTestProjectUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = MyTestProject;
 				USES_XCTRUNNER = YES;
 			};
@@ -563,6 +562,7 @@
 				LIST_TESTS = build/derivedData/tests.json;
 				PRODUCT_BUNDLE_IDENTIFIER = org.lds.MyTestProjectUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_TARGET_NAME = MyTestProject;
 				USES_XCTRUNNER = YES;
 			};
@@ -574,16 +574,13 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ENABLE_MODULES = YES;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"LIST_TESTS=${LIST_TESTS}",
-				);
 				INFOPLIST_FILE = MyTestProjectUnitTests2/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIST_TESTS = build/derivedData/tests.json;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hf.test.MyTestProjectUnitTests2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MyTestProject.app/MyTestProject";
 			};
 			name = Debug;
@@ -599,6 +596,7 @@
 				LIST_TESTS = build/derivedData/tests.json;
 				PRODUCT_BUNDLE_IDENTIFIER = com.hf.test.MyTestProjectUnitTests2;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MyTestProject.app/MyTestProject";
 			};
 			name = Release;

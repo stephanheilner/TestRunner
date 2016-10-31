@@ -41,6 +41,11 @@ class DeviceController {
         return self.testDevicePrefix + " %d, %@, %@" // number, device type, runtime
     }()
     
+    func createTestDevice() -> String? {
+        deleteTestDevices()
+        return createTestDevices(1).values.flatMap { $0.first?.deviceID }.first
+    }
+    
     func resetAndCreateDevices() -> [String: [(simulatorName: String, deviceID: String)]]? {
         deleteTestDevices()
         return createTestDevices()
@@ -255,11 +260,11 @@ class DeviceController {
         task.waitUntilExit()
     }
     
-    func createTestDevices() -> [String: [(simulatorName: String, deviceID: String)]] {
+    func createTestDevices(numberOfDevices: Int? = nil) -> [String: [(simulatorName: String, deviceID: String)]] {
         var devices = [String: [(simulatorName: String, deviceID: String)]]()
         
         let devicesArg = AppArgs.shared.devices ?? "iPhone 5, iOS 9.3"
-        let numberOfSimulators = (AppArgs.shared.simulatorsCount ?? 1)
+        let numberOfSimulators = numberOfDevices ?? AppArgs.shared.simulatorsCount ?? 1
         
         var simulatorNumber = 1
         

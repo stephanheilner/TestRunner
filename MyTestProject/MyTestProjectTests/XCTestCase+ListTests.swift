@@ -12,7 +12,7 @@ import Foundation
 extension XCTestCase {
     
     @nonobjc static let testListURL: URL? = {
-        guard let path = Bundle.main.object(forInfoDictionaryKey: "LIST_TESTS") as? String else { return nil }
+        guard let path = Bundle.main.object(forInfoDictionaryKey: "TestRunnerListTests") as? String else { return nil }
         
         print("\n************ List Tests ******************\n", path, "\n******************************\n\n\n")
         
@@ -46,7 +46,6 @@ extension XCTestCase {
                 XCTestObservationCenter.shared().addTestObserver(self)
                 XCTestCase.observing = true
             }
-            
             if let range = testName.range(of: "-[") {
                 testName = testName.substring(from: range.upperBound)
             }
@@ -54,8 +53,9 @@ extension XCTestCase {
                 testName = testName.substring(to: range.lowerBound)
             }
             let nameParts = testName.components(separatedBy: " ")
-            if nameParts.count == 2, let className = nameParts.first, let testName = nameParts.last {
-                XCTestCase.tests.append("\(className)/\(testName)")
+            if nameParts.count == 2, let testSuite = nameParts.first, let testName = nameParts.last {
+                let testClass = NSStringFromClass(type(of: self)).replacingOccurrences(of: ("." + testSuite), with: "")
+                XCTestCase.tests.append("\(testClass)/\(testSuite)/\(testName)")
             }
         } else {
             swizzled_invokeTest()

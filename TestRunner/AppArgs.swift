@@ -111,13 +111,13 @@ struct AppArgs {
         if let project = NSUserDefaults.standardUserDefaults().stringForKey("project") {
             let projectURL = NSURL(fileURLWithPath: project)
 
-            projectPath = projectURL.lastPathComponent
+            projectPath = projectURL.path
             projectDirectory = projectURL.URLByDeletingLastPathComponent?.path
             
         } else if let workspace = NSUserDefaults.standardUserDefaults().stringForKey("workspace") {
             let workspaceURL = NSURL(fileURLWithPath: workspace)
             
-            workspacePath = workspaceURL.lastPathComponent
+            workspacePath = workspaceURL.path
             projectDirectory = workspaceURL.URLByDeletingLastPathComponent?.path
         } else {
             exitWithMessage("'-workspace' or '-project' needs to be specified")

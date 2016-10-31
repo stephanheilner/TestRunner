@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "82922FC7E0C4AEF5F23FB0187843494E46F7E935",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "82922FC7E0C4AEF5F23FB0187843494E46F7E935" : 9223372036854775807,
+    "1AFCDD1F8B8287BC5D630CDE2BC7539AFBF39D3B" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "D25AC9EE-17D9-402F-BD67-E8099FF2F1FE",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "82922FC7E0C4AEF5F23FB0187843494E46F7E935" : "TestRunner\/",
+    "1AFCDD1F8B8287BC5D630CDE2BC7539AFBF39D3B" : "TestRunner\/Swiftification\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "TestRunner",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "TestRunner.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/CrossWaterBridge\/Swiftification.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "1AFCDD1F8B8287BC5D630CDE2BC7539AFBF39D3B"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/nickmshelley\/TestRunner",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "82922FC7E0C4AEF5F23FB0187843494E46F7E935"
+    }
+  ]
+}

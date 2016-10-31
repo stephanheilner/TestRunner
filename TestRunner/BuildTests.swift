@@ -11,17 +11,22 @@ import Cocoa
 class BuildTests {
     
     static let sharedInstance = BuildTests()
+    private static let PlistValueName = "TestRunnerListTests"
     
-    func build() throws {
-        deleteFilesInDirectory(AppArgs.shared.derivedDataPath)
-        deleteFilesInDirectory(AppArgs.shared.logsDir)
+    func build(listTests listTests: Bool) throws {
         
-        let testsJSONPath = "\(AppArgs.shared.derivedDataPath)/tests.json"
-        print("Tests:", testsJSONPath)
+        let actions: [String]
+        if listTests {
+            actions = ["test-without-building"]
+            addPlistEntry(name: BuildTests.PlistValueName, value: "\(AppArgs.shared.logsDir)/tests.json")
+        } else {
+            deleteFilesInDirectory(AppArgs.shared.derivedDataPath)
+            deleteFilesInDirectory(AppArgs.shared.logsDir)
+            actions = ["clean", "build-for-testing"]
+        }
         
-//        xcodebuild -project /Users/stephan/projects/ios/TestRunner/MyTestProject/MyTestProject.xcodeproj -scheme MyTestProject -sdk iphonesimulator -derivedDataPath ${DERIVED_DATA_PATH} CONFIGURATION_BUILD_DIR=${DERIVED_DATA_PATH} clean build-for-testing
-
-        let task = XcodebuildTask(args: ["-destination", "'platform=iOS Simulator,name=iPhone 5,OS=10.0'", "clean", "test"], standardOutputLogType: .Text, environmentVars: ["LIST_TESTS": testsJSONPath])
+        let deviceID = DeviceController.sharedController.createTestDevice()
+        let task = XcodebuildTask(actions: actions, deviceID: deviceID)
         task.delegate = self
         task.launch()
         task.waitUntilExit()
@@ -33,12 +38,40 @@ class BuildTests {
             return
         }
 
+        if listTests {
+            deletePlistEntry(name: BuildTests.PlistValueName)
+        }
     }
     
     func deleteFilesInDirectory(path: String) {
         let task = NSTask()
         task.launchPath = "/bin/rm"
         task.arguments = ["-rf", path]
+        task.standardError = NSPipe()
+        task.standardOutput = NSPipe()
+        task.launch()
+        task.waitUntilExit()
+    }
+    
+    func addPlistEntry(name name: String, value: String) {
+        let task = NSTask()
+        task.launchPath = "/bin/sh"
+        let infoPlist = String(format: "%@/%@.app/Info.plist", AppArgs.shared.derivedDataPath, AppArgs.shared.scheme)
+        let arguments = ["/usr/libexec/PlistBuddy", infoPlist, "-c", "\"Add :\(name) string \(value)\""]
+        task.arguments = ["-c", arguments.joinWithSeparator(" ")]
+        task.standardError = NSPipe()
+        task.standardOutput = NSPipe()
+        task.launch()
+        task.waitUntilExit()
+    }
+    
+    func deletePlistEntry(name name: String) {
+        let task = NSTask()
+        task.launchPath = "/bin/sh"
+        
+        let infoPlist = String(format: "%@/%@.app/Info.plist", AppArgs.shared.derivedDataPath, AppArgs.shared.scheme)
+        let arguments = ["/usr/libexec/PlistBuddy", infoPlist, "-c", "\"Delete :\(name)\""]
+        task.arguments = ["-c", arguments.joinWithSeparator(" ")]
         task.standardError = NSPipe()
         task.standardOutput = NSPipe()
         task.launch()
