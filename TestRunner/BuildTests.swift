@@ -71,7 +71,7 @@ class BuildTests {
             let task = Process()
             task.launchPath = "/bin/sh"
         
-            let infoPlist = String(format: "%@/%@.app/Info.plist", AppArgs.shared.derivedDataPath, AppArgs.shared.scheme)
+            let infoPlist = String(format: "%@/%@.app/Info.plist", AppArgs.shared.derivedDataPath, scheme)
             let arguments = ["/usr/libexec/PlistBuddy", infoPlist, "-c", "\"Delete :\(name)\""]
             task.arguments = ["-c", arguments.joined(separator: " ")]
             task.standardError = Pipe()

@@ -78,7 +78,7 @@ class TestRunnerOperation: Operation {
     
     override func start() {
         super.start()
-        
+
         isExecuting = true
         self.status = .running
 
@@ -146,23 +146,25 @@ class TestRunnerOperation: Operation {
             
             if let match = TestRunnerOperation.TestSuiteStartedRegex.matches(in: log, options: [], range: range).first {
                 let nameRange = match.rangeAt(1)
-                let testSuiteName = nameRange.range(from: log)
-                
-                for testCase in failedTests {
-                    var testName: String?
-                    var testClass: String?
+                if let testSuiteRange = nameRange.range(from: log) {
+                    let testSuiteName = log.substring(with: testSuiteRange)
                     
-                    if let testNameRange = testCase.range(of: " ", options: .backwards, range: nil, locale: nil) {
-                        testName = testCase.substring(with: testNameRange.upperBound..<testCase.characters.index(testCase.endIndex, offsetBy: -1))
-                        testClass = testCase.substring(with: testCase.characters.index(testCase.startIndex, offsetBy: 2)..<testNameRange.lowerBound)
-                    }
-                    
-                    if let testTargetRange = testClass?.range(of: ".", options: .literal, range: nil, locale: nil) {
-                        testClass = testClass?.substring(from: testTargetRange.upperBound)
-                    }
-                    
-                    if let testName = testName, let testClass = testClass {
-                        tests.append("\(testSuiteName)/\(testClass)/\(testName)")
+                    for testCase in failedTests {
+                        var testName: String?
+                        var testClass: String?
+                        
+                        if let testNameRange = testCase.range(of: " ", options: .backwards, range: nil, locale: nil) {
+                            testName = testCase.substring(with: testNameRange.upperBound..<testCase.characters.index(testCase.endIndex, offsetBy: -1))
+                            testClass = testCase.substring(with: testCase.characters.index(testCase.startIndex, offsetBy: 2)..<testNameRange.lowerBound)
+                        }
+                        
+                        if let testTargetRange = testClass?.range(of: ".", options: .literal, range: nil, locale: nil) {
+                            testClass = testClass?.substring(from: testTargetRange.upperBound)
+                        }
+                        
+                        if let testName = testName, let testClass = testClass {
+                            tests.append("\(testSuiteName)/\(testClass)/\(testName)")
+                        }
                     }
                 }
             }
