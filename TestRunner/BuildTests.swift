@@ -14,11 +14,10 @@ class BuildTests {
     fileprivate static let PlistValueName = "TestRunnerListTests"
     
     func build(listTests: Bool) throws {
-        
         let actions: [String]
         if listTests {
             actions = ["test-without-building"]
-            addPlistEntry(name: BuildTests.PlistValueName, value: "\(AppArgs.shared.logsDir)/tests.json")
+            addPlistEntries(name: BuildTests.PlistValueName, value: "\(AppArgs.shared.logsDir)/tests.json")
         } else {
             deleteFilesInDirectory(AppArgs.shared.derivedDataPath)
             deleteFilesInDirectory(AppArgs.shared.logsDir)
@@ -39,7 +38,7 @@ class BuildTests {
         }
 
         if listTests {
-            deletePlistEntry(name: BuildTests.PlistValueName)
+            deletePlistEntries(name: BuildTests.PlistValueName)
         }
     }
     
@@ -53,29 +52,33 @@ class BuildTests {
         task.waitUntilExit()
     }
     
-    func addPlistEntry(name: String, value: String) {
-        let task = Process()
-        task.launchPath = "/bin/sh"
-        let infoPlist = String(format: "%@/%@.app/Info.plist", AppArgs.shared.derivedDataPath, AppArgs.shared.scheme)
-        let arguments = ["/usr/libexec/PlistBuddy", infoPlist, "-c", "\"Add :\(name) string \(value)\""]
-        task.arguments = ["-c", arguments.joined(separator: " ")]
-        task.standardError = Pipe()
-        task.standardOutput = Pipe()
-        task.launch()
-        task.waitUntilExit()
+    func addPlistEntries(name: String, value: String) {
+        [AppArgs.shared.scheme, AppArgs.shared.uiTestScheme].forEach { scheme in
+            let task = Process()
+            task.launchPath = "/bin/sh"
+            let infoPlist = String(format: "%@/%@.app/Info.plist", AppArgs.shared.derivedDataPath, scheme)
+            let arguments = ["/usr/libexec/PlistBuddy", infoPlist, "-c", "\"Add :\(name) string \(value)\""]
+            task.arguments = ["-c", arguments.joined(separator: " ")]
+            task.standardError = Pipe()
+            task.standardOutput = Pipe()
+            task.launch()
+            task.waitUntilExit()
+        }
     }
     
-    func deletePlistEntry(name: String) {
-        let task = Process()
-        task.launchPath = "/bin/sh"
+    func deletePlistEntries(name: String) {
+        [AppArgs.shared.scheme, AppArgs.shared.uiTestScheme].forEach { scheme in
+            let task = Process()
+            task.launchPath = "/bin/sh"
         
-        let infoPlist = String(format: "%@/%@.app/Info.plist", AppArgs.shared.derivedDataPath, AppArgs.shared.scheme)
-        let arguments = ["/usr/libexec/PlistBuddy", infoPlist, "-c", "\"Delete :\(name)\""]
-        task.arguments = ["-c", arguments.joined(separator: " ")]
-        task.standardError = Pipe()
-        task.standardOutput = Pipe()
-        task.launch()
-        task.waitUntilExit()
+            let infoPlist = String(format: "%@/%@.app/Info.plist", AppArgs.shared.derivedDataPath, AppArgs.shared.scheme)
+            let arguments = ["/usr/libexec/PlistBuddy", infoPlist, "-c", "\"Delete :\(name)\""]
+            task.arguments = ["-c", arguments.joined(separator: " ")]
+            task.standardError = Pipe()
+            task.standardOutput = Pipe()
+            task.launch()
+            task.waitUntilExit()
+        }
     }
     
 }
