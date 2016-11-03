@@ -30,9 +30,6 @@ struct AppArgs {
     let logsDir: String
     let retryCount: Int
     let launchRetryCount: Int
-    var uiTestScheme: String {
-        return scheme + "UITests-Runner"
-    }
     
     init() {
         if let scheme = UserDefaults.standard.string(forKey: "scheme") {
