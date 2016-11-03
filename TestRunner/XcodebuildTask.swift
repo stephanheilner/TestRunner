@@ -78,7 +78,7 @@ class XcodebuildTask {
         task.currentDirectoryPath = AppArgs.shared.currentDirectory
         task.environment = ProcessInfo.processInfo.environment
         
-        var arguments = ["LC_ALL='en_US.UTF-8'", "xcodebuild"] + actions
+        var arguments = ["xcodebuild"] + actions
         
         if let project = AppArgs.shared.projectPath {
             arguments += ["-project", project]
@@ -103,7 +103,7 @@ class XcodebuildTask {
         if let logFilePath = logFilePath {
             output = ["|", "tee", "\"\(logFilePath)\""]
         } else {
-            output = ["|", "/usr/local/bin/xcpretty"]
+            output = ["|", "LC_ALL='en_US.UTF-8'", "/usr/local/bin/xcpretty"]
         }
 
         let shellCommand = (arguments + output).joined(separator: " ")

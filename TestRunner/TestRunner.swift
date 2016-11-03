@@ -66,7 +66,7 @@ open class TestRunner: NSObject {
         if AppArgs.shared.buildTests {
             do {
                 try BuildTests.sharedInstance.build(listTests: false)
-                try BuildTests.sharedInstance.build(listTests: true)
+//                try BuildTests.sharedInstance.build(listTests: true)
             } catch let failureError as FailureError {
                 switch failureError {
                 case let .failed(log: log):
