@@ -63,7 +63,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-workspace &quot;/Users/rhett/Developer/Source/LDSMediaLibrary-iOS/LDSMediaLibrary.xcworkspace&quot;"
+            argument = "-workspace &quot;/Users/stephan/projects/ios/gospellibrary/GospelLibrary.xcworkspace&quot;"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -75,16 +75,16 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-scheme &quot;LDSMediaLibrary&quot;"
+            argument = "-scheme &quot;GospelLibrary&quot;"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-target &quot;LDSMediaLibraryUITests&quot;"
+            argument = "-target &quot;GospelLibraryIntegrationTests&quot;"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-target &quot;LDSMediaLibraryTests&quot;"
-            isEnabled = "YES">
+            argument = "-target &quot;GospelLibraryUITests&quot;"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-project &quot;/Users/stephan/projects/ios/TestRunner/MyTestProject/MyTestProject.xcodeproj&quot;"
