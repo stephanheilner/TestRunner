@@ -14,14 +14,24 @@ class BuildTests {
     fileprivate static let PlistValueName = "TestRunnerListTests"
     
     func build(listTests: Bool) throws {
-        
         let actions: [String]
         if listTests {
             actions = ["test-without-building"]
-            addPlistEntry(name: BuildTests.PlistValueName, value: "\(AppArgs.shared.logsDir)/tests.json")
+            if let regex = try? NSRegularExpression(pattern: ".*\\.app$", options: []) {
+                _ = try? FileManager.default.contentsOfDirectory(atPath: AppArgs.shared.derivedDataPath).forEach { fileName in
+                    guard regex.numberOfMatches(in: fileName, options: [], range: NSRange(location: 0, length: fileName.length)) > 0 else { return }
+
+                    self.addEntries(toPlist: "\(AppArgs.shared.derivedDataPath)/\(fileName)", value: "\(AppArgs.shared.logsDir)/tests.json")
+                }
+            }
         } else {
-            deleteFilesInDirectory(AppArgs.shared.derivedDataPath)
-            deleteFilesInDirectory(AppArgs.shared.logsDir)
+            do {
+                try FileManager.default.removeItem(atPath: AppArgs.shared.derivedDataPath)
+                try FileManager.default.removeItem(atPath: AppArgs.shared.logsDir)
+            } catch {
+                print("Couldn't remove working directories")
+            }
+
             actions = ["clean", "build-for-testing"]
         }
         
@@ -38,44 +48,36 @@ class BuildTests {
             return
         }
 
-        if listTests {
-            deletePlistEntry(name: BuildTests.PlistValueName)
+        if listTests, let regex = try? NSRegularExpression(pattern: ".*\\.app$", options: []) {
+            _ = try? FileManager.default.contentsOfDirectory(atPath: AppArgs.shared.derivedDataPath).forEach { fileName in
+                guard regex.numberOfMatches(in: fileName, options: [], range: NSRange(location: 0, length: fileName.length)) > 0 else { return }
+
+                self.deleteEntries(fromPlist: "\(AppArgs.shared.derivedDataPath)/\(fileName)")
+            }
         }
     }
     
-    func deleteFilesInDirectory(_ path: String) {
-        let task = Process()
-        task.launchPath = "/bin/rm"
-        task.arguments = ["-rf", path]
-        task.standardError = Pipe()
-        task.standardOutput = Pipe()
+    func addEntries(toPlist path: String, value: String) {
+        let arguments = ["/usr/libexec/PlistBuddy", path, "-c", "\"Add :\(BuildTests.PlistValueName) string \(value)\""]
+        let task = self.task(withLaunchPath: "/bin/sh", andArguments: ["-c", arguments.joined(separator: " ")])
         task.launch()
         task.waitUntilExit()
     }
     
-    func addPlistEntry(name: String, value: String) {
-        let task = Process()
-        task.launchPath = "/bin/sh"
-        let infoPlist = String(format: "%@/%@.app/Info.plist", AppArgs.shared.derivedDataPath, AppArgs.shared.scheme)
-        let arguments = ["/usr/libexec/PlistBuddy", infoPlist, "-c", "\"Add :\(name) string \(value)\""]
-        task.arguments = ["-c", arguments.joined(separator: " ")]
-        task.standardError = Pipe()
-        task.standardOutput = Pipe()
+    func deleteEntries(fromPlist path: String) {
+        let arguments = ["/usr/libexec/PlistBuddy", path, "-c", "\"Delete :\(BuildTests.PlistValueName)\""]
+        let task = self.task(withLaunchPath: "/bin/sh", andArguments: ["-c", arguments.joined(separator: " ")])
         task.launch()
         task.waitUntilExit()
     }
-    
-    func deletePlistEntry(name: String) {
+
+    private func task(withLaunchPath launchPath: String, andArguments arguments: [String]? = nil) -> Process {
         let task = Process()
-        task.launchPath = "/bin/sh"
-        
-        let infoPlist = String(format: "%@/%@.app/Info.plist", AppArgs.shared.derivedDataPath, AppArgs.shared.scheme)
-        let arguments = ["/usr/libexec/PlistBuddy", infoPlist, "-c", "\"Delete :\(name)\""]
-        task.arguments = ["-c", arguments.joined(separator: " ")]
+        task.launchPath = launchPath
+        task.arguments = arguments
         task.standardError = Pipe()
         task.standardOutput = Pipe()
-        task.launch()
-        task.waitUntilExit()
+        return task
     }
     
 }

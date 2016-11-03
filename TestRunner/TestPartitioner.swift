@@ -21,6 +21,7 @@ class TestPartitioner {
             if let data = try? Data(contentsOf: URL(fileURLWithPath: AppArgs.shared.logsDir + "/tests.json")) {
                 if let targetTests = try JSONSerialization.jsonObject(with: data, options: []) as? [String: [String]], let target = AppArgs.shared.target {
                     tests = targetTests[target]
+
                 }
             }
         } catch {

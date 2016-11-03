@@ -78,7 +78,7 @@ class TestRunnerOperation: Operation {
     
     override func start() {
         super.start()
-        
+
         isExecuting = true
         self.status = .running
 
@@ -146,7 +146,9 @@ class TestRunnerOperation: Operation {
             
             if let match = TestRunnerOperation.TestSuiteStartedRegex.matches(in: log, options: [], range: range).first {
                 let nameRange = match.rangeAt(1)
-                let testSuiteName = nameRange.range(from: log)
+                guard let testSuiteRange = nameRange.range(from: log) else { return tests }
+
+                let testSuiteName = log.substring(with: testSuiteRange)
                 
                 for testCase in failedTests {
                     var testName: String?
