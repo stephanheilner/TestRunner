@@ -8,31 +8,31 @@
 
 import Foundation
 
-class WaitOperation: NSOperation {
+class WaitOperation: Operation {
 
-    override var executing: Bool {
+    override var isExecuting: Bool {
         get {
             return _executing
         }
         set {
-            willChangeValueForKey("isExecuting")
+            willChangeValue(forKey: "isExecuting")
             _executing = newValue
-            didChangeValueForKey("isExecuting")
+            didChangeValue(forKey: "isExecuting")
         }
     }
-    private var _executing: Bool
+    fileprivate var _executing: Bool
     
-    override var finished: Bool {
+    override var isFinished: Bool {
         get {
             return _finished
         }
         set {
-            willChangeValueForKey("isFinished")
+            willChangeValue(forKey: "isFinished")
             _finished = newValue
-            didChangeValueForKey("isFinished")
+            didChangeValue(forKey: "isFinished")
         }
     }
-    private var _finished: Bool
+    fileprivate var _finished: Bool
     
     override init() {
         _executing = true

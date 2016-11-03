@@ -16,30 +16,30 @@
 
 import Foundation
 
-enum FailureError: ErrorType {
-    case Failed(log: String)
+enum FailureError: Error {
+    case failed(log: String)
 }
 
-let dateFormatter: NSDateFormatter = {
-    let dateFormatter = NSDateFormatter()
+let dateFormatter: DateFormatter = {
+    let dateFormatter = DateFormatter()
     dateFormatter.dateFormat = "M/d/yy h:mm:s a"
     return dateFormatter
 }()
 
-let logQueue: NSOperationQueue = {
-    let queue = NSOperationQueue()
+let logQueue: OperationQueue = {
+    let queue = OperationQueue()
     queue.maxConcurrentOperationCount = 1
     return queue
 }()
 
 var lastSimulatorName = ""
 
-func TRLog(logData: NSData, simulatorName: String? = nil) {
-    logQueue.addOperation(NSBlockOperation() {
-        guard let log = String(data: logData, encoding: NSUTF8StringEncoding) where !log.isEmpty else { return }
+func TRLog(_ logData: Data, simulatorName: String? = nil) {
+    logQueue.addOperation(BlockOperation() {
+        guard let log = String(data: logData, encoding: String.Encoding.utf8), !log.isEmpty else { return }
         
-        if let simulatorName = simulatorName where simulatorName != lastSimulatorName {
-            print("\n", dateFormatter.stringFromDate(NSDate()), "-----------", simulatorName, "-----------\n", log, terminator: "")
+        if let simulatorName = simulatorName, simulatorName != lastSimulatorName {
+            print("\n", dateFormatter.string(from: Date()), "-----------", simulatorName, "-----------\n", log, terminator: "")
             lastSimulatorName = simulatorName
         } else {
             print(log, terminator: "")
@@ -47,9 +47,9 @@ func TRLog(logData: NSData, simulatorName: String? = nil) {
     })
 }
 
-public class TestRunner: NSObject {
+open class TestRunner: NSObject {
     
-    public static func start() {
+    open static func start() {
         // Don't buffer output
         setbuf(__stdoutp, nil)
         
@@ -69,7 +69,7 @@ public class TestRunner: NSObject {
                 try BuildTests.sharedInstance.build(listTests: true)
             } catch let failureError as FailureError {
                 switch failureError {
-                case let .Failed(log: log):
+                case let .failed(log: log):
                     NSLog("Build-Tests Failed: %@", log)
                 }
                 return false
@@ -82,7 +82,7 @@ public class TestRunner: NSObject {
         if AppArgs.shared.runTests {
             DeviceController.sharedController.killAndDeleteTestDevices()
             
-            guard let devices = DeviceController.sharedController.resetAndCreateDevices() where !devices.isEmpty else {
+            guard let devices = DeviceController.sharedController.resetAndCreateDevices(), !devices.isEmpty else {
                 NSLog("No Devices available")
                 return false
             }
@@ -93,7 +93,7 @@ public class TestRunner: NSObject {
                 }
             }
             
-            guard let testsByPartition = TestPartitioner.sharedInstance.loadTestsByPartition() where !testsByPartition.isEmpty else {
+            guard let testsByPartition = TestPartitioner.sharedInstance.loadTestsByPartition(), !testsByPartition.isEmpty else {
                 NSLog("Unable to load list of tests")
                 return false
             }
@@ -102,7 +102,7 @@ public class TestRunner: NSObject {
             let testsByDevice = testsByPartition[partition]
             
             for (deviceFamily, deviceInfos) in devices {
-                for (index, deviceInfo) in deviceInfos.enumerate() {
+                for (index, deviceInfo) in deviceInfos.enumerated() {
                     guard let tests = testsByDevice[index] else { continue }
                     
                     let operation = createOperation(deviceFamily, simulatorName: deviceInfo.simulatorName, deviceID: deviceInfo.deviceID, tests: tests)
@@ -120,22 +120,22 @@ public class TestRunner: NSObject {
             Summary.outputSummary(false)
         }
         
-        return simulatorPassStatus.values.reduce(true, combine: { passedSoFar, passed in
+        return simulatorPassStatus.values.reduce(true, { passedSoFar, passed in
             return passedSoFar && passed
         })
     }
     
-    func createOperation(deviceFamily: String, simulatorName: String, deviceID: String, tests: [String], retryCount: Int = 0, launchRetryCount: Int = 0) -> TestRunnerOperation {
+    func createOperation(_ deviceFamily: String, simulatorName: String, deviceID: String, tests: [String], retryCount: Int = 0, launchRetryCount: Int = 0) -> TestRunnerOperation {
         let operation = TestRunnerOperation(deviceFamily: deviceFamily, simulatorName: simulatorName, deviceID: deviceID, tests: tests, retryCount: retryCount, launchRetryCount: launchRetryCount)
         operation.completion = { status, simulatorName, failedTests, deviceID, retryCount, launchRetryCount in
             switch status {
-            case .Success:
+            case .success:
                 NSLog("Tests PASSED on %@\n", simulatorName)
                 DeviceController.sharedController.deleteDeviceWithID(deviceID)
                 
                 self.simulatorPassStatus[simulatorName] = true
                 
-            case .Failed, .TestTimeout:
+            case .failed, .testTimeout:
                 let retryCount = retryCount + 1
                 NSLog("\n\nTests FAILED (Attempt %d of %d) on %@\n", retryCount, AppArgs.shared.retryCount, simulatorName)
                 
@@ -152,7 +152,7 @@ public class TestRunner: NSObject {
                     // Failed, kill all items in queue
                     self.testRunnerQueue.cancelAllOperations()
                 }
-            case .Running, .Stopped:
+            case .running, .stopped:
                 break
             }
         }

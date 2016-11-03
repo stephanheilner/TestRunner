@@ -8,19 +8,19 @@
 
 import Foundation
 
-class TestRunnerOperationQueue: NSOperationQueue {
+class TestRunnerOperationQueue: OperationQueue {
 
     static let SimulatorLoadedNotification = "SimulatorLoadedNotification"
     
-    var waitOperations = [NSOperation]()
+    var waitOperations = [Operation]()
     
     override init() {
         super.init()
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(TestRunnerOperationQueue.simulatorLoaded), name: TestRunnerOperationQueue.SimulatorLoadedNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(TestRunnerOperationQueue.simulatorLoaded), name: NSNotification.Name(rawValue: TestRunnerOperationQueue.SimulatorLoadedNotification), object: nil)
     }
     
-    override func addOperation(operation: NSOperation) {
+    override func addOperation(_ operation: Operation) {
         // Causing it to hang, when just one build is added it has a wait operation but it
         if isWaitingToLoad() {
             let waitOperation = WaitOperation()
@@ -30,18 +30,18 @@ class TestRunnerOperationQueue: NSOperationQueue {
         super.addOperation(operation)
     }
     
-    private func isWaitingToLoad() -> Bool {
+    fileprivate func isWaitingToLoad() -> Bool {
         for case let operation as TestRunnerOperation in operations where !operation.simulatorLaunched {
             return true
         }
         return false
     }
     
-    func simulatorLoaded(notification: NSNotification) {
+    func simulatorLoaded(_ notification: Notification) {
         guard let waitOperation = waitOperations.shift() as? WaitOperation else { return }
         
-        waitOperation.executing = false
-        waitOperation.finished = true
+        waitOperation.isExecuting = false
+        waitOperation.isFinished = true
     }
     
 }

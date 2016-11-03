@@ -11,20 +11,20 @@ import Cocoa
 
 protocol XcodebuildTaskDelegate {
 
-    func outputDataReceived(task: XcodebuildTask, data: NSData)
+    func outputDataReceived(_ task: XcodebuildTask, data: Data)
     
 }
 
 class XcodebuildTask {
     
-    private let task: NSTask
+    fileprivate let task: Process
     
     let standardOutputData = NSMutableData()
     let standardErrorData = NSMutableData()
     var delegate: XcodebuildTaskDelegate?
     var logFilePath: String?
     
-    var terminationHandler: (NSTask -> Void)? {
+    var terminationHandler: ((Process) -> Void)? {
         set {
             task.terminationHandler = newValue
         }
@@ -41,44 +41,44 @@ class XcodebuildTask {
     
     var isRunning: Bool {
         get {
-            return task.running
+            return task.isRunning
         }
     }
 
-    var terminationReason: NSTaskTerminationReason {
+    var terminationReason: Process.TerminationReason {
         get {
             return task.terminationReason
         }
     }
     
-    lazy var standardErrorPipe: NSPipe = {
-        let pipe = NSPipe()
+    lazy var standardErrorPipe: Pipe = {
+        let pipe = Pipe()
         pipe.fileHandleForReading.readabilityHandler = { handle in
-            self.standardErrorData.appendData(handle.availableData)
+            self.standardErrorData.append(handle.availableData)
         }
         return pipe
     }()
     
-    lazy var standardOutputPipe: NSPipe = {
-        let pipe = NSPipe()
+    lazy var standardOutputPipe: Pipe = {
+        let pipe = Pipe()
         pipe.fileHandleForReading.readabilityHandler = { handle in
             let data = handle.availableData
-            self.standardOutputData.appendData(data)
+            self.standardOutputData.append(data)
             self.delegate?.outputDataReceived(self, data: data)
         }
         return pipe
     }()
     var running: Bool {
-        return task.running
+        return task.isRunning
     }
     
     init(actions: [String], deviceID: String? = nil, tests: [String]? = nil, logFilePath: String? = nil) {
-        task = NSTask()
+        task = Process()
         task.launchPath = "/bin/sh"
         task.currentDirectoryPath = AppArgs.shared.currentDirectory
-        task.environment = NSProcessInfo.processInfo().environment
+        task.environment = ProcessInfo.processInfo.environment
         
-        var arguments = ["xcodebuild"] + actions
+        var arguments = ["LC_ALL='en_US.UTF-8'", "xcodebuild"] + actions
         
         if let project = AppArgs.shared.projectPath {
             arguments += ["-project", project]
@@ -106,7 +106,7 @@ class XcodebuildTask {
             output = ["|", "/usr/local/bin/xcpretty"]
         }
 
-        let shellCommand = (arguments + output).joinWithSeparator(" ")
+        let shellCommand = (arguments + output).joined(separator: " ")
         print("\n\n\(shellCommand)\n\n")
         
         task.arguments = ["-c", shellCommand]

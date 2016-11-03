@@ -9,57 +9,57 @@
 import Foundation
 
 enum TestRunnerStatus: Int {
-    case Stopped
-    case Running
-    case TestTimeout
-    case Success
-    case Failed
+    case stopped
+    case running
+    case testTimeout
+    case success
+    case failed
 }
 
-class TestRunnerOperation: NSOperation {
+class TestRunnerOperation: Operation {
     
-    private static let TestCaseStartedRegex = try! NSRegularExpression(pattern: "Test Case '(.*)' started.", options: [])
-    private static let TestCasePassedRegex = try! NSRegularExpression(pattern: "Test Case '(.*)' passed (.*)", options: [])
-    private static let TestSuiteStartedRegex = try! NSRegularExpression(pattern: "Test Suite '(.*).xctest' started", options: [])
+    fileprivate static let TestCaseStartedRegex = try! NSRegularExpression(pattern: "Test Case '(.*)' started.", options: [])
+    fileprivate static let TestCasePassedRegex = try! NSRegularExpression(pattern: "Test Case '(.*)' passed (.*)", options: [])
+    fileprivate static let TestSuiteStartedRegex = try! NSRegularExpression(pattern: "Test Suite '(.*).xctest' started", options: [])
     
-    private let deviceFamily: String
-    private let deviceID: String
-    private let tests: [String]
+    fileprivate let deviceFamily: String
+    fileprivate let deviceID: String
+    fileprivate let tests: [String]
     
-    override var executing: Bool {
+    override var isExecuting: Bool {
         get {
             return _executing
         }
         set {
-            willChangeValueForKey("isExecuting")
+            willChangeValue(forKey: "isExecuting")
             _executing = newValue
-            didChangeValueForKey("isExecuting")
+            didChangeValue(forKey: "isExecuting")
         }
     }
-    private var _executing: Bool
+    fileprivate var _executing: Bool
     
-    override var finished: Bool {
+    override var isFinished: Bool {
         get {
             return _finished
         }
         set {
-            willChangeValueForKey("isFinished")
+            willChangeValue(forKey: "isFinished")
             _finished = newValue
-            didChangeValueForKey("isFinished")
+            didChangeValue(forKey: "isFinished")
         }
     }
-    private var _finished: Bool
+    fileprivate var _finished: Bool
     
-    private let simulatorName: String
-    private let retryCount: Int
-    private let launchRetryCount: Int
-    private let logFilePath: String
-    private var status: TestRunnerStatus = .Stopped
-    private var lastCheck = NSDate().timeIntervalSince1970
-    private var timeoutCounter = 0
+    fileprivate let simulatorName: String
+    fileprivate let retryCount: Int
+    fileprivate let launchRetryCount: Int
+    fileprivate let logFilePath: String
+    fileprivate var status: TestRunnerStatus = .stopped
+    fileprivate var lastCheck = Date().timeIntervalSince1970
+    fileprivate var timeoutCounter = 0
     
     var simulatorLaunched = false
-    var completion: ((status: TestRunnerStatus, simulatorName: String, failedTests: [String], deviceID: String, retryCount: Int, launchRetryCount: Int) -> Void)?
+    var completion: ((_ status: TestRunnerStatus, _ simulatorName: String, _ failedTests: [String], _ deviceID: String, _ retryCount: Int, _ launchRetryCount: Int) -> Void)?
     
     init(deviceFamily: String, simulatorName: String, deviceID: String, tests: [String], retryCount: Int, launchRetryCount: Int) {
         self.deviceFamily = deviceFamily
@@ -79,11 +79,11 @@ class TestRunnerOperation: NSOperation {
     override func start() {
         super.start()
         
-        executing = true
-        self.status = .Running
+        isExecuting = true
+        self.status = .running
 
-        let logMessage = String(format: "Running the following tests:\n\t%@\n\n", tests.joinWithSeparator("\n\t"))
-        if let logData = logMessage.dataUsingEncoding(NSUTF8StringEncoding) {
+        let logMessage = String(format: "Running the following tests:\n\t%@\n\n", tests.joined(separator: "\n\t"))
+        if let logData = logMessage.data(using: String.Encoding.utf8) {
             TRLog(logData, simulatorName: simulatorName)
         }
         
@@ -93,24 +93,24 @@ class TestRunnerOperation: NSOperation {
         task.launch()
         task.waitUntilExit()
         
-        let status: TestRunnerStatus = task.terminationStatus == 0 ? .Success : .Failed
+        let status: TestRunnerStatus = task.terminationStatus == 0 ? .success : .failed
 
         finishOperation(status: status)
     }
     
-    func finishOperation(status status: TestRunnerStatus) {
+    func finishOperation(status: TestRunnerStatus) {
         simulatorDidLaunch()
         
         var status = status
         
         let failedTests = getFailedTests()
         if !failedTests.isEmpty {
-            status = .Failed
+            status = .failed
         }
-        completion?(status: status, simulatorName: simulatorName, failedTests: failedTests, deviceID: deviceID, retryCount: retryCount, launchRetryCount: launchRetryCount)
+        completion?(status, simulatorName, failedTests, deviceID, retryCount, launchRetryCount)
         
-        executing = false
-        finished = true
+        isExecuting = false
+        isFinished = true
     }
     
     func simulatorDidLaunch() {
@@ -118,51 +118,50 @@ class TestRunnerOperation: NSOperation {
         
         simulatorLaunched = true
         
-        NSNotificationCenter.defaultCenter().postNotificationName(TestRunnerOperationQueue.SimulatorLoadedNotification, object: nil)
+        NotificationCenter.default.post(name: Notification.Name(rawValue: TestRunnerOperationQueue.SimulatorLoadedNotification), object: nil)
     }
     
     func getFailedTests() -> [String] {
         var tests = [String]()
 
         do {
-            let log = try String(contentsOfFile: logFilePath, encoding: NSUTF8StringEncoding)
+            let log = try String(contentsOfFile: logFilePath, encoding: String.Encoding.utf8)
             let range = NSRange(location: 0, length: log.length)
             
             var failedTests = Set<String>()
             
-            for match in TestRunnerOperation.TestCaseStartedRegex.matchesInString(log, options: [], range: range) {
-                let nameRange = match.rangeAtIndex(1)
-                let startIndex = log.startIndex.advancedBy(nameRange.location)
-                let testCase = log.substringWithRange(startIndex..<startIndex.advancedBy(nameRange.length))
+            for match in TestRunnerOperation.TestCaseStartedRegex.matches(in: log, options: [], range: range) {
+                let nameRange = match.rangeAt(1)
+                guard let range = nameRange.range(from: log) else { continue }
+                let testCase = log.substring(with: range)
                 failedTests.insert(testCase)
             }
             
-            for match in TestRunnerOperation.TestCasePassedRegex.matchesInString(log, options: [], range: range) {
-                let nameRange = match.rangeAtIndex(1)
-                let startIndex = log.startIndex.advancedBy(nameRange.location)
-                let testCase = log.substringWithRange(startIndex..<startIndex.advancedBy(nameRange.length))
+            for match in TestRunnerOperation.TestCasePassedRegex.matches(in: log, options: [], range: range) {
+                let nameRange = match.rangeAt(1)
+                guard let range = nameRange.range(from: log) else { continue }
+                let testCase = log.substring(with: range)
                 failedTests.remove(testCase)
             }
             
-            if let match = TestRunnerOperation.TestSuiteStartedRegex.matchesInString(log, options: [], range: range).first {
-                let nameRange = match.rangeAtIndex(1)
-                let startIndex = log.startIndex.advancedBy(nameRange.location)
-                let testSuiteName = log.substringWithRange(startIndex..<startIndex.advancedBy(nameRange.length))
+            if let match = TestRunnerOperation.TestSuiteStartedRegex.matches(in: log, options: [], range: range).first {
+                let nameRange = match.rangeAt(1)
+                let testSuiteName = nameRange.range(from: log)
                 
                 for testCase in failedTests {
                     var testName: String?
                     var testClass: String?
                     
-                    if let testNameRange = testCase.rangeOfString(" ", options: .BackwardsSearch, range: nil, locale: nil) {
-                        testName = testCase.substringWithRange(testNameRange.endIndex..<testCase.endIndex.advancedBy(-1))
-                        testClass = testCase.substringWithRange(testCase.startIndex.advancedBy(2)..<testNameRange.startIndex)
+                    if let testNameRange = testCase.range(of: " ", options: .backwards, range: nil, locale: nil) {
+                        testName = testCase.substring(with: testNameRange.upperBound..<testCase.characters.index(testCase.endIndex, offsetBy: -1))
+                        testClass = testCase.substring(with: testCase.characters.index(testCase.startIndex, offsetBy: 2)..<testNameRange.lowerBound)
                     }
                     
-                    if let testTargetRange = testClass?.rangeOfString(".", options: .LiteralSearch, range: nil, locale: nil) {
-                        testClass = testClass?.substringFromIndex(testTargetRange.endIndex)
+                    if let testTargetRange = testClass?.range(of: ".", options: .literal, range: nil, locale: nil) {
+                        testClass = testClass?.substring(from: testTargetRange.upperBound)
                     }
                     
-                    if let testName = testName, testClass = testClass {
+                    if let testName = testName, let testClass = testClass {
                         tests.append("\(testSuiteName)/\(testClass)/\(testName)")
                     }
                 }
@@ -172,17 +171,17 @@ class TestRunnerOperation: NSOperation {
         return tests
     }
 
-    func notifyIfLaunched(data: NSData) {
+    func notifyIfLaunched(_ data: Data) {
         guard !simulatorLaunched else { return }
         
-        let now = NSDate().timeIntervalSince1970
+        let now = Date().timeIntervalSince1970
         guard (lastCheck + 2) < now else { return }
         lastCheck = now
         
-        dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+        DispatchQueue.global(qos: .background).async {
             do {
-                let log = try String(contentsOfFile: self.logFilePath, encoding: NSUTF8StringEncoding)
-                if TestRunnerOperation.TestSuiteStartedRegex.numberOfMatchesInString(log, options: [], range: NSRange(location: 0, length: log.length)) > 0 {
+                let log = try String(contentsOfFile: self.logFilePath, encoding: String.Encoding.utf8)
+                if TestRunnerOperation.TestSuiteStartedRegex.numberOfMatches(in: log, options: [], range: NSRange(location: 0, length: log.length)) > 0 {
                     self.simulatorDidLaunch()
                 }
             } catch {}
@@ -193,23 +192,36 @@ class TestRunnerOperation: NSOperation {
 
 extension TestRunnerOperation: XcodebuildTaskDelegate {
 
-    func outputDataReceived(task: XcodebuildTask, data: NSData) {
-        guard data.length > 0 else { return }
+    func outputDataReceived(_ task: XcodebuildTask, data: Data) {
+        guard data.count > 0 else { return }
 
         TRLog(data, simulatorName: simulatorName)
 
         let counter = timeoutCounter
         
-        let timeoutTime = dispatch_time(DISPATCH_TIME_NOW, Int64(AppArgs.shared.timeout * Double(NSEC_PER_SEC)))
-        dispatch_after(timeoutTime, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)) {
+        let timeoutTime = DispatchTime.now() + Double(Int64(AppArgs.shared.timeout * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
+        DispatchQueue.global(qos: .background).asyncAfter(deadline: timeoutTime) {
             guard counter < self.timeoutCounter else {
-                self.finishOperation(status: .TestTimeout)
+                self.finishOperation(status: .testTimeout)
                 return
             }
         }
         timeoutCounter += 1
         
         notifyIfLaunched(data)
+    }
+    
+}
+
+extension NSRange {
+    
+    func range(from string: String) -> Range<String.Index>? {
+        guard let from16 = string.utf16.index(string.utf16.startIndex, offsetBy: location, limitedBy: string.utf16.endIndex),
+            let to16 = string.utf16.index(from16, offsetBy: length, limitedBy: string.utf16.endIndex),
+            let from = String.Index(from16, within: string),
+            let to = String.Index(to16, within: string) else { return nil }
+        
+        return from ..< to
     }
     
 }

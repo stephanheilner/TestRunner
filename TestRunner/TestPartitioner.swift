@@ -13,26 +13,25 @@ class TestPartitioner {
     
     static let sharedInstance = TestPartitioner()
     
-    func loadTestsByPartition(retries: Int = 5) -> [[Int: [String]]]? {
+    func loadTestsByPartition(_ retries: Int = 5) -> [[Int: [String]]]? {
         guard retries > 0 else { return nil }
         
         var tests: [String]?
         do {
-            if let data = NSData(contentsOfFile: AppArgs.shared.logsDir + "/tests.json") {
-                let targetTests = try NSJSONSerialization.JSONObjectWithData(data, options: [])
-                if let target = AppArgs.shared.target {
-                    tests = targetTests[target] as? [String]
+            if let data = try? Data(contentsOf: URL(fileURLWithPath: AppArgs.shared.logsDir + "/tests.json")) {
+                if let targetTests = try JSONSerialization.jsonObject(with: data, options: []) as? [String: [String]], let target = AppArgs.shared.target {
+                    tests = targetTests[target]
                 }
             }
         } catch {
             print(error)
         }
         
-        guard let allTests = tests where !allTests.isEmpty else {
+        guard let allTests = tests, !allTests.isEmpty else {
             return loadTestsByPartition(retries - 1)
         }
         
-        let partitionsCount = AppArgs.shared.partitionsCount ?? 1
+        let partitionsCount = AppArgs.shared.partitionsCount
         let numTestsPerPartition = Float(allTests.count) / Float(partitionsCount)
         
         var start = 0
@@ -48,10 +47,10 @@ class TestPartitioner {
             partitionTests.append(Array(tests))
         }
         
-        let simulatorsCount = AppArgs.shared.simulatorsCount ?? 1
+        let simulatorsCount = AppArgs.shared.simulatorsCount
         
         var testsByPartition = [[Int: [String]]]()
-        for (_, tests) in partitionTests.enumerate() {
+        for (_, tests) in partitionTests.enumerated() {
             let numTestsPerSimulator = Float(tests.count) / Float(simulatorsCount)
             var testsBySimulator = [Int: [String]]()
             

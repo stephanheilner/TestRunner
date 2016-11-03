@@ -64,11 +64,11 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-workspace &quot;/Users/stephan/projects/ios/gospellibrary/GospelLibrary.xcworkspace&quot;"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-workspace &quot;/Users/stephan/projects/ios/LDSMusic-iOS/LDSMusic.xcworkspace&quot;"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-launch-timeout 30"
@@ -76,11 +76,11 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-scheme &quot;GospelLibrary&quot;"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-target &quot;GospelLibraryIntegrationTests&quot;"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-target &quot;GospelLibraryUITests&quot;"
@@ -96,7 +96,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-scheme &quot;LDSMusic&quot;"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-target &quot;MyTestProjectUnitTests2&quot;"
@@ -104,7 +104,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-target &quot;UITests&quot;"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-build-tests false"

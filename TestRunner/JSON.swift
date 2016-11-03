@@ -10,20 +10,20 @@ import Foundation
 
 class JSON {
     
-    class func jsonObjectFromStandardOutputData(data: NSData) -> [[String: AnyObject]]? {
-        if let jsonString = String(data: data, encoding: NSUTF8StringEncoding) {
+    class func jsonObjectFromStandardOutputData(_ data: Data) -> [[String: AnyObject]]? {
+        if let jsonString = String(data: data, encoding: String.Encoding.utf8) {
             return jsonObjectFromJSONString(jsonString)
         }
         return nil
     }
     
-    class func hasBeginTestSuiteEvent(path: String) -> Bool {
+    class func hasBeginTestSuiteEvent(_ path: String) -> Bool {
         do {
-            let jsonFileContents = try String(contentsOfFile: path, encoding: NSUTF8StringEncoding)
-            let jsonStrings = jsonFileContents.componentsSeparatedByCharactersInSet(.newlineCharacterSet())
+            let jsonFileContents = try String(contentsOfFile: path, encoding: String.Encoding.utf8)
+            let jsonStrings = jsonFileContents.components(separatedBy: .newlines)
             for jsonString in jsonStrings {
-                if let jsonData = jsonString.dataUsingEncoding(NSUTF8StringEncoding), jsonObject = try NSJSONSerialization.JSONObjectWithData(jsonData, options: []) as? [String: AnyObject] {
-                    guard let event = jsonObject["event"] as? String where event == "begin-test-suite" else { continue }
+                if let jsonData = jsonString.data(using: String.Encoding.utf8), let jsonObject = try JSONSerialization.jsonObject(with: jsonData, options: []) as? [String: AnyObject] {
+                    guard let event = jsonObject["event"] as? String, event == "begin-test-suite" else { continue }
                     return true
                 }
             }
@@ -31,9 +31,9 @@ class JSON {
         return false
     }
     
-    class func jsonObjectsFromJSONStreamFile(path: String) -> [[String: AnyObject]]? {
+    class func jsonObjectsFromJSONStreamFile(_ path: String) -> [[String: AnyObject]]? {
         do {
-            let jsonString = try String(contentsOfFile: path, encoding: NSUTF8StringEncoding)
+            let jsonString = try String(contentsOfFile: path, encoding: String.Encoding.utf8)
             return jsonObjectFromJSONString(jsonString)
         } catch let error as NSError {
             NSLog("Unable to create jsonObject from jsonStream: %@", error)
@@ -41,14 +41,14 @@ class JSON {
         return nil
     }
 
-    private class func jsonObjectFromJSONString(jsonString: String) -> [[String: AnyObject]]? {
+    fileprivate class func jsonObjectFromJSONString(_ jsonString: String) -> [[String: AnyObject]]? {
         var jsonString = jsonString
         do {
-            jsonString.insert("[", atIndex: jsonString.startIndex)
+            jsonString.insert("[", at: jsonString.startIndex)
             jsonString += "]"
-            jsonString = jsonString.stringByReplacingOccurrencesOfString("}\n{", withString: "},{")
-            if let data = jsonString.dataUsingEncoding(NSUTF8StringEncoding) {
-                return try NSJSONSerialization.JSONObjectWithData(data, options: []) as? [[String: AnyObject]]
+            jsonString = jsonString.replacingOccurrences(of: "}\n{", with: "},{")
+            if let data = jsonString.data(using: String.Encoding.utf8) {
+                return try JSONSerialization.jsonObject(with: data, options: []) as? [[String: AnyObject]]
             }
         } catch let error as NSError {
             NSLog("Unable to create jsonObject from jsonStream: %@", error)

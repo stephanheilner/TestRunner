@@ -11,9 +11,9 @@ import Cocoa
 class BuildTests {
     
     static let sharedInstance = BuildTests()
-    private static let PlistValueName = "TestRunnerListTests"
+    fileprivate static let PlistValueName = "TestRunnerListTests"
     
-    func build(listTests listTests: Bool) throws {
+    func build(listTests: Bool) throws {
         
         let actions: [String]
         if listTests {
@@ -32,8 +32,8 @@ class BuildTests {
         task.waitUntilExit()
         
         guard task.terminationStatus == 0 else {
-            if let log = String(data: task.standardErrorData, encoding: NSUTF8StringEncoding) where !log.isEmpty {
-                throw FailureError.Failed(log: log)
+            if let log = String(data: task.standardErrorData as Data, encoding: String.Encoding.utf8), !log.isEmpty {
+                throw FailureError.failed(log: log)
             }
             return
         }
@@ -43,37 +43,37 @@ class BuildTests {
         }
     }
     
-    func deleteFilesInDirectory(path: String) {
-        let task = NSTask()
+    func deleteFilesInDirectory(_ path: String) {
+        let task = Process()
         task.launchPath = "/bin/rm"
         task.arguments = ["-rf", path]
-        task.standardError = NSPipe()
-        task.standardOutput = NSPipe()
+        task.standardError = Pipe()
+        task.standardOutput = Pipe()
         task.launch()
         task.waitUntilExit()
     }
     
-    func addPlistEntry(name name: String, value: String) {
-        let task = NSTask()
+    func addPlistEntry(name: String, value: String) {
+        let task = Process()
         task.launchPath = "/bin/sh"
         let infoPlist = String(format: "%@/%@.app/Info.plist", AppArgs.shared.derivedDataPath, AppArgs.shared.scheme)
         let arguments = ["/usr/libexec/PlistBuddy", infoPlist, "-c", "\"Add :\(name) string \(value)\""]
-        task.arguments = ["-c", arguments.joinWithSeparator(" ")]
-        task.standardError = NSPipe()
-        task.standardOutput = NSPipe()
+        task.arguments = ["-c", arguments.joined(separator: " ")]
+        task.standardError = Pipe()
+        task.standardOutput = Pipe()
         task.launch()
         task.waitUntilExit()
     }
     
-    func deletePlistEntry(name name: String) {
-        let task = NSTask()
+    func deletePlistEntry(name: String) {
+        let task = Process()
         task.launchPath = "/bin/sh"
         
         let infoPlist = String(format: "%@/%@.app/Info.plist", AppArgs.shared.derivedDataPath, AppArgs.shared.scheme)
         let arguments = ["/usr/libexec/PlistBuddy", infoPlist, "-c", "\"Delete :\(name)\""]
-        task.arguments = ["-c", arguments.joinWithSeparator(" ")]
-        task.standardError = NSPipe()
-        task.standardOutput = NSPipe()
+        task.arguments = ["-c", arguments.joined(separator: " ")]
+        task.standardError = Pipe()
+        task.standardOutput = Pipe()
         task.launch()
         task.waitUntilExit()
     }
@@ -82,7 +82,7 @@ class BuildTests {
 
 extension BuildTests: XcodebuildTaskDelegate {
     
-    func outputDataReceived(task: XcodebuildTask, data: NSData) {
+    func outputDataReceived(_ task: XcodebuildTask, data: Data) {
         TRLog(data)
     }
     

@@ -7,16 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		D47A6F3D1D8B433E00250724 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47A6F311D8B433E00250724 /* Array.swift */; };
-		D47A6F3E1D8B433E00250724 /* CaseCountable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47A6F321D8B433E00250724 /* CaseCountable.swift */; };
-		D47A6F3F1D8B433E00250724 /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47A6F331D8B433E00250724 /* Dictionary.swift */; };
-		D47A6F401D8B433E00250724 /* Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47A6F351D8B433E00250724 /* Int.swift */; };
-		D47A6F411D8B433E00250724 /* Memoize.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47A6F361D8B433E00250724 /* Memoize.swift */; };
-		D47A6F421D8B433E00250724 /* NSAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47A6F371D8B433E00250724 /* NSAttributedString.swift */; };
-		D47A6F431D8B433E00250724 /* NSDate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47A6F381D8B433E00250724 /* NSDate.swift */; };
-		D47A6F441D8B433E00250724 /* ObserverSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47A6F391D8B433E00250724 /* ObserverSet.swift */; };
-		D47A6F451D8B433E00250724 /* SequenceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47A6F3A1D8B433E00250724 /* SequenceType.swift */; };
-		D47A6F461D8B433E00250724 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = D47A6F3B1D8B433E00250724 /* String.swift */; };
+		D40F70D71DCB8CC200CC54A9 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40F70CD1DCB8CC200CC54A9 /* Array.swift */; };
+		D40F70D81DCB8CC200CC54A9 /* CaseCountable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40F70CE1DCB8CC200CC54A9 /* CaseCountable.swift */; };
+		D40F70D91DCB8CC200CC54A9 /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40F70CF1DCB8CC200CC54A9 /* Dictionary.swift */; };
+		D40F70DA1DCB8CC200CC54A9 /* Double.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40F70D01DCB8CC200CC54A9 /* Double.swift */; };
+		D40F70DB1DCB8CC200CC54A9 /* Int.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40F70D11DCB8CC200CC54A9 /* Int.swift */; };
+		D40F70DC1DCB8CC200CC54A9 /* Memoize.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40F70D21DCB8CC200CC54A9 /* Memoize.swift */; };
+		D40F70DD1DCB8CC200CC54A9 /* NSAttributedString.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40F70D31DCB8CC200CC54A9 /* NSAttributedString.swift */; };
+		D40F70DE1DCB8CC200CC54A9 /* ObserverSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40F70D41DCB8CC200CC54A9 /* ObserverSet.swift */; };
+		D40F70DF1DCB8CC200CC54A9 /* SequenceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40F70D51DCB8CC200CC54A9 /* SequenceType.swift */; };
+		D40F70E01DCB8CC200CC54A9 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40F70D61DCB8CC200CC54A9 /* String.swift */; };
 		D4829BB01D874EBB000E3BDB /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4829BAF1D874EBB000E3BDB /* main.swift */; };
 		D4829BB71D874F07000E3BDB /* TestRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4829BB61D874F07000E3BDB /* TestRunner.swift */; };
 		D4829BC31D8750C6000E3BDB /* AppArgs.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4829BB91D8750C6000E3BDB /* AppArgs.swift */; };
@@ -44,18 +44,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		D47A6F311D8B433E00250724 /* Array.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
-		D47A6F321D8B433E00250724 /* CaseCountable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaseCountable.swift; sourceTree = "<group>"; };
-		D47A6F331D8B433E00250724 /* Dictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
-		D47A6F341D8B433E00250724 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D47A6F351D8B433E00250724 /* Int.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Int.swift; sourceTree = "<group>"; };
-		D47A6F361D8B433E00250724 /* Memoize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Memoize.swift; sourceTree = "<group>"; };
-		D47A6F371D8B433E00250724 /* NSAttributedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSAttributedString.swift; sourceTree = "<group>"; };
-		D47A6F381D8B433E00250724 /* NSDate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDate.swift; sourceTree = "<group>"; };
-		D47A6F391D8B433E00250724 /* ObserverSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObserverSet.swift; sourceTree = "<group>"; };
-		D47A6F3A1D8B433E00250724 /* SequenceType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SequenceType.swift; sourceTree = "<group>"; };
-		D47A6F3B1D8B433E00250724 /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
-		D47A6F3C1D8B433E00250724 /* Swiftification.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Swiftification.h; sourceTree = "<group>"; };
+		D40F70CD1DCB8CC200CC54A9 /* Array.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
+		D40F70CE1DCB8CC200CC54A9 /* CaseCountable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CaseCountable.swift; sourceTree = "<group>"; };
+		D40F70CF1DCB8CC200CC54A9 /* Dictionary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
+		D40F70D01DCB8CC200CC54A9 /* Double.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Double.swift; sourceTree = "<group>"; };
+		D40F70D11DCB8CC200CC54A9 /* Int.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Int.swift; sourceTree = "<group>"; };
+		D40F70D21DCB8CC200CC54A9 /* Memoize.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Memoize.swift; sourceTree = "<group>"; };
+		D40F70D31DCB8CC200CC54A9 /* NSAttributedString.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSAttributedString.swift; sourceTree = "<group>"; };
+		D40F70D41DCB8CC200CC54A9 /* ObserverSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObserverSet.swift; sourceTree = "<group>"; };
+		D40F70D51DCB8CC200CC54A9 /* SequenceType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SequenceType.swift; sourceTree = "<group>"; };
+		D40F70D61DCB8CC200CC54A9 /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
 		D4829BAC1D874EBB000E3BDB /* TestRunner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestRunner; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4829BAF1D874EBB000E3BDB /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		D4829BB61D874F07000E3BDB /* TestRunner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestRunner.swift; sourceTree = "<group>"; };
@@ -85,18 +83,16 @@
 		D47A6F301D8B433E00250724 /* Swiftification */ = {
 			isa = PBXGroup;
 			children = (
-				D47A6F311D8B433E00250724 /* Array.swift */,
-				D47A6F321D8B433E00250724 /* CaseCountable.swift */,
-				D47A6F331D8B433E00250724 /* Dictionary.swift */,
-				D47A6F341D8B433E00250724 /* Info.plist */,
-				D47A6F351D8B433E00250724 /* Int.swift */,
-				D47A6F361D8B433E00250724 /* Memoize.swift */,
-				D47A6F371D8B433E00250724 /* NSAttributedString.swift */,
-				D47A6F381D8B433E00250724 /* NSDate.swift */,
-				D47A6F391D8B433E00250724 /* ObserverSet.swift */,
-				D47A6F3A1D8B433E00250724 /* SequenceType.swift */,
-				D47A6F3B1D8B433E00250724 /* String.swift */,
-				D47A6F3C1D8B433E00250724 /* Swiftification.h */,
+				D40F70CD1DCB8CC200CC54A9 /* Array.swift */,
+				D40F70CE1DCB8CC200CC54A9 /* CaseCountable.swift */,
+				D40F70CF1DCB8CC200CC54A9 /* Dictionary.swift */,
+				D40F70D01DCB8CC200CC54A9 /* Double.swift */,
+				D40F70D11DCB8CC200CC54A9 /* Int.swift */,
+				D40F70D21DCB8CC200CC54A9 /* Memoize.swift */,
+				D40F70D31DCB8CC200CC54A9 /* NSAttributedString.swift */,
+				D40F70D41DCB8CC200CC54A9 /* ObserverSet.swift */,
+				D40F70D51DCB8CC200CC54A9 /* SequenceType.swift */,
+				D40F70D61DCB8CC200CC54A9 /* String.swift */,
 			);
 			name = Swiftification;
 			path = Swiftification/Swiftification;
@@ -171,6 +167,7 @@
 					D4829BAB1D874EBB000E3BDB = {
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = 5XJ2TN9APQ;
+						LastSwiftMigration = 0810;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -197,28 +194,28 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				D47A6F441D8B433E00250724 /* ObserverSet.swift in Sources */,
+				D40F70DE1DCB8CC200CC54A9 /* ObserverSet.swift in Sources */,
 				D4829BC31D8750C6000E3BDB /* AppArgs.swift in Sources */,
 				D4829BCB1D8750C6000E3BDB /* WaitOperation.swift in Sources */,
+				D40F70DA1DCB8CC200CC54A9 /* Double.swift in Sources */,
 				D4829BC81D8750C6000E3BDB /* TestPartitioner.swift in Sources */,
+				D40F70DF1DCB8CC200CC54A9 /* SequenceType.swift in Sources */,
 				D4829BB01D874EBB000E3BDB /* main.swift in Sources */,
-				D47A6F451D8B433E00250724 /* SequenceType.swift in Sources */,
 				D4829BC51D8750C6000E3BDB /* DeviceController.swift in Sources */,
-				D47A6F3E1D8B433E00250724 /* CaseCountable.swift in Sources */,
+				D40F70DB1DCB8CC200CC54A9 /* Int.swift in Sources */,
+				D40F70D81DCB8CC200CC54A9 /* CaseCountable.swift in Sources */,
 				D4829BC61D8750C6000E3BDB /* JSON.swift in Sources */,
 				D4829BCA1D8750C6000E3BDB /* TestRunnerOperationQueue.swift in Sources */,
+				D40F70E01DCB8CC200CC54A9 /* String.swift in Sources */,
 				D4829BCC1D8750C6000E3BDB /* XcodebuildTask.swift in Sources */,
 				D4829BC41D8750C6000E3BDB /* BuildTests.swift in Sources */,
-				D47A6F461D8B433E00250724 /* String.swift in Sources */,
-				D47A6F3D1D8B433E00250724 /* Array.swift in Sources */,
-				D47A6F3F1D8B433E00250724 /* Dictionary.swift in Sources */,
-				D47A6F431D8B433E00250724 /* NSDate.swift in Sources */,
+				D40F70D71DCB8CC200CC54A9 /* Array.swift in Sources */,
+				D40F70D91DCB8CC200CC54A9 /* Dictionary.swift in Sources */,
 				D4829BB71D874F07000E3BDB /* TestRunner.swift in Sources */,
-				D47A6F421D8B433E00250724 /* NSAttributedString.swift in Sources */,
 				D4829BC91D8750C6000E3BDB /* TestRunnerOperation.swift in Sources */,
+				D40F70DC1DCB8CC200CC54A9 /* Memoize.swift in Sources */,
+				D40F70DD1DCB8CC200CC54A9 /* NSAttributedString.swift in Sources */,
 				D4829BC71D8750C6000E3BDB /* Summary.swift in Sources */,
-				D47A6F411D8B433E00250724 /* Memoize.swift in Sources */,
-				D47A6F401D8B433E00250724 /* Int.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -271,7 +268,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0.1;
 			};
 			name = Debug;
 		};
@@ -314,7 +311,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = macosx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				SWIFT_VERSION = 2.3;
+				SWIFT_VERSION = 3.0.1;
 			};
 			name = Release;
 		};

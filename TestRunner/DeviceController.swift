@@ -12,11 +12,11 @@ class DeviceController {
     
     static let sharedController = DeviceController()
     
-    private lazy var deviceTypes: [String: String] = {
+    fileprivate lazy var deviceTypes: [String: String] = {
         var deviceTypes = [String: String]()
         for (key, values) in self.getDeviceInfoJSON() ?? [:] where key == "devicetypes" {
             for value in values as? [[String: String]] ?? [] {
-                if let name = value["name"], identifier = value["identifier"] {
+                if let name = value["name"], let identifier = value["identifier"] {
                     deviceTypes[name] = identifier
                 }
             }
@@ -24,11 +24,11 @@ class DeviceController {
         return deviceTypes
     }()
     
-    private lazy var runtimes: [String: String] = {
+    fileprivate lazy var runtimes: [String: String] = {
         var runtimes = [String: String]()
         for (key, values) in self.getDeviceInfoJSON() ?? [:] where key == "runtimes" {
             for value in values as? [[String: String]] ?? [] {
-                if let name = value["name"], identifier = value["identifier"] {
+                if let name = value["name"], let identifier = value["identifier"] {
                     runtimes[name] = identifier
                 }
             }
@@ -36,8 +36,8 @@ class DeviceController {
         return runtimes
     }()
     
-    private let testDevicePrefix = "Test Simulator"
-    private lazy var simulatorNameFormat: String = {
+    fileprivate let testDevicePrefix = "Test Simulator"
+    fileprivate lazy var simulatorNameFormat: String = {
         return self.testDevicePrefix + " %d, %@, %@" // number, device type, runtime
     }()
     
@@ -51,12 +51,12 @@ class DeviceController {
         return createTestDevices()
     }
     
-    func getRuntimes(jsonObject: [String: AnyObject]) -> [String: String] {
+    func getRuntimes(_ jsonObject: [String: AnyObject]) -> [String: String] {
         var runtimes = [String: String]()
         
         for (key, values) in jsonObject where key == "runtimes" {
             for value in values as? [[String: String]] ?? [] {
-                if let name = value["name"], identifier = value["identifier"] {
+                if let name = value["name"], let identifier = value["identifier"] {
                     runtimes[name] = identifier
                 }
             }
@@ -65,7 +65,7 @@ class DeviceController {
         return runtimes
     }
     
-    func getTestDeviceIDs(jsonObject: [String: AnyObject]) -> [String] {
+    func getTestDeviceIDs(_ jsonObject: [String: AnyObject]) -> [String] {
         var testDeviceIDs = [String]()
         
         for (key, values) in jsonObject where key == "devices" {
@@ -75,7 +75,7 @@ class DeviceController {
                 guard let devices = devices as? [AnyObject] else { continue }
                 
                 for device in devices {
-                    if let name = device["name"] as? String where name.hasPrefix(testDevicePrefix), let udid = device["udid"] as? String {
+                    if let name = device["name"] as? String, name.hasPrefix(testDevicePrefix), let udid = device["udid"] as? String {
                         testDeviceIDs.append(udid)
                     }
                 }
@@ -86,16 +86,16 @@ class DeviceController {
     }
     
     func getDeviceInfoJSON() -> [String: AnyObject]? {
-        let outputPipe = NSPipe()
+        let outputPipe = Pipe()
         
-        let task = NSTask()
+        let task = Process()
         task.launchPath = "/usr/bin/xcrun"
         task.arguments = ["simctl", "list", "-j"]
         task.standardOutput = outputPipe
         
         let standardOutputData = NSMutableData()
         outputPipe.fileHandleForReading.readabilityHandler = { handle in
-            standardOutputData.appendData(handle.availableData)
+            standardOutputData.append(handle.availableData)
         }
         
         task.launch()
@@ -104,7 +104,7 @@ class DeviceController {
         guard task.terminationStatus == 0 else { return nil }
         
         do {
-            return try NSJSONSerialization.JSONObjectWithData(standardOutputData, options: []) as? [String: AnyObject]
+            return try JSONSerialization.jsonObject(with: standardOutputData as Data, options: []) as? [String: AnyObject]
         } catch let error as NSError {
             NSLog("Unable to deserialize simctl device list JSON: %@", error)
         }
@@ -112,57 +112,57 @@ class DeviceController {
         return nil
     }
     
-    func deleteDevicesWithIDs(deviceIDs: [String]) {
+    func deleteDevicesWithIDs(_ deviceIDs: [String]) {
         deviceIDs.forEach { deleteDeviceWithID($0) }
     }
     
-    func deleteDeviceWithID(deviceID: String) {
+    func deleteDeviceWithID(_ deviceID: String) {
         shutdownDeviceWithID(deviceID)
         killProcessesForDevice(deviceID)
         
         print("\n=== DELETING DEVICE \n\(deviceID) ===")
         
-        let task = NSTask()
+        let task = Process()
         task.launchPath = "/usr/bin/xcrun"
         task.arguments = ["simctl", "delete", deviceID]
-        task.standardError = NSPipe()
-        task.standardOutput = NSPipe()
+        task.standardError = Pipe()
+        task.standardOutput = Pipe()
         task.launch()
         task.waitUntilExit()
     }
     
-    func shutdownDeviceWithID(deviceID: String) {
+    func shutdownDeviceWithID(_ deviceID: String) {
         print("\n=== SHUTDOWN DEVICE \n\(deviceID) ===")
         
-        let task = NSTask()
+        let task = Process()
         task.launchPath = "/usr/bin/xcrun"
         task.arguments = ["simctl", "shutdown", deviceID]
-        task.standardError = NSPipe()
-        task.standardOutput = NSPipe()
+        task.standardError = Pipe()
+        task.standardOutput = Pipe()
         task.launch()
         task.waitUntilExit()
     }
     
-    func getProcessComponents(processString: String) -> [String] {
-        return processString.componentsSeparatedByString(" ").filter { !$0.trimmed().isEmpty }
+    func getProcessComponents(_ processString: String) -> [String] {
+        return processString.components(separatedBy: " ").filter { !$0.trimmed().isEmpty }
     }
     
-    func killProcessesForDevice(deviceID: String) {
-        let task = NSTask()
+    func killProcessesForDevice(_ deviceID: String) {
+        let task = Process()
         task.launchPath = "/bin/sh"
         task.arguments = ["-c", "ps aux | grep \"\(deviceID)\""]
         
         let standardOutputData = NSMutableData()
-        let pipe = NSPipe()
+        let pipe = Pipe()
         pipe.fileHandleForReading.readabilityHandler = { handle in
-            standardOutputData.appendData(handle.availableData)
+            standardOutputData.append(handle.availableData)
         }
         task.standardOutput = pipe
         task.launch()
         task.waitUntilExit()
         
-        if task.terminationStatus == 0, let processInfoString = String(data: standardOutputData, encoding: NSUTF8StringEncoding) {
-            for processString in processInfoString.componentsSeparatedByString("\n") {
+        if task.terminationStatus == 0, let processInfoString = String(data: standardOutputData as Data, encoding: String.Encoding.utf8) {
+            for processString in processInfoString.components(separatedBy: "\n") {
                 let parts = getProcessComponents(processString)
                 if !parts.isEmpty && !parts.contains("grep") {
                     killProcess(parts)
@@ -171,22 +171,22 @@ class DeviceController {
         }
     }
     
-    func killProcess(processParts: [String]) {
+    func killProcess(_ processParts: [String]) {
         for part in processParts {
             guard let processID = Int(part) else { continue }
             
-            print("\n=== KILLING PROCESS ===\n\(processParts.joinWithSeparator(" "))")
+            print("\n=== KILLING PROCESS ===\n\(processParts.joined(separator: " "))")
             
-            let task = NSTask()
+            let task = Process()
             task.launchPath = "/bin/sh"
             task.arguments = ["-c", "kill -9 \(processID)"]
             
-            let standardOutputPipe = NSPipe()
+            let standardOutputPipe = Pipe()
             task.standardOutput = standardOutputPipe
             standardOutputPipe.fileHandleForReading.readabilityHandler = { handle in
                 TRLog(handle.availableData)
             }
-            let standardErrorPipe = NSPipe()
+            let standardErrorPipe = Pipe()
             task.standardError = standardErrorPipe
             standardErrorPipe.fileHandleForReading.readabilityHandler = { handle in
                 TRLog(handle.availableData)
@@ -198,20 +198,20 @@ class DeviceController {
         }
     }
     
-    func resetDeviceWithID(deviceID: String, simulatorName: String) -> String? {
+    func resetDeviceWithID(_ deviceID: String, simulatorName: String) -> String? {
         killProcessesForDevice(deviceID)
         
-        let parts = simulatorName.componentsSeparatedByString(",")
-        if let deviceTypeID = deviceTypes[parts[1].trimmed()], runtimeID = runtimes[parts[2].trimmed()] {
+        let parts = simulatorName.components(separatedBy: ",")
+        if let deviceTypeID = deviceTypes[parts[1].trimmed()], let runtimeID = runtimes[parts[2].trimmed()] {
             deleteDeviceWithID(deviceID)
             return createTestDevice(simulatorName, deviceTypeID: deviceTypeID, runtimeID: runtimeID)
         }
         
-        let task = NSTask()
+        let task = Process()
         task.launchPath = "/usr/bin/xcrun"
         task.arguments = ["simctl", "erase", deviceID]
-        task.standardError = NSPipe()
-        task.standardOutput = NSPipe()
+        task.standardError = Pipe()
+        task.standardOutput = Pipe()
         task.launch()
         task.waitUntilExit()
         
@@ -221,16 +221,16 @@ class DeviceController {
     func killallSimulators() {
         print("\n=== KILLING SIMULATORS ===")
         
-        let task = NSTask()
+        let task = Process()
         task.launchPath = "/usr/bin/killall"
         task.arguments = ["Simulator"]
         
-        let standardOutputPipe = NSPipe()
+        let standardOutputPipe = Pipe()
         task.standardOutput = standardOutputPipe
         standardOutputPipe.fileHandleForReading.readabilityHandler = { handle in
             TRLog(handle.availableData)
         }
-        let standardErrorPipe = NSPipe()
+        let standardErrorPipe = Pipe()
         task.standardError = standardErrorPipe
         standardErrorPipe.fileHandleForReading.readabilityHandler = { handle in
             TRLog(handle.availableData)
@@ -242,16 +242,16 @@ class DeviceController {
     func killallXcodebuild() {
         print("\n=== KILLING xcodebuild ===")
         
-        let task = NSTask()
+        let task = Process()
         task.launchPath = "/usr/bin/killall"
         task.arguments = ["xcodebuild"]
         
-        let standardOutputPipe = NSPipe()
+        let standardOutputPipe = Pipe()
         task.standardOutput = standardOutputPipe
         standardOutputPipe.fileHandleForReading.readabilityHandler = { handle in
             TRLog(handle.availableData)
         }
-        let standardErrorPipe = NSPipe()
+        let standardErrorPipe = Pipe()
         task.standardError = standardErrorPipe
         standardErrorPipe.fileHandleForReading.readabilityHandler = { handle in
             TRLog(handle.availableData)
@@ -260,17 +260,17 @@ class DeviceController {
         task.waitUntilExit()
     }
     
-    func createTestDevices(numberOfDevices: Int? = nil) -> [String: [(simulatorName: String, deviceID: String)]] {
+    func createTestDevices(_ numberOfDevices: Int? = nil) -> [String: [(simulatorName: String, deviceID: String)]] {
         var devices = [String: [(simulatorName: String, deviceID: String)]]()
         
-        let devicesArg = AppArgs.shared.devices ?? "iPhone 5, iOS 9.3"
-        let numberOfSimulators = numberOfDevices ?? AppArgs.shared.simulatorsCount ?? 1
+        let devicesArg = AppArgs.shared.devices
+        let numberOfSimulators = numberOfDevices ?? AppArgs.shared.simulatorsCount
         
         var simulatorNumber = 1
         
-        for deviceFamily in devicesArg.componentsSeparatedByString(";") {
-            let components = deviceFamily.componentsSeparatedByString(",")
-            if components.count == 2, let name = components.first?.trimmed(), runtime = components.last?.trimmed(), deviceTypeID = deviceTypes[name], runtimeID = runtimes[runtime] {
+        for deviceFamily in devicesArg.components(separatedBy: ";") {
+            let components = deviceFamily.components(separatedBy: ",")
+            if components.count == 2, let name = components.first?.trimmed(), let runtime = components.last?.trimmed(), let deviceTypeID = deviceTypes[name], let runtimeID = runtimes[runtime] {
                 for _ in 1...numberOfSimulators {
                     let simulatorName = String(format: simulatorNameFormat, simulatorNumber, name, runtime)
                     if let deviceID = createTestDevice(simulatorName, deviceTypeID: deviceTypeID, runtimeID: runtimeID) {
@@ -292,16 +292,16 @@ class DeviceController {
         return devices
     }
     
-    func createTestDevice(simulatorName: String, deviceTypeID: String, runtimeID: String) -> String? {
-        let task = NSTask()
+    func createTestDevice(_ simulatorName: String, deviceTypeID: String, runtimeID: String) -> String? {
+        let task = Process()
         task.launchPath = "/usr/bin/xcrun"
         task.arguments = ["simctl", "create", simulatorName, deviceTypeID, runtimeID]
         
-        let createDeviceOutput = NSPipe()
+        let createDeviceOutput = Pipe()
         task.standardOutput = createDeviceOutput
         let data = NSMutableData()
         createDeviceOutput.fileHandleForReading.readabilityHandler = { handle in
-            data.appendData(handle.availableData)
+            data.append(handle.availableData)
         }
         
         task.launch()
@@ -309,7 +309,7 @@ class DeviceController {
         
         guard task.terminationStatus == 0 else { return nil }
         
-        return String(data: data, encoding: NSUTF8StringEncoding)?.trimmed()
+        return String(data: data as Data, encoding: String.Encoding.utf8)?.trimmed()
     }
     
     func killAndDeleteTestDevices() {

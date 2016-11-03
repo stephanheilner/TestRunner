@@ -23,8 +23,8 @@ struct AppArgs {
     let currentDirectory: String
     let buildTests: Bool
     let runTests: Bool
-    let timeout: NSTimeInterval
-    let launchTimeout: NSTimeInterval
+    let timeout: TimeInterval
+    let launchTimeout: TimeInterval
     let buildDir: String
     let derivedDataPath: String
     let logsDir: String
@@ -32,53 +32,53 @@ struct AppArgs {
     let launchRetryCount: Int
     
     init() {
-        if let scheme = NSUserDefaults.standardUserDefaults().stringForKey("scheme") {
+        if let scheme = UserDefaults.standard.string(forKey: "scheme") {
             self.scheme = scheme
         } else {
             exitWithMessage("'-scheme' needs to be specified")
         }
         
-        if let buildTests = NSUserDefaults.standardUserDefaults().objectForKey("build-tests") {
-            self.buildTests = buildTests.boolValue
+        if let buildTests = UserDefaults.standard.object(forKey: "build-tests") {
+            self.buildTests = (buildTests as AnyObject).boolValue
         } else {
             buildTests = true
         }
 
-        if let runTests = NSUserDefaults.standardUserDefaults().objectForKey("run-tests") {
-            self.runTests = runTests.boolValue
+        if let runTests = UserDefaults.standard.object(forKey: "run-tests") {
+            self.runTests = (runTests as AnyObject).boolValue
         } else {
             runTests = true
         }
         
-        if let retryCount = NSUserDefaults.standardUserDefaults().objectForKey("retry-count") {
-            self.retryCount = retryCount.integerValue
+        if let retryCount = UserDefaults.standard.object(forKey: "retry-count") {
+            self.retryCount = (retryCount as AnyObject).intValue
         } else {
             retryCount = 5 // Default
         }
         
-        if let launchRetryCount = NSUserDefaults.standardUserDefaults().objectForKey("launch-retry-count") {
-            self.launchRetryCount = launchRetryCount.integerValue
+        if let launchRetryCount = UserDefaults.standard.object(forKey: "launch-retry-count") {
+            self.launchRetryCount = (launchRetryCount as AnyObject).intValue
         } else {
             launchRetryCount = 10 // Default
         }
         
-        if let timeout = NSUserDefaults.standardUserDefaults().objectForKey("timeout") {
-            self.timeout = NSTimeInterval(timeout.doubleValue)
+        if let timeout = UserDefaults.standard.object(forKey: "timeout") {
+            self.timeout = TimeInterval((timeout as AnyObject).doubleValue)
         } else {
-            timeout = NSTimeInterval(120) // Default
+            timeout = TimeInterval(120) // Default
         }
         
-        if let launchTimeout = NSUserDefaults.standardUserDefaults().objectForKey("launch-timeout") {
-            self.launchTimeout = NSTimeInterval(launchTimeout.doubleValue)
+        if let launchTimeout = UserDefaults.standard.object(forKey: "launch-timeout") {
+            self.launchTimeout = TimeInterval((launchTimeout as AnyObject).doubleValue)
         } else {
-            launchTimeout = NSTimeInterval(30) // Default
+            launchTimeout = TimeInterval(30) // Default
         }
         
-        if let target = NSUserDefaults.standardUserDefaults().stringForKey("target") {
+        if let target = UserDefaults.standard.string(forKey: "target") {
             self.target = target
         }
 
-        if let devices = NSUserDefaults.standardUserDefaults().stringForKey("devices") {
+        if let devices = UserDefaults.standard.string(forKey: "devices") {
             self.devices = devices
         } else {
             // Default
@@ -86,17 +86,17 @@ struct AppArgs {
         }
 
         // Defaults to partition 0
-        partition = NSUserDefaults.standardUserDefaults().integerForKey("partition")
+        partition = UserDefaults.standard.integer(forKey: "partition")
 
-        if let simulatorsCount = NSUserDefaults.standardUserDefaults().objectForKey("simulators-count") {
-            self.simulatorsCount = simulatorsCount.integerValue
+        if let simulatorsCount = UserDefaults.standard.object(forKey: "simulators-count") {
+            self.simulatorsCount = (simulatorsCount as AnyObject).intValue
         } else {
             // Defaults to 1 simulator
             simulatorsCount = 1
         }
 
-        if let partitionsCount = NSUserDefaults.standardUserDefaults().objectForKey("partitions-count") {
-            self.partitionsCount = partitionsCount.integerValue
+        if let partitionsCount = UserDefaults.standard.object(forKey: "partitions-count") {
+            self.partitionsCount = (partitionsCount as AnyObject).intValue
         } else {
             // Defaults to 1 partition
             partitionsCount = 1
@@ -108,17 +108,17 @@ struct AppArgs {
 
         var projectDirectory: String?
         
-        if let project = NSUserDefaults.standardUserDefaults().stringForKey("project") {
-            let projectURL = NSURL(fileURLWithPath: project)
+        if let project = UserDefaults.standard.string(forKey: "project") {
+            let projectURL = URL(fileURLWithPath: project)
 
             projectPath = projectURL.path
-            projectDirectory = projectURL.URLByDeletingLastPathComponent?.path
+            projectDirectory = projectURL.deletingLastPathComponent().path
             
-        } else if let workspace = NSUserDefaults.standardUserDefaults().stringForKey("workspace") {
-            let workspaceURL = NSURL(fileURLWithPath: workspace)
+        } else if let workspace = UserDefaults.standard.string(forKey: "workspace") {
+            let workspaceURL = URL(fileURLWithPath: workspace)
             
             workspacePath = workspaceURL.path
-            projectDirectory = workspaceURL.URLByDeletingLastPathComponent?.path
+            projectDirectory = workspaceURL.deletingLastPathComponent().path
         } else {
             exitWithMessage("'-workspace' or '-project' needs to be specified")
         }
@@ -138,10 +138,10 @@ struct AppArgs {
         AppArgs.createDirectoryAtPath(logsDir)
     }
     
-    private static func createDirectoryAtPath(path: String) {
-        if !NSFileManager.defaultManager().fileExistsAtPath(path) {
+    fileprivate static func createDirectoryAtPath(_ path: String) {
+        if !FileManager.default.fileExists(atPath: path) {
             do {
-                try NSFileManager.defaultManager().createDirectoryAtPath(path, withIntermediateDirectories: true, attributes: nil)
+                try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
             } catch {
                 exitWithMessage(String(format: "Unable to create directory at path: %@", path))
             }
@@ -150,7 +150,7 @@ struct AppArgs {
     
 }
 
-@noreturn func exitWithMessage(message: String, file: String = #file, line: Int = #line) {
+func exitWithMessage(_ message: String, file: String = #file, line: Int = #line) -> Never  {
     NSLog("%@", "Failure at \(file):\(line): \(message)")
     exit(1)
 }
