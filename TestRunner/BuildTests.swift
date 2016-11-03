@@ -53,31 +53,38 @@ class BuildTests {
     }
     
     func addPlistEntries(name: String, value: String) {
-        [AppArgs.shared.scheme, AppArgs.shared.uiTestScheme].forEach { scheme in
-            let task = Process()
-            task.launchPath = "/bin/sh"
-            let infoPlist = String(format: "%@/%@.app/Info.plist", AppArgs.shared.derivedDataPath, scheme)
-            let arguments = ["/usr/libexec/PlistBuddy", infoPlist, "-c", "\"Add :\(name) string \(value)\""]
-            task.arguments = ["-c", arguments.joined(separator: " ")]
-            task.standardError = Pipe()
-            task.standardOutput = Pipe()
-            task.launch()
-            task.waitUntilExit()
+        if let regex = try? NSRegularExpression(pattern: ".*\\.app$", options: []) {
+            _ = try? FileManager.default.contentsOfDirectory(atPath: AppArgs.shared.derivedDataPath).forEach { fileName in
+                guard regex.numberOfMatches(in: fileName, options: [], range: NSRange(location: 0, length: fileName.length)) > 0 else { return }
+
+                let task = Process()
+                task.launchPath = "/bin/sh"
+                let infoPlist = String(format: "%@/%@/Info.plist", AppArgs.shared.derivedDataPath, fileName)
+                let arguments = ["/usr/libexec/PlistBuddy", infoPlist, "-c", "\"Add :\(name) string \(value)\""]
+                task.arguments = ["-c", arguments.joined(separator: " ")]
+                task.standardError = Pipe()
+                task.standardOutput = Pipe()
+                task.launch()
+                task.waitUntilExit()
+            }
         }
     }
     
     func deletePlistEntries(name: String) {
-        [AppArgs.shared.scheme, AppArgs.shared.uiTestScheme].forEach { scheme in
-            let task = Process()
-            task.launchPath = "/bin/sh"
-        
-            let infoPlist = String(format: "%@/%@.app/Info.plist", AppArgs.shared.derivedDataPath, scheme)
-            let arguments = ["/usr/libexec/PlistBuddy", infoPlist, "-c", "\"Delete :\(name)\""]
-            task.arguments = ["-c", arguments.joined(separator: " ")]
-            task.standardError = Pipe()
-            task.standardOutput = Pipe()
-            task.launch()
-            task.waitUntilExit()
+        if let regex = try? NSRegularExpression(pattern: ".*\\.app$", options: []) {
+            _ = try? FileManager.default.contentsOfDirectory(atPath: AppArgs.shared.derivedDataPath).forEach { fileName in
+                guard regex.numberOfMatches(in: fileName, options: [], range: NSRange(location: 0, length: fileName.length)) > 0 else { return }
+                let task = Process()
+                task.launchPath = "/bin/sh"
+            
+                let infoPlist = String(format: "%@/%@/Info.plist", AppArgs.shared.derivedDataPath, fileName)
+                let arguments = ["/usr/libexec/PlistBuddy", infoPlist, "-c", "\"Delete :\(name)\""]
+                task.arguments = ["-c", arguments.joined(separator: " ")]
+                task.standardError = Pipe()
+                task.standardOutput = Pipe()
+                task.launch()
+                task.waitUntilExit()
+            }
         }
     }
     
