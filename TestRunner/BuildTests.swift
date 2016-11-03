@@ -15,15 +15,12 @@ class BuildTests {
     
     func build(listTests: Bool) throws {
         let actions: [String]
+        var plistPaths: [String]?
+        
         if listTests {
             actions = ["test-without-building"]
-            if let regex = try? NSRegularExpression(pattern: ".*\\.app$", options: []) {
-                _ = try? FileManager.default.contentsOfDirectory(atPath: AppArgs.shared.derivedDataPath).forEach { fileName in
-                    guard regex.numberOfMatches(in: fileName, options: [], range: NSRange(location: 0, length: fileName.length)) > 0 else { return }
-
-                    self.addEntries(toPlist: "\(AppArgs.shared.derivedDataPath)/\(fileName)", value: "\(AppArgs.shared.logsDir)/tests.json")
-                }
-            }
+            plistPaths = getPlistPaths()
+            plistPaths?.forEach { self.addEntries(toPlist: $0, value: "\(AppArgs.shared.logsDir)/tests.json") }
         } else {
             do {
                 try FileManager.default.removeItem(atPath: AppArgs.shared.derivedDataPath)
@@ -48,12 +45,8 @@ class BuildTests {
             return
         }
 
-        if listTests, let regex = try? NSRegularExpression(pattern: ".*\\.app$", options: []) {
-            _ = try? FileManager.default.contentsOfDirectory(atPath: AppArgs.shared.derivedDataPath).forEach { fileName in
-                guard regex.numberOfMatches(in: fileName, options: [], range: NSRange(location: 0, length: fileName.length)) > 0 else { return }
-
-                self.deleteEntries(fromPlist: "\(AppArgs.shared.derivedDataPath)/\(fileName)")
-            }
+        if listTests {
+            plistPaths?.forEach { self.deleteEntries(fromPlist: $0) }
         }
     }
     
@@ -80,6 +73,23 @@ class BuildTests {
         return task
     }
     
+    private func getPlistPaths() -> [String] {
+        var plistPaths = [String]()
+        if let regex = try? NSRegularExpression(pattern: ".*\\.app$", options: []) {
+            do {
+                let productPath = AppArgs.shared.derivedDataPath + "/Build/Products/Debug-iphonesimulator"
+                for filename in try FileManager.default.contentsOfDirectory(atPath: productPath) {
+                    guard regex.numberOfMatches(in: filename, options: [], range: NSRange(location: 0, length: filename.length)) > 0 else { continue }
+                    
+                    plistPaths.append("\(productPath)/\(filename)/Info.plist")
+                }
+            } catch {
+                print("Unable to find any app bundles!", error)
+            }
+        }
+        return plistPaths
+    }
+
 }
 
 extension BuildTests: XcodebuildTaskDelegate {

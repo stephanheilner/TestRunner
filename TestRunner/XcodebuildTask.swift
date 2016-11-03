@@ -93,8 +93,6 @@ class XcodebuildTask {
             arguments += ["-destination", "'id=\(deviceID)'"]
         }
         
-        arguments.append("CONFIGURATION_BUILD_DIR='\(AppArgs.shared.derivedDataPath)'")
-        
         if let tests = tests {
             arguments += tests.map { "-only-testing:\($0)" }
         }
