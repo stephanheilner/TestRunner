@@ -123,7 +123,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-partitions-count 20"
+            argument = "-partitions-count 30"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -132,10 +132,10 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-partition 5"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-simulators-count 4"
+            argument = "-simulators-count 5"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -147,19 +147,7 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-devices &quot;iPad 2, iOS 9.3&quot;"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-devices &quot;iPhone 5, iOS 9.3;iPad 2, iOS 9.3&quot;"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-devices &quot;iPhone 5, iOS 9.3&quot;"
-            isEnabled = "NO">
-         </CommandLineArgument>
-         <CommandLineArgument
-            argument = "-devices &quot;iPhone 5, iOS 10.0;iPad 2, iOS 10.0&quot;"
+            argument = "-devices &quot;iPhone 5, iOS 10.1;iPad Air, iOS 10.1&quot;"
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>

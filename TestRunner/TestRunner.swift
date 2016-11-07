@@ -63,6 +63,8 @@ open class TestRunner: NSObject {
     var simulatorPassStatus = [String: Bool]()
     
     func runTests() -> Bool {
+        DeviceController.sharedController.resetAndCreateDevices()
+        
         if AppArgs.shared.buildTests {
             do {
                 try BuildTests.sharedInstance.build(listTests: false)
@@ -78,19 +80,11 @@ open class TestRunner: NSObject {
                 return false
             }
         }
-        
+
         if AppArgs.shared.runTests {
-            DeviceController.sharedController.killAndDeleteTestDevices()
-            
-            guard let devices = DeviceController.sharedController.resetAndCreateDevices(), !devices.isEmpty else {
+            guard let devices = DeviceController.sharedController.resetAndCreateDevices(prepare: true), !devices.isEmpty else {
                 NSLog("No Devices available")
                 return false
-            }
-            
-            for (deviceName, simulators) in devices {
-                for simulator in simulators {
-                    print("Created", deviceName, ":", simulator.simulatorName, "(", simulator.deviceID, ")")
-                }
             }
             
             guard let testsByPartition = TestPartitioner.sharedInstance.loadTestsByPartition(), !testsByPartition.isEmpty else {
@@ -114,12 +108,12 @@ open class TestRunner: NSObject {
             
             testRunnerQueue.waitUntilAllOperationsAreFinished()
             
-            // Shutdown, Delete and Kill all Simulators
-            DeviceController.sharedController.killAndDeleteTestDevices()
+            // Shutdown and kill all simulators
+            DeviceController.sharedController.resetAndCreateDevices()
             
-            Summary.outputSummary(false)
+            Summary.outputSummary()
         }
-        
+
         return simulatorPassStatus.values.reduce(true, { passedSoFar, passed in
             return passedSoFar && passed
         })
@@ -131,8 +125,6 @@ open class TestRunner: NSObject {
             switch status {
             case .success:
                 NSLog("Tests PASSED on %@\n", simulatorName)
-                DeviceController.sharedController.deleteDeviceWithID(deviceID)
-                
                 self.simulatorPassStatus[simulatorName] = true
                 
             case .failed, .testTimeout:
@@ -143,7 +135,7 @@ open class TestRunner: NSObject {
                 
                 if retryCount < AppArgs.shared.retryCount && !failedTests.isEmpty {
                     // Create new device for retry
-                    let retryDeviceID = DeviceController.sharedController.resetDeviceWithID(deviceID, simulatorName: simulatorName) ?? deviceID
+                    let retryDeviceID = DeviceController.sharedController.resetDevice(simulatorName: simulatorName, deviceID: deviceID)?.deviceID ?? deviceID
                     
                     // Retry
                     let retryOperation = self.createOperation(deviceFamily, simulatorName: simulatorName, deviceID: retryDeviceID, tests: failedTests, retryCount: retryCount)

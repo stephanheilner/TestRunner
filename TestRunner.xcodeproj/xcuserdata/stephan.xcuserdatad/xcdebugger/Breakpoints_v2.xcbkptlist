@@ -4,18 +4,28 @@
    version = "2.0">
    <Breakpoints>
       <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            scope = "0"
+            stopOnStyle = "0">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "TestRunner/XCToolTask.swift"
-            timestampString = "498945136.205146"
+            filePath = "TestRunner/Summary.swift"
+            timestampString = "500411197.744461"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "134"
-            endingLineNumber = "134"
-            landmarkName = "init(arguments:tests:logFilename:outputFileLogType:standardOutputLogType:)"
+            startingLineNumber = "67"
+            endingLineNumber = "67"
+            landmarkName = "getTestResults(logFile:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
@@ -25,13 +35,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "TestRunner/TestRunnerOperation.swift"
-            timestampString = "499880346.695877"
+            filePath = "TestRunner/TestRunner.swift"
+            timestampString = "500411310.998852"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "133"
-            endingLineNumber = "133"
-            landmarkName = "getFailedTests()"
+            startingLineNumber = "112"
+            endingLineNumber = "112"
+            landmarkName = "runTests()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

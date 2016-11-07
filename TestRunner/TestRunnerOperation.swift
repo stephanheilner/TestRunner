@@ -18,10 +18,6 @@ enum TestRunnerStatus: Int {
 
 class TestRunnerOperation: Operation {
     
-    fileprivate static let TestCaseStartedRegex = try! NSRegularExpression(pattern: "Test Case '(.*)' started.", options: [])
-    fileprivate static let TestCasePassedRegex = try! NSRegularExpression(pattern: "Test Case '(.*)' passed (.*)", options: [])
-    fileprivate static let TestSuiteStartedRegex = try! NSRegularExpression(pattern: "Test Suite '(.*).xctest' started", options: [])
-    
     fileprivate let deviceFamily: String
     fileprivate let deviceID: String
     fileprivate let tests: [String]
@@ -65,7 +61,7 @@ class TestRunnerOperation: Operation {
         self.deviceFamily = deviceFamily
         self.simulatorName = simulatorName
         self.deviceID = deviceID
-        self.tests = tests
+        self.tests = tests.shuffled()
         self.retryCount = retryCount
         self.launchRetryCount = launchRetryCount
         self.logFilePath = String(format: "%@/%@-%d.log", AppArgs.shared.logsDir, deviceID, retryCount + 1)
@@ -87,6 +83,8 @@ class TestRunnerOperation: Operation {
             TRLog(logData, simulatorName: simulatorName)
         }
         
+        // launchSimulator()
+        
         let task = XcodebuildTask(actions: ["test-without-building"], deviceID: deviceID, tests: tests, logFilePath: logFilePath)
         
         task.delegate = self
@@ -98,12 +96,36 @@ class TestRunnerOperation: Operation {
         finishOperation(status: status)
     }
     
+    func launchSimulator() {
+        let task = Process()
+        task.launchPath = "/bin/sh"
+        let arguments = ["-c", "/usr/bin/open -n /Applications/Xcode.app/Contents/Developer/Applications/Simulator.app --args -CurrentDeviceUDID \(deviceID)"]
+        task.arguments = arguments
+        
+        print(arguments)
+        
+        let outputPipe = Pipe()
+        outputPipe.fileHandleForReading.readabilityHandler = { handle in
+            TRLog(handle.availableData)
+        }
+        task.standardOutput = outputPipe
+        
+        let errorPipe = Pipe()
+        errorPipe.fileHandleForReading.readabilityHandler = { handle in
+            TRLog(handle.availableData)
+        }
+        task.standardError = errorPipe
+        task.launch()
+        task.waitUntilExit()
+
+    }
+    
     func finishOperation(status: TestRunnerStatus) {
         simulatorDidLaunch()
         
         var status = status
         
-        let failedTests = getFailedTests()
+        let failedTests = Array(Summary.getTestResults(logFile: logFilePath).failed)
         if !failedTests.isEmpty {
             status = .failed
         }
@@ -121,58 +143,6 @@ class TestRunnerOperation: Operation {
         NotificationCenter.default.post(name: Notification.Name(rawValue: TestRunnerOperationQueue.SimulatorLoadedNotification), object: nil)
     }
     
-    func getFailedTests() -> [String] {
-        var tests = [String]()
-
-        do {
-            let log = try String(contentsOfFile: logFilePath, encoding: String.Encoding.utf8)
-            let range = NSRange(location: 0, length: log.length)
-            
-            var failedTests = Set<String>()
-            
-            for match in TestRunnerOperation.TestCaseStartedRegex.matches(in: log, options: [], range: range) {
-                let nameRange = match.rangeAt(1)
-                guard let range = nameRange.range(from: log) else { continue }
-                let testCase = log.substring(with: range)
-                failedTests.insert(testCase)
-            }
-            
-            for match in TestRunnerOperation.TestCasePassedRegex.matches(in: log, options: [], range: range) {
-                let nameRange = match.rangeAt(1)
-                guard let range = nameRange.range(from: log) else { continue }
-                let testCase = log.substring(with: range)
-                failedTests.remove(testCase)
-            }
-            
-            if let match = TestRunnerOperation.TestSuiteStartedRegex.matches(in: log, options: [], range: range).first {
-                let nameRange = match.rangeAt(1)
-                guard let testSuiteRange = nameRange.range(from: log) else { return tests }
-
-                let testSuiteName = log.substring(with: testSuiteRange)
-                
-                for testCase in failedTests {
-                    var testName: String?
-                    var testClass: String?
-                    
-                    if let testNameRange = testCase.range(of: " ", options: .backwards, range: nil, locale: nil) {
-                        testName = testCase.substring(with: testNameRange.upperBound..<testCase.characters.index(testCase.endIndex, offsetBy: -1))
-                        testClass = testCase.substring(with: testCase.characters.index(testCase.startIndex, offsetBy: 2)..<testNameRange.lowerBound)
-                    }
-                    
-                    if let testTargetRange = testClass?.range(of: ".", options: .literal, range: nil, locale: nil) {
-                        testClass = testClass?.substring(from: testTargetRange.upperBound)
-                    }
-                    
-                    if let testName = testName, let testClass = testClass {
-                        tests.append("\(testSuiteName)/\(testClass)/\(testName)")
-                    }
-                }
-            }
-        } catch {}
-        
-        return tests
-    }
-
     func notifyIfLaunched(_ data: Data) {
         guard !simulatorLaunched else { return }
         
@@ -183,7 +153,7 @@ class TestRunnerOperation: Operation {
         DispatchQueue.global(qos: .background).async {
             do {
                 let log = try String(contentsOfFile: self.logFilePath, encoding: String.Encoding.utf8)
-                if TestRunnerOperation.TestSuiteStartedRegex.numberOfMatches(in: log, options: [], range: NSRange(location: 0, length: log.length)) > 0 {
+                if Summary.TestSuiteStartedRegex.numberOfMatches(in: log, options: [], range: NSRange(location: 0, length: log.length)) > 0 {
                     self.simulatorDidLaunch()
                 }
             } catch {}

@@ -148,6 +148,10 @@ struct AppArgs {
         }
     }
     
+    var productPath: String {
+        return derivedDataPath + "/Build/Products/Debug-iphonesimulator"
+    }
+    
 }
 
 func exitWithMessage(_ message: String, file: String = #file, line: Int = #line) -> Never  {

@@ -10,91 +10,98 @@ import Foundation
 
 class Summary {
     
-    class func outputSummary(_ jsonOutput: Bool) {
+    static let TestCaseStartedRegex = try! NSRegularExpression(pattern: "Test Case '(.*)' started.", options: [])
+    static let TestCasePassedRegex = try! NSRegularExpression(pattern: "Test Case '(.*)' passed (.*)", options: [])
+    static let TestSuiteStartedRegex = try! NSRegularExpression(pattern: "Test Suite '(.*).xctest' started", options: [])
+    
+    class func outputSummary() {
+        let logDirectoryURL = URL(fileURLWithPath: AppArgs.shared.logsDir)
         
-        var simulatorRetries = [String: Int]()
-        var testSummaries = [TestSummary]()
-        var suiteSummaries = [SuiteSummary]()
+        print("\n============================ SUMMARY ============================")
+        
+        var failedTests = Set<String>()
+        var succeededTests = Set<String>()
         
         do {
-            for filename in try FileManager.default.contentsOfDirectory(atPath: AppArgs.shared.logsDir) where filename.range(of: "Test Simulator") != nil {
-                var simulatorName = filename
+            for fileURL in try FileManager.default.contentsOfDirectory(at: logDirectoryURL, includingPropertiesForKeys: nil, options: FileManager.DirectoryEnumerationOptions.skipsHiddenFiles) {
+                let testResults = getTestResults(logFile: fileURL.path)
+                succeededTests.formUnion(testResults.succeeded)
+                failedTests.formUnion(testResults.failed)
+            }
+        } catch {
+            print(error)
+        }
+
+        // If a test eventually succeeded, remove it from list of failed tests
+        failedTests.subtract(succeededTests)
+
+        if !succeededTests.isEmpty {
+            print("\n--- Successful Tests -----------------------------------------------------")
+            for test in Array(succeededTests).sorted() {
+                print(test)
+            }
+        }
+
+        if !failedTests.isEmpty {
+            print("\n--- Failed Tests -----------------------------------------------------")
+            for test in Array(failedTests).sorted() {
+                print(test)
+            }
+        }
+        
+        print("\n=================================================================")
+    }
+
+    class func getTestResults(logFile: String) -> (succeeded: Set<String>, failed: Set<String>) {
+        var succeededTests = Set<String>()
+        var failedTests = Set<String>()
+        
+        do {
+            let log = try String(contentsOfFile: logFile, encoding: String.Encoding.utf8)
+            let range = NSRange(location: 0, length: log.length)
+            
+            for match in Summary.TestCaseStartedRegex.matches(in: log, options: [], range: range) {
+                let nameRange = match.rangeAt(1)
+                guard let range = nameRange.range(from: log) else { continue }
+                let testCase = log.substring(with: range)
+                failedTests.insert(testCase)
+            }
+            
+            for match in Summary.TestCasePassedRegex.matches(in: log, options: [], range: range) {
+                let nameRange = match.rangeAt(1)
+                guard let range = nameRange.range(from: log) else { continue }
+                let testCase = log.substring(with: range)
+                failedTests.remove(testCase)
+                succeededTests.insert(testCase)
+            }
+            
+            if let match = Summary.TestSuiteStartedRegex.matches(in: log, options: [], range: range).first {
+                let nameRange = match.rangeAt(1)
+                guard let testSuiteRange = nameRange.range(from: log) else { return (succeeded: succeededTests, failed: failedTests) }
                 
-                if let range = filename.range(of: " (") {
-                    simulatorName = filename.substring(with: filename.startIndex..<range.lowerBound)
-                    simulatorRetries[simulatorName] = (simulatorRetries[simulatorName] ?? -1) + 1
-                } else if let range = filename.range(of: ".json") {
-                    simulatorName = filename.substring(with: filename.startIndex..<range.lowerBound)
-                    simulatorRetries[simulatorName] = (simulatorRetries[simulatorName] ?? -1) + 1
-                }
+                let testSuiteName = log.substring(with: testSuiteRange)
                 
-                if let jsonObjects = JSON.jsonObjectsFromJSONStreamFile(String(format: "%@/%@", AppArgs.shared.logsDir, filename)) {
-                    testSummaries += jsonObjects.flatMap { jsonObject -> TestSummary? in
-                        guard let event = jsonObject["event"] as? String, event == "end-test", let testName = jsonObject["test"] as? String, let succeeded = jsonObject["succeeded"] as? Bool, let duration = jsonObject["totalDuration"] as? TimeInterval else { return nil }
-                        let exceptions = jsonObject["exceptions"] as? [[String: AnyObject]]
-                        return TestSummary(simulatorName: simulatorName, testName: testName, passed: succeeded, duration: duration, exceptions: exceptions)
+                for testCase in failedTests {
+                    var testName: String?
+                    var testClass: String?
+                    
+                    if let testNameRange = testCase.range(of: " ", options: .backwards, range: nil, locale: nil) {
+                        testName = testCase.substring(with: testNameRange.upperBound..<testCase.characters.index(testCase.endIndex, offsetBy: -1))
+                        testClass = testCase.substring(with: testCase.characters.index(testCase.startIndex, offsetBy: 2)..<testNameRange.lowerBound)
                     }
-                    for jsonObject in jsonObjects {
-                        if let event = jsonObject["event"] as? String, event == "end-test-suite", let testCaseCount = jsonObject["testCaseCount"] as? Int, let duration = jsonObject["totalDuration"] as? TimeInterval, let failureCount = jsonObject["totalFailureCount"] as? Int {
-                            suiteSummaries.append(SuiteSummary(testCaseCount: testCaseCount, duration: duration, failureCount: failureCount))
-                        }
+                    
+                    if let testTargetRange = testClass?.range(of: ".", options: .literal, range: nil, locale: nil) {
+                        testClass = testClass?.substring(from: testTargetRange.upperBound)
+                    }
+                    
+                    if let testName = testName, let testClass = testClass {
+                        failedTests.insert("\(testSuiteName)/\(testClass)/\(testName)")
                     }
                 }
             }
         } catch {}
-
-        let suiteSummary = suiteSummaries.reduce(SuiteSummary(testCaseCount: 0, duration: 0, failureCount: 0), { totalSummary, suiteSummary in
-            return SuiteSummary(testCaseCount: (suiteSummary.testCaseCount + totalSummary.testCaseCount), duration: (suiteSummary.duration + totalSummary.duration), failureCount: (suiteSummary.failureCount + totalSummary.failureCount))
-        })
         
-        if jsonOutput {
-            // TODO: Output JSON
-            
-        } else {
-            // Plain Text
-            print("\n============================ SUMMARY ============================\n")
-            for (simulatorName, retries) in simulatorRetries {
-                print(String(format: "%d Retries: '%@'", retries, simulatorName))
-            }
-
-            print("")
-            print(suiteSummary.testCaseCount, "Test Run in", suiteSummary.duration, "seconds.", suiteSummary.failureCount, "Failures")
-            print("")
-
-            // Number of each devices run
-            // Number of retries on each
-            
-            testSummaries.sort { lhs, rhs -> Bool in
-                if lhs.passed == rhs.passed {
-                    return lhs.testName == rhs.testName
-                } else {
-                    return lhs.passed
-                }
-            }
-            
-            print("-------------------------------------------------------------------")
-            
-            // Get of list of test that never passed.
-            var failureTestSummaries = testSummaries.filter { !$0.passed }.uniqueBy { $0.testName }
-            for testSummary in testSummaries {
-                for (index, failureSummary) in failureTestSummaries.enumerated() where testSummary.testName == failureSummary.testName && testSummary.passed {
-                    // Even though this test summary shows it failed, it retried and eventually passed, so remove it from the list.
-                    failureTestSummaries.remove(at: index)
-                }
-            }
-            
-            for testSummary in failureTestSummaries {
-                print("-------------------------------------------------------------------")
-                print(testSummary.testName, "Failed", String(format: "(%@)", testSummary.simulatorName))
-                for exception in testSummary.exceptions ?? [] {
-                    guard let line = exception["lineNumber"] as? Int, let filePath = exception["filePathInProject"] as? String, let reason = exception["reason"] as? String else { continue }
-                    print("")
-                    print("Reason:", reason)
-                    print(filePath, String(format: "(line %d)", line))
-                }
-            }
-            print("-------------------------------------------------------------------")
-        }
+        return (succeeded: succeededTests, failed: failedTests)
     }
     
 }
@@ -104,7 +111,7 @@ class SuiteSummary {
     var testCaseCount: Int
     var duration: TimeInterval
     var failureCount: Int
-
+    
     init(testCaseCount: Int, duration: TimeInterval, failureCount: Int) {
         self.testCaseCount = testCaseCount
         self.duration = duration
