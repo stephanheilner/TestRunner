@@ -63,8 +63,8 @@ open class TestRunner: NSObject {
     var simulatorPassStatus = [String: Bool]()
     
     func runTests() -> Bool {
-        testRunnerQueue.maxConcurrentOperationCount = 1
-        DeviceController.sharedController.resetAndCreateDevices()
+		testRunnerQueue.maxConcurrentOperationCount = 1
+        DeviceController.sharedController.resetDevices()
         
         if AppArgs.shared.buildTests {
             do {
@@ -83,9 +83,15 @@ open class TestRunner: NSObject {
         }
 
         if AppArgs.shared.runTests {
-            guard let devices = DeviceController.sharedController.resetAndCreateDevices(prepare: true), !devices.isEmpty else {
+            guard let devices = DeviceController.sharedController.resetAndCreateDevices(), !devices.isEmpty else {
                 NSLog("No Devices available")
                 return false
+            }
+            print("\n=== TESTING ON DEVICES ===")
+            for (deviceName, simulators) in devices {
+                for simulator in simulators {
+                    print(deviceName, ":", simulator.simulatorName, "(", simulator.deviceID, ")")
+                }
             }
             
             guard let testsByPartition = TestPartitioner.sharedInstance.loadTestsByPartition(), !testsByPartition.isEmpty else {
@@ -110,7 +116,7 @@ open class TestRunner: NSObject {
             testRunnerQueue.waitUntilAllOperationsAreFinished()
             
             // Shutdown and kill all simulators
-            DeviceController.sharedController.resetAndCreateDevices()
+            DeviceController.sharedController.resetDevices()
             
             Summary.outputSummary(attemptedTests: Array(testsByDevice.values.joined()))
         }
@@ -129,7 +135,7 @@ open class TestRunner: NSObject {
                 NSLog("Tests PASSED on %@\n", simulatorName)
                 self.simulatorPassStatus[simulatorName] = true
                 
-            case .failed, .testTimeout:
+            case .failed, .testTimeout, .launchTimeout, .stopped:
                 let retryCount = retryCount + 1
                 NSLog("\n\nTests FAILED (Attempt %d of %d) on %@\n", retryCount, AppArgs.shared.retryCount, simulatorName)
                 
@@ -153,7 +159,7 @@ open class TestRunner: NSObject {
                     // Failed, kill all items in queue
                     self.testRunnerQueue.cancelAllOperations()
                 }
-            case .running, .stopped:
+            case .running:
                 break
             }
         }

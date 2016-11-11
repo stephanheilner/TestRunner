@@ -32,7 +32,7 @@ class BuildTests {
             actions = ["clean", "build-for-testing"]
         }
         
-        let deviceID = DeviceController.sharedController.createTestDevice(prepare: listTests)
+        let deviceID = DeviceController.sharedController.createTestDevice(installApp: (listTests == true))
         
         let task = XcodebuildTask(actions: actions, deviceID: deviceID)
         task.delegate = self

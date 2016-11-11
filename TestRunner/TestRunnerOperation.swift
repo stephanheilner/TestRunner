@@ -12,6 +12,7 @@ enum TestRunnerStatus: Int {
     case stopped
     case running
     case testTimeout
+    case launchTimeout
     case success
     case failed
 }
@@ -86,6 +87,12 @@ class TestRunnerOperation: Operation {
         if let logData = logMessage.data(using: String.Encoding.utf8) {
             TRLog(logData, simulatorName: simulatorName)
         }
+        
+        DeviceController.sharedController.deleteApplicationData(deviceID: deviceID)
+        if retryCount == 0 {
+            DeviceController.sharedController.installAppsOnDevice(deviceID: deviceID)
+        }
+        
         
         let task = XcodebuildTask(actions: ["test-without-building"], deviceID: deviceID, tests: tests, logFilePath: logFilePath)
         
@@ -162,6 +169,15 @@ class TestRunnerOperation: Operation {
                     self.simulatorDidLaunch()
                 }
             } catch {}
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: (.now() + DispatchTimeInterval.seconds(AppArgs.shared.launchTimeout))) {
+            guard !self.simulatorLaunched else { return }
+            if let data = "TIMED OUT Launching Simulator".data(using: String.Encoding.utf8) {
+                TRLog(data, simulatorName: self.simulatorName)
+            }
+            self.finishOperation(status: .launchTimeout)
+            return
         }
     }
     

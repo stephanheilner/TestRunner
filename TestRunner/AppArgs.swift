@@ -24,7 +24,7 @@ struct AppArgs {
     let buildTests: Bool
     let runTests: Bool
     let timeout: TimeInterval
-    let launchTimeout: TimeInterval
+    let launchTimeout: Int
     let buildDir: String
     let derivedDataPath: String
     let logsDir: String
@@ -68,10 +68,11 @@ struct AppArgs {
             timeout = TimeInterval(120) // Default
         }
         
-        if let launchTimeout = UserDefaults.standard.object(forKey: "launch-timeout") {
-            self.launchTimeout = TimeInterval((launchTimeout as AnyObject).doubleValue)
+        let launchTimeout = UserDefaults.standard.integer(forKey: "launch-timeout")
+        if launchTimeout > 0 {
+            self.launchTimeout = launchTimeout
         } else {
-            launchTimeout = TimeInterval(30) // Default
+            self.launchTimeout = 30 // Default
         }
         
         if let target = UserDefaults.standard.string(forKey: "target") {

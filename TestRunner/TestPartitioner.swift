@@ -13,23 +13,22 @@ class TestPartitioner {
     
     static let sharedInstance = TestPartitioner()
     
-    func loadTestsByPartition(_ retries: Int = 5) -> [[Int: [String]]]? {
-        guard retries > 0 else { return nil }
-        
-        var tests: [String]?
+    func loadTestsByPartition() -> [[Int: [String]]]? {
+        var allTests = Set<String>()
         do {
             if let data = try? Data(contentsOf: URL(fileURLWithPath: AppArgs.shared.logsDir + "/tests.json")) {
-                if let targetTests = try JSONSerialization.jsonObject(with: data, options: []) as? [String: [String]], let target = AppArgs.shared.target {
-                    tests = targetTests[target]
-
+                if let targetTests = try JSONSerialization.jsonObject(with: data, options: []) as? [String: [String]] {
+                    if let target = AppArgs.shared.target, let tests = targetTests[target] {
+                        allTests.formUnion(tests)
+                    } else {
+                        targetTests.forEach { target, tests in
+                            allTests.formUnion(tests)
+                        }
+                    }
                 }
             }
         } catch {
             print(error)
-        }
-        
-        guard let allTests = tests, !allTests.isEmpty else {
-            return loadTestsByPartition(retries - 1)
         }
         
         let partitionsCount = AppArgs.shared.partitionsCount
@@ -38,14 +37,13 @@ class TestPartitioner {
         var start = 0
         var end = 0
         
+        var tests = Array(allTests).shuffled()
         var partitionTests = [[String]]()
         
         for i in 0..<partitionsCount {
             start = Int(round(numTestsPerPartition * Float(i)))
             end = Int(round(numTestsPerPartition * Float(i + 1)))
-            
-            let tests = allTests[start..<end]
-            partitionTests.append(Array(tests))
+            partitionTests.append(Array(tests[start..<end]))
         }
         
         let simulatorsCount = AppArgs.shared.simulatorsCount
