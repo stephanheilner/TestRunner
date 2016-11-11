@@ -59,10 +59,11 @@ open class TestRunner: NSObject {
         exit(testsPassed ? 0 : 1)
     }
     
-    let testRunnerQueue = TestRunnerOperationQueue()
+    let testRunnerQueue = OperationQueue()
     var simulatorPassStatus = [String: Bool]()
     
     func runTests() -> Bool {
+        testRunnerQueue.maxConcurrentOperationCount = 1
         DeviceController.sharedController.resetAndCreateDevices()
         
         if AppArgs.shared.buildTests {
@@ -143,9 +144,11 @@ open class TestRunner: NSObject {
                     // Clear device for reuse
                     DeviceController.sharedController.reuseDevice(simulatorName: simulatorName, deviceID: deviceID)
                     
-                    // Retry
-                    let retryOperation = self.createOperation(deviceFamily, simulatorName: simulatorName, deviceID: deviceID, tests: failedTests, retryCount: retryCount)
-                    self.testRunnerQueue.addOperation(retryOperation)
+                    // Retry failed tests individually
+                    for test in failedTests {
+                        let retryOperation = self.createOperation(deviceFamily, simulatorName: simulatorName, deviceID: deviceID, tests: [test], retryCount: retryCount)
+                        self.testRunnerQueue.addOperation(retryOperation)
+                    }
                 } else {
                     // Failed, kill all items in queue
                     self.testRunnerQueue.cancelAllOperations()
