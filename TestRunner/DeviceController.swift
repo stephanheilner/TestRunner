@@ -331,14 +331,16 @@ class DeviceController {
         print("\n=== REUSE DEVICE (\(deviceID)) ===")
         
         killProcessesForDevice(deviceID: deviceID)
+        
         deleteApplicationData(deviceID: deviceID)
         deleteApplicationBundles(deviceID: deviceID)
     }
     
     func deleteApplicationBundles(deviceID: String) {
+        print("Deleting Application Bundle")
         let task = Process()
         task.launchPath = "/bin/sh"
-        task.arguments = ["-c", "/bin/rm -rf \(NSHomeDirectory())/Library/Developer/CoreSimulator/\(deviceID)/data/Containers/Bundle/Application/*"]
+        task.arguments = ["-c", "/bin/rm -rf \(NSHomeDirectory())/Library/Developer/CoreSimulator/Devices/\(deviceID)/data/Containers/Bundle/Application/*"]
         
         let standardOutputPipe = Pipe()
         task.standardOutput = standardOutputPipe
@@ -355,9 +357,10 @@ class DeviceController {
     }
     
     func deleteApplicationData(deviceID: String) {
+        print("Deleting Application Data")
         let task = Process()
         task.launchPath = "/bin/sh"
-        task.arguments = ["-c", "/bin/rm -rf \(NSHomeDirectory())/Library/Developer/CoreSimulator/\(deviceID)/data/Containers/Data/Application/*"]
+        task.arguments = ["-c", "/bin/rm -rf \(NSHomeDirectory())/Library/Developer/CoreSimulator/Devices/\(deviceID)/data/Containers/Data/Application/*"]
         
         let standardOutputPipe = Pipe()
         task.standardOutput = standardOutputPipe
