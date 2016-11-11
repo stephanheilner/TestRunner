@@ -123,14 +123,14 @@ class TestRunnerOperation: Operation {
         
         var status = status
         
-        let failedTests = Summary.getTestResults(logFile: logFilePath)?.failed
-        if failedTests == nil || failedTests?.isEmpty == false {
+        let succeededTests = Summary.getSucceededTests(logFile: logFilePath)
+        if tests.count > succeededTests.count {
             status = .failed
         }
         
-        Summary.outputSummary(logFile: logFilePath)
+        Summary.outputSummary(logFile: logFilePath, attemptedTests: tests)
         
-        completion?(status, simulatorName, failedTests ?? [], deviceID, retryCount, launchRetryCount)
+        completion?(status, simulatorName, tests.filter { !succeededTests.contains($0) }, deviceID, retryCount, launchRetryCount)
         
         isExecuting = false
         isFinished = true

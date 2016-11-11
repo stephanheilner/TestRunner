@@ -14,12 +14,11 @@ class Summary {
     static let TestCasePassedRegex = try! NSRegularExpression(pattern: "Test Case '(.*)' passed (.*)", options: [])
     static let TestSuiteStartedRegex = try! NSRegularExpression(pattern: "Test Suite '(.*).xctest' started", options: [])
     
-    class func outputSummary(logFile: String? = nil) {
+    class func outputSummary(logFile: String? = nil, attemptedTests: [String]) {
         let logDirectoryURL = URL(fileURLWithPath: AppArgs.shared.logsDir)
         
         print("\n============================ SUMMARY ============================")
         
-        var failedTests = Set<String>()
         var succeededTests = Set<String>()
         
         do {
@@ -28,17 +27,12 @@ class Summary {
                     continue
                 }
                 
-                guard let testResults = getTestResults(logFile: fileURL.path) else { continue }
-                
-                succeededTests.formUnion(testResults.succeeded)
-                failedTests.formUnion(testResults.failed)
+                let successes = getSucceededTests(logFile: fileURL.path)
+                succeededTests.formUnion(successes)
             }
         } catch {
             print(error)
         }
-
-        // If a test eventually succeeded, remove it from list of failed tests
-        failedTests.subtract(succeededTests)
 
         if !succeededTests.isEmpty {
             print("\n---------- Passed Tests ----------")
@@ -46,7 +40,8 @@ class Summary {
                 print(test)
             }
         }
-
+        
+        let failedTests = Set(attemptedTests).subtracting(succeededTests)
         if !failedTests.isEmpty {
             print("\n---------- Failed Tests ----------")
             for test in Array(failedTests).sorted() {
@@ -57,42 +52,32 @@ class Summary {
         print("\n=================================================================\n")
     }
 
-    class func getTestResults(logFile: String) -> (succeeded: [String], failed: [String])? {
+    class func getSucceededTests(logFile: String) -> [String] {
         var succeededTests = Set<String>()
-        var failedTests = Set<String>()
         
         do {
             let log = try String(contentsOfFile: logFile, encoding: String.Encoding.utf8)
             let range = NSRange(location: 0, length: log.length)
             
-            for match in Summary.TestCaseStartedRegex.matches(in: log, options: [], range: range) {
-                let nameRange = match.rangeAt(1)
-                guard let range = nameRange.range(from: log) else { continue }
-                let testCase = log.substring(with: range)
-                failedTests.insert(testCase)
-            }
-            
             for match in Summary.TestCasePassedRegex.matches(in: log, options: [], range: range) {
                 let nameRange = match.rangeAt(1)
                 guard let range = nameRange.range(from: log) else { continue }
                 let testCase = log.substring(with: range)
-                failedTests.remove(testCase)
                 succeededTests.insert(testCase)
             }
             
-            guard let match = Summary.TestSuiteStartedRegex.matches(in: log, options: [], range: range).first else { return nil }
+            guard let match = Summary.TestSuiteStartedRegex.matches(in: log, options: [], range: range).first else { return [] }
             
             let nameRange = match.rangeAt(1)
             
-            guard let testSuiteRange = nameRange.range(from: log) else { return nil }
+            guard let testSuiteRange = nameRange.range(from: log) else { return [] }
             
             let testSuite = log.substring(with: testSuiteRange)
-            let failed = failedTests.flatMap { formattedTestName(testCase: $0, testSuite: testSuite) }
             let succeeded = succeededTests.flatMap { formattedTestName(testCase: $0, testSuite: testSuite) }
-            return (succeeded: succeeded, failed: failed)
-        } catch {}
-        
-        return nil
+            return (succeeded: succeeded)
+        } catch {
+            return []
+        }
     }
     
     class func formattedTestName(testCase: String, testSuite: String) -> String? {

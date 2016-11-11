@@ -111,7 +111,7 @@ open class TestRunner: NSObject {
             // Shutdown and kill all simulators
             DeviceController.sharedController.resetAndCreateDevices()
             
-            Summary.outputSummary()
+            Summary.outputSummary(attemptedTests: Array(testsByDevice.values.joined()))
         }
 
         let failed = simulatorPassStatus.any { _, passed in
