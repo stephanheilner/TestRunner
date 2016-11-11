@@ -127,6 +127,9 @@ class TestRunnerOperation: Operation {
         if failedTests == nil || failedTests?.isEmpty == false {
             status = .failed
         }
+        
+        Summary.outputSummary(logFile: logFilePath)
+        
         completion?(status, simulatorName, failedTests ?? [], deviceID, retryCount, launchRetryCount)
         
         isExecuting = false

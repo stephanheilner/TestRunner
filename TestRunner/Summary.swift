@@ -14,7 +14,7 @@ class Summary {
     static let TestCasePassedRegex = try! NSRegularExpression(pattern: "Test Case '(.*)' passed (.*)", options: [])
     static let TestSuiteStartedRegex = try! NSRegularExpression(pattern: "Test Suite '(.*).xctest' started", options: [])
     
-    class func outputSummary() {
+    class func outputSummary(logFile: String? = nil) {
         let logDirectoryURL = URL(fileURLWithPath: AppArgs.shared.logsDir)
         
         print("\n============================ SUMMARY ============================")
@@ -24,6 +24,10 @@ class Summary {
         
         do {
             for fileURL in try FileManager.default.contentsOfDirectory(at: logDirectoryURL, includingPropertiesForKeys: nil, options: FileManager.DirectoryEnumerationOptions.skipsHiddenFiles) {
+                if let logFile = logFile, logFile != fileURL.path {
+                    continue
+                }
+                
                 guard let testResults = getTestResults(logFile: fileURL.path) else { continue }
                 
                 succeededTests.formUnion(testResults.succeeded)

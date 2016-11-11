@@ -153,39 +153,16 @@ class DeviceController {
     func killProcessesForDevice(deviceID: String) {
         print("\n=== KILLING PROCESSES FOR DEVICE (\(deviceID)) ===")
         
-        let task = Process()
-        task.launchPath = "/bin/sh"
-        task.arguments = ["-c", "ps aux | grep \"\(deviceID)\""]
-        
-        let standardOutputData = NSMutableData()
-        let pipe = Pipe()
-        pipe.fileHandleForReading.readabilityHandler = { handle in
-            standardOutputData.append(handle.availableData)
-        }
-        task.standardOutput = pipe
-        task.launch()
-        task.waitUntilExit()
-        
-        if task.terminationStatus == 0, let processInfoString = String(data: standardOutputData as Data, encoding: String.Encoding.utf8) {
-            for processString in processInfoString.components(separatedBy: "\n") {
-                let parts = getProcessComponents(processString)
-                if !parts.isEmpty && !parts.contains("grep") {
-                    killProcess(parts)
-                }
-            }
-        }
-        
-        killProcessesWithGrepArg(grepArg: "launchd_sim | grep \"\(deviceID)\"")
+        killProcessesWithGrepArg(grepArg: deviceID)
         killProcessesWithGrepArg(grepArg: "iPhoneSimulator.platform")
         killProcessesWithGrepArg(grepArg: "pkd")
         killProcessesWithGrepArg(grepArg: "aslmanager")
     }
     
     func killProcessesWithGrepArg(grepArg: String) {
-        
         let task = Process()
         task.launchPath = "/bin/sh"
-        task.arguments = ["-c", "ps aux | grep \"\(grepArg)\""]
+        task.arguments = ["-c", "/usr/local/bin/pstree -U -w | grep \(grepArg); /bin/ps aux | grep \(grepArg)"]
         
         var standardOutputData = Data()
         let pipe = Pipe()
@@ -198,39 +175,35 @@ class DeviceController {
         
         if task.terminationStatus == 0, let processInfoString = String(data: standardOutputData, encoding: String.Encoding.utf8) {
             for processString in processInfoString.components(separatedBy: "\n") {
-                let parts = getProcessComponents(processString)
-                if !parts.isEmpty && !parts.contains("grep") {
-                    killProcess(parts)
+                let parts = processString.components(separatedBy: " ")
+                for part in parts {
+                    guard let processID = Int(part) else { continue }
+                    killProcess(processID: processID)
+                    break
                 }
             }
         }
     }
     
-    func killProcess(_ processParts: [String]) {
-        for part in processParts {
-            guard let processID = Int(part) else { continue }
-            
-            print(processParts.joined(separator: " "))
-            
-            let task = Process()
-            task.launchPath = "/bin/sh"
-            task.arguments = ["-c", "kill -9 \(processID)"]
-            
-            let standardOutputPipe = Pipe()
-            task.standardOutput = standardOutputPipe
-//            standardOutputPipe.fileHandleForReading.readabilityHandler = { handle in
-//                TRLog(handle.availableData)
-//            }
-            let standardErrorPipe = Pipe()
-            task.standardError = standardErrorPipe
-//            standardErrorPipe.fileHandleForReading.readabilityHandler = { handle in
-//                TRLog(handle.availableData)
-//            }
-            task.launch()
-            task.waitUntilExit()
-            
-            return
+    func killProcess(processID: Int) {
+        let task = Process()
+        task.launchPath = "/bin/sh"
+        let command = "/bin/kill -9 \(processID)"
+        print(command)
+        task.arguments = ["-c", command]
+        
+        let standardOutputPipe = Pipe()
+        task.standardOutput = standardOutputPipe
+        standardOutputPipe.fileHandleForReading.readabilityHandler = { handle in
+            TRLog(handle.availableData)
         }
+        let standardErrorPipe = Pipe()
+        task.standardError = standardErrorPipe
+//        standardErrorPipe.fileHandleForReading.readabilityHandler = { handle in
+//            TRLog(handle.availableData)
+//        }
+        task.launch()
+        task.waitUntilExit()
     }
     
     func killallSimulators() {
@@ -337,7 +310,6 @@ class DeviceController {
     }
     
     func deleteApplicationBundles(deviceID: String) {
-        print("Deleting Application Bundle")
         let task = Process()
         task.launchPath = "/bin/sh"
         task.arguments = ["-c", "/bin/rm -rf \(NSHomeDirectory())/Library/Developer/CoreSimulator/Devices/\(deviceID)/data/Containers/Bundle/Application/*"]
@@ -357,7 +329,6 @@ class DeviceController {
     }
     
     func deleteApplicationData(deviceID: String) {
-        print("Deleting Application Data")
         let task = Process()
         task.launchPath = "/bin/sh"
         task.arguments = ["-c", "/bin/rm -rf \(NSHomeDirectory())/Library/Developer/CoreSimulator/Devices/\(deviceID)/data/Containers/Data/Application/*"]
