@@ -64,7 +64,11 @@ class TestRunnerOperation: Operation {
         self.tests = tests.shuffled()
         self.retryCount = retryCount
         self.launchRetryCount = launchRetryCount
-        self.logFilePath = String(format: "%@/%@-%d.log", AppArgs.shared.logsDir, deviceID, retryCount + 1)
+        var logPrefix = "\(AppArgs.shared.logsDir)/\(deviceID)"
+        if tests.count == 1 {
+            logPrefix += "-" + tests[0]
+        }
+        self.logFilePath = String(format: "%@-%d.log", logPrefix, retryCount + 1)
         
         _executing = false
         _finished = false
