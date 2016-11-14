@@ -125,8 +125,8 @@ class DeviceController {
             NSLog("Unable to deserialize simctl device list JSON: %@", error)
         }
         
-        if retryCount > 5 {
-            NSLog("Failed to get devices after 5 tries.")
+        if retryCount > 20 {
+            NSLog("Failed to get devices after 20 tries.")
             return nil
         } else {
             return getDeviceInfoJSON(retryCount: retryCount + 1)
