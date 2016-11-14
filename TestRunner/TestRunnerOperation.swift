@@ -67,9 +67,10 @@ class TestRunnerOperation: Operation {
         self.launchRetryCount = launchRetryCount
         var logPrefix = "\(AppArgs.shared.logsDir)/\(deviceID)"
         if tests.count == 1 {
-            logPrefix += "-" + tests[0]
+            logPrefix += "-" + tests[0].replacingOccurrences(of: "/", with: "-")
         }
         self.logFilePath = String(format: "%@-%d.log", logPrefix, retryCount + 1)
+        print("log file path:", logFilePath)
         
         _executing = false
         _finished = false
