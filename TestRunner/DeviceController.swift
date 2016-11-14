@@ -161,11 +161,9 @@ class DeviceController {
     func killProcessesForDevice(deviceID: String) {
         print("\n=== KILLING PROCESSES FOR DEVICE (\(deviceID)) ===")
         
-        killProcessesWithGrepArg(grepArg: deviceID)
-        killProcessesWithGrepArg(grepArg: "xcodebuild")
-        killProcessesWithGrepArg(grepArg: "Simulator")
-        killProcessesWithGrepArg(grepArg: "pkd")
-        killProcessesWithGrepArg(grepArg: "aslmanager")
+        let grepArgs = [deviceID, "xcodebuild", "Simulator", "pkd", "aslmanager", "IDSKeychainSyncingProxy", "CloudKeychainProxy"]
+        
+        grepArgs.forEach(killProcessesWithGrepArg)
     }
     
     func killProcessesWithGrepArg(grepArg: String) {
