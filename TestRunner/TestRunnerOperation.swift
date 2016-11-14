@@ -83,13 +83,15 @@ class TestRunnerOperation: Operation {
 
         isExecuting = true
         self.status = .running
+        
+        // Clear device for reuse
+        DeviceController.sharedController.reuseDevice(simulatorName: simulatorName, deviceID: deviceID)
 
         let logMessage = String(format: "Running the following tests:\n\t%@\n\n", tests.joined(separator: "\n\t"))
         if let logData = logMessage.data(using: String.Encoding.utf8) {
             TRLog(logData, simulatorName: simulatorName)
         }
         
-        DeviceController.sharedController.deleteApplicationData(deviceID: deviceID)
         if retryCount == 0 {
             DeviceController.sharedController.installAppsOnDevice(deviceID: deviceID)
         }

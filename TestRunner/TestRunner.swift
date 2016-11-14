@@ -147,9 +147,6 @@ open class TestRunner: NSObject {
                 }
                 
                 if retryCount < AppArgs.shared.retryCount && !failedTests.isEmpty {
-                    // Clear device for reuse
-                    DeviceController.sharedController.reuseDevice(simulatorName: simulatorName, deviceID: deviceID)
-                    
                     // Retry failed tests individually
                     for test in failedTests {
                         let retryOperation = self.createOperation(deviceFamily, simulatorName: simulatorName, deviceID: deviceID, tests: [test], retryCount: retryCount)
