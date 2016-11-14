@@ -129,6 +129,7 @@ class DeviceController {
             NSLog("Failed to get devices after 20 tries.")
             return nil
         } else {
+            sleep(1)
             return getDeviceInfoJSON(retryCount: retryCount + 1)
         }
     }
