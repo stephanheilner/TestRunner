@@ -112,7 +112,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-build-tests false"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-run-tests false"
@@ -128,7 +128,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-partitions-count 30"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-partitions-count 7"
@@ -136,7 +136,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-partition 5"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-simulators-count 5"

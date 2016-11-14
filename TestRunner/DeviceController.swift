@@ -101,7 +101,7 @@ class DeviceController {
         return testDevices
     }
     
-    func getDeviceInfoJSON() -> [String: AnyObject]? {
+    func getDeviceInfoJSON(retryCount: Int = 1) -> [String: AnyObject]? {
         let outputPipe = Pipe()
         
         let task = Process()
@@ -125,7 +125,12 @@ class DeviceController {
             NSLog("Unable to deserialize simctl device list JSON: %@", error)
         }
         
-        return nil
+        if retryCount > 5 {
+            NSLog("Failed to get devices after 5 tries.")
+            return nil
+        } else {
+            return getDeviceInfoJSON(retryCount: retryCount + 1)
+        }
     }
     
     func simctl(command: String, deviceID: String, appPath: String? = nil) {
