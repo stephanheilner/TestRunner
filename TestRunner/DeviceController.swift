@@ -407,7 +407,7 @@ class DeviceController {
         
         if let regex = try? NSRegularExpression(pattern: ".*\\.app$", options: []) {
             do {
-                let productPath = AppArgs.shared.derivedDataPath + "/Build/Products/Debug-iphonesimulator"
+                let productPath = AppArgs.shared.outputDirectory
                 for filename in try FileManager.default.contentsOfDirectory(atPath: productPath) {
                     guard regex.numberOfMatches(in: filename, options: [], range: NSRange(location: 0, length: filename.length)) > 0 else { continue }
                     

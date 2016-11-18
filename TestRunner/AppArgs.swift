@@ -31,6 +31,10 @@ struct AppArgs {
     let retryCount: Int
     let launchRetryCount: Int
     
+    var outputDirectory: String {
+        return derivedDataPath + "/output"
+    }
+    
     init() {
         if let scheme = UserDefaults.standard.string(forKey: "scheme") {
             self.scheme = scheme

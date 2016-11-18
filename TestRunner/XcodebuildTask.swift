@@ -88,6 +88,7 @@ class XcodebuildTask {
         arguments += ["-scheme", AppArgs.shared.scheme]
         arguments += ["-sdk", "iphonesimulator"]
         arguments += ["-derivedDataPath", AppArgs.shared.derivedDataPath]
+        arguments += ["CONFIGURATION_BUILD_DIR=\(AppArgs.shared.outputDirectory)"]
         
         if let deviceID = deviceID {
             arguments += ["-destination", "'id=\(deviceID)'"]
