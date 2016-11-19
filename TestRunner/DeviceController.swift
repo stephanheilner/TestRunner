@@ -41,16 +41,6 @@ class DeviceController {
         return self.testDevicePrefix + " %d, %@, %@" // number, device type, runtime
     }()
     
-    func createTestDevice(installApp: Bool) -> String? {
-        guard let deviceID = createTestDevices(1, testDevices: getTestDevices()).values.flatMap({ $0.first?.deviceID }).first else { return nil }
-        
-        if installApp {
-            installAppsOnDevice(deviceID: deviceID)
-        }
-        
-        return deviceID
-    }
-    
     func resetAndCreateDevices() -> [String: [(simulatorName: String, deviceID: String)]]? {
         killallXcodebuild()
         killallSimulators()
@@ -165,9 +155,9 @@ class DeviceController {
     }
     
     func killProcessesForDevice(deviceID: String) {
-        print("\n=== KILLING PROCESSES FOR DEVICE (\(deviceID)) ===")
+        print("\t* Killing processes for device:", deviceID)
         
-        let grepArgs = [deviceID, "xcodebuild", "Simulator", "pkd", "aslmanager", "IDSKeychainSyncingProxy", "CloudKeychainProxy"]
+        let grepArgs = [deviceID, "xcodebuild", "iPhoneSimulator", "pkd", "IDSKeychainSyncingProxy", "CloudKeychainProxy"]
         
         grepArgs.forEach(killProcessesWithGrepArg)
     }
@@ -238,8 +228,6 @@ class DeviceController {
                 killProcess.waitUntilExit()
             }
         }
-        
-//        ; /bin/kill -9 \(processID);
     }
     
     func killallSimulators() {
@@ -327,14 +315,14 @@ class DeviceController {
     }
     
     func reuseDevice(simulatorName: String, deviceID: String) {
-        print("\n=== PREPARE DEVICE FOR REUSE (\(deviceID)) ===")
+        print("\t* Preparing device for reuse")
         
         killProcessesForDevice(deviceID: deviceID)
         deleteApplicationData(deviceID: deviceID)
     }
     
     func deleteApplicationBundles(deviceID: String) {
-        print("\n=== DELETING APP BUNDLES (\(deviceID)) ===")
+        print("\t* Deleting app bundles")
         
         let task = Process()
         task.launchPath = "/bin/sh"
@@ -355,7 +343,7 @@ class DeviceController {
     }
     
     func deleteApplicationData(deviceID: String) {
-        print("\n=== DELETING APP DATA (\(deviceID)) ===")
+        print("\t* Deleting app data")
         
         let task = Process()
         task.launchPath = "/bin/sh"
@@ -400,7 +388,7 @@ class DeviceController {
     }
     
     func installAppsOnDevice(deviceID: String) {
-        print("\n=== PREPARING DEVICE FOR USE ===")
+        print("\t* Installing aps on device")
         
         deleteApplicationBundles(deviceID: deviceID)
         simctl(command: "boot", deviceID: deviceID)

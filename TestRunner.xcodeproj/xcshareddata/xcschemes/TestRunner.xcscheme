@@ -64,11 +64,11 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-workspace &quot;/Users/stephan/projects/ios/gospellibrary/GospelLibrary.xcworkspace&quot;"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-workspace &quot;/Users/nicknick/ios/gospellibrary/GospelLibrary.xcworkspace&quot;"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-workspace &quot;/Users/stephan/projects/ios/LDSMusic-iOS/LDSMusic.xcworkspace&quot;"
@@ -112,7 +112,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-build-tests false"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-run-tests false"

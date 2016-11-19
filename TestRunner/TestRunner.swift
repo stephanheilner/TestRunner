@@ -64,7 +64,6 @@ open class TestRunner: NSObject {
     
     func runTests() -> Bool {
 		testRunnerQueue.maxConcurrentOperationCount = 1
-        DeviceController.sharedController.resetDevices()
         
         if AppArgs.shared.buildTests {
             do {

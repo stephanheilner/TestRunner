@@ -72,7 +72,7 @@ class XcodebuildTask {
         return task.isRunning
     }
     
-    init(actions: [String], deviceID: String? = nil, tests: [String]? = nil, logFilePath: String? = nil) {
+    init(actions: [String], deviceID: String? = nil, destination: String? = nil, tests: [String]? = nil, logFilePath: String? = nil) {
         task = Process()
         task.launchPath = "/bin/sh"
         task.currentDirectoryPath = AppArgs.shared.currentDirectory
@@ -92,6 +92,9 @@ class XcodebuildTask {
         
         if let deviceID = deviceID {
             arguments += ["-destination", "'id=\(deviceID)'"]
+        }
+        if let destination = destination {
+            arguments += ["-destination", "'\(destination)'"]
         }
         
         if let tests = tests {

@@ -6,7 +6,7 @@
 //  Copyright © 2016 Stephan Heilner
 //
 
-import Cocoa
+import Foundation
 
 class BuildTests {
     
@@ -32,12 +32,19 @@ class BuildTests {
             actions = ["clean", "build-for-testing"]
         }
         
-        let deviceID = DeviceController.sharedController.createTestDevice(installApp: (listTests == true))
-        
-        let task = XcodebuildTask(actions: actions, deviceID: deviceID)
+        guard let destination = AppArgs.shared.devices.components(separatedBy: ";").first.flatMap({ arg -> String? in
+            let parts = arg.components(separatedBy: ",")
+            guard parts.count == 2, let device = parts.first?.trimmed(), let osString = parts.last?.trimmed(), let range = osString.range(of: " ") else { return nil }
+            let os = osString.substring(from: range.upperBound)
+            return "platform=iOS Simulator,name=\(device),OS=\(os)"
+        }) else { throw FailureError.failed(log: "Unable to derive device name") }
+
+        let start = Date()
+        let task = XcodebuildTask(actions: actions, destination: destination)
         task.delegate = self
         task.launch()
         task.waitUntilExit()
+        print("\n\n=== Built in \(Date().timeIntervalSince(start)) seconds ===\n")
         
         guard task.terminationStatus == 0 else {
             if let log = String(data: task.standardErrorData as Data, encoding: String.Encoding.utf8), !log.isEmpty {
