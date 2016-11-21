@@ -47,7 +47,7 @@ class BuildTests {
         print("\n\n=== Built in \(Date().timeIntervalSince(start)) seconds ===\n")
         
         guard task.terminationStatus == 0 else {
-            if let log = String(data: task.standardErrorData as Data, encoding: String.Encoding.utf8), !log.isEmpty {
+            if let log = String(data: task.standardErrorPipe.fileHandleForReading.readDataToEndOfFile(), encoding: String.Encoding.utf8), !log.isEmpty {
                 throw FailureError.failed(log: log)
             }
             return

@@ -26,25 +26,20 @@ let dateFormatter: DateFormatter = {
     return dateFormatter
 }()
 
-let logQueue: OperationQueue = {
-    let queue = OperationQueue()
-    queue.maxConcurrentOperationCount = 1
-    return queue
-}()
+let logQueue = DispatchQueue(label: "TestRunner.log")
 
 var lastSimulatorName = ""
 
 func TRLog(_ logData: Data, simulatorName: String? = nil) {
-    logQueue.addOperation(BlockOperation() {
-        guard let log = String(data: logData, encoding: String.Encoding.utf8), !log.isEmpty else { return }
-        
+    logQueue.async {
+        guard !logData.isEmpty, let log = String(data: logData, encoding: String.Encoding.utf8), !log.isEmpty else { return }
         if let simulatorName = simulatorName, simulatorName != lastSimulatorName {
-            print("\n", dateFormatter.string(from: Date()), "-----------", simulatorName, "-----------\n", log, terminator: "")
+            print("-----------", simulatorName, "-----------\n", log, terminator: "")
             lastSimulatorName = simulatorName
         } else {
             print(log, terminator: "")
         }
-    })
+    }
 }
 
 open class TestRunner: NSObject {

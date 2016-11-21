@@ -19,8 +19,6 @@ class XcodebuildTask {
     
     fileprivate let task: Process
     
-    let standardOutputData = NSMutableData()
-    let standardErrorData = NSMutableData()
     var delegate: XcodebuildTaskDelegate?
     var logFilePath: String?
     
@@ -51,23 +49,9 @@ class XcodebuildTask {
         }
     }
     
-    lazy var standardErrorPipe: Pipe = {
-        let pipe = Pipe()
-        pipe.fileHandleForReading.readabilityHandler = { handle in
-            self.standardErrorData.append(handle.availableData)
-        }
-        return pipe
-    }()
+    let standardErrorPipe = Pipe()
+    let standardOutputPipe = Pipe()
     
-    lazy var standardOutputPipe: Pipe = {
-        let pipe = Pipe()
-        pipe.fileHandleForReading.readabilityHandler = { handle in
-            let data = handle.availableData
-            self.standardOutputData.append(data)
-            self.delegate?.outputDataReceived(self, data: data)
-        }
-        return pipe
-    }()
     var running: Bool {
         return task.isRunning
     }
@@ -113,6 +97,10 @@ class XcodebuildTask {
         task.arguments = ["-c", shellCommand]
         task.standardError = standardErrorPipe
         task.standardOutput = standardOutputPipe
+
+        standardOutputPipe.fileHandleForReading.readabilityHandler = { handle in
+            self.delegate?.outputDataReceived(self, data: handle.availableData)
+        }
     }
 
     func launch() {
