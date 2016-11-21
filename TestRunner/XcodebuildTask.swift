@@ -104,12 +104,11 @@ class XcodebuildTask {
         var output: [String] = []
         if let logFilePath = logFilePath {
             output = ["|", "tee", "\"\(logFilePath)\""]
-        } else {
-            output = ["|", "LC_ALL='en_US.UTF-8'", "/usr/local/bin/xcpretty"]
         }
+        output += ["|", "LC_ALL='en_US.UTF-8'", "/usr/local/bin/xcpretty"]
 
         let shellCommand = (arguments + output).joined(separator: " ")
-        print("\n\n\(shellCommand)\n\n")
+        TRLog("\n\n\(shellCommand)\n\n".data(using: String.Encoding.utf8)!)
         
         task.arguments = ["-c", shellCommand]
         task.standardError = standardErrorPipe

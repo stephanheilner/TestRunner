@@ -318,6 +318,7 @@ class DeviceController {
         print("\t* Preparing device for reuse")
         
         killProcessesForDevice(deviceID: deviceID)
+        simctl(command: "shutdown", deviceID: deviceID)
         deleteApplicationData(deviceID: deviceID)
     }
     
@@ -388,7 +389,7 @@ class DeviceController {
     }
     
     func installAppsOnDevice(deviceID: String) {
-        print("\t* Installing aps on device")
+        print("\t* Installing apps on device")
         
         deleteApplicationBundles(deviceID: deviceID)
         simctl(command: "boot", deviceID: deviceID)

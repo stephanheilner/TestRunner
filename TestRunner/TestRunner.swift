@@ -140,11 +140,6 @@ open class TestRunner: NSObject {
                 
                 self.simulatorPassStatus[simulatorName] = false
                 
-                let failedLog = "---------- Failed Tests ----------\n" + failedTests.joined(separator: "\n")
-                if let failedData = failedLog.data(using: String.Encoding.utf8) {
-                    TRLog(failedData, simulatorName: simulatorName)
-                }
-                
                 if retryCount < AppArgs.shared.retryCount && !failedTests.isEmpty {
                     // Retry failed tests individually
                     for test in failedTests {

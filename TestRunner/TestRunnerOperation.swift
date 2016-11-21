@@ -86,16 +86,14 @@ class TestRunnerOperation: Operation {
         
         // Clear device for reuse
         DeviceController.sharedController.reuseDevice(simulatorName: simulatorName, deviceID: deviceID)
-
-        let logMessage = String(format: "Running the following tests:\n\t%@\n\n", tests.joined(separator: "\n\t"))
-        if let logData = logMessage.data(using: String.Encoding.utf8) {
-            TRLog(logData, simulatorName: simulatorName)
-        }
-        
         if retryCount == 0 {
             DeviceController.sharedController.installAppsOnDevice(deviceID: deviceID)
         }
-        
+
+        let logMessage = String(format: "Running Tests:\n\t%@\n\n", tests.joined(separator: "\n\t"))
+        if let logData = logMessage.data(using: String.Encoding.utf8) {
+            TRLog(logData, simulatorName: simulatorName)
+        }
         
         let task = XcodebuildTask(actions: ["test-without-building"], deviceID: deviceID, tests: tests, logFilePath: logFilePath)
         
