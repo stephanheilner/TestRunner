@@ -88,6 +88,8 @@ class TestRunnerOperation: Operation {
         DeviceController.sharedController.reuseDevice(simulatorName: simulatorName, deviceID: deviceID)
         if retryCount == 0 {
             DeviceController.sharedController.installAppsOnDevice(deviceID: deviceID)
+        } else {
+            DeviceController.sharedController.killallSimulators()
         }
 
         let logMessage = String(format: "Running Tests:\n\t%@\n\n", tests.joined(separator: "\n\t"))

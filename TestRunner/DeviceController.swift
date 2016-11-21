@@ -151,7 +151,7 @@ class DeviceController {
         task.launch()
         task.waitUntilExit()
         
-        print("simctl", command, deviceID, "(\(Date().timeIntervalSince(start)) seconds)")
+        print("\t* simctl", command, deviceID, "(\(Date().timeIntervalSince(start)) seconds)")
     }
     
     func killProcessesForDevice(deviceID: String) {
