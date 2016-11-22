@@ -33,14 +33,11 @@ var lastSimulatorName = ""
 func TRLog(_ logData: Data, simulatorName: String? = nil) {
     logQueue.async {
         guard !logData.isEmpty, let log = String(data: logData, encoding: String.Encoding.utf8), !log.isEmpty else { return }
-        
-        DispatchQueue.main.async {
-            if let simulatorName = simulatorName, simulatorName != lastSimulatorName {
-                print("-----------", simulatorName, "-----------\n", log, terminator: "")
-                lastSimulatorName = simulatorName
-            } else {
-                print(log, terminator: "")
-            }
+        if let simulatorName = simulatorName, simulatorName != lastSimulatorName {
+            print("-----------", simulatorName, "-----------\n", log, terminator: "")
+            lastSimulatorName = simulatorName
+        } else {
+            print(log, terminator: "")
         }
     }
 }
