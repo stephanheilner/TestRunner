@@ -37,7 +37,7 @@ class TestPartitioner {
         var start = 0
         var end = 0
         
-        var tests = Array(allTests).shuffled()
+        var tests = Array(allTests)
         var partitionTests = [[String]]()
         
         for i in 0..<partitionsCount {
