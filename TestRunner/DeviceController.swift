@@ -191,43 +191,11 @@ class DeviceController {
     func killProcess(processID: Int) {
         let showProcess = Process()
         showProcess.launchPath = "/bin/sh"
-        
-        let command = "/bin/ps -p \(processID)"
-        showProcess.arguments = ["-c", command]
-
-        var standardOutput = Data()
-        let standardOutputPipe = Pipe()
-        showProcess.standardOutput = standardOutputPipe
-        standardOutputPipe.fileHandleForReading.readabilityHandler = { handle in
-            standardOutput.append(handle.availableData)
-            TRLog(handle.availableData)
-        }
-        let standardErrorPipe = Pipe()
-        showProcess.standardError = standardErrorPipe
+        showProcess.arguments = ["-c", "/bin/kill -9 \(processID)"]
+        showProcess.standardOutput = Pipe()
+        showProcess.standardError = Pipe()
         showProcess.launch()
         showProcess.waitUntilExit()
-        
-        if let outputString = String(data: standardOutput, encoding: String.Encoding.utf8) {
-            var processes = outputString.components(separatedBy: "\n").filter { !$0.isEmpty }
-            _ = processes.shift()
-            for process in processes {
-                print(process)
-                
-                let killProcess = Process()
-                killProcess.launchPath = "/bin/sh"
-                killProcess.arguments = ["-c", "/bin/kill -9 \(processID)"]
-                
-                let standardOutputPipe = Pipe()
-                killProcess.standardOutput = standardOutputPipe
-                standardOutputPipe.fileHandleForReading.readabilityHandler = { handle in
-                    TRLog(handle.availableData)
-                }
-                let standardErrorPipe = Pipe()
-                killProcess.standardError = standardErrorPipe
-                killProcess.launch()
-                killProcess.waitUntilExit()
-            }
-        }
     }
     
     func killallSimulators() {

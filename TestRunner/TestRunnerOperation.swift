@@ -195,7 +195,7 @@ extension TestRunnerOperation: XcodebuildTaskDelegate {
 
         let counter = timeoutCounter
         
-        let timeoutTime = DispatchTime.now() + Double(Int64(AppArgs.shared.timeout * Double(NSEC_PER_SEC))) / Double(NSEC_PER_SEC)
+        let timeoutTime = DispatchTime.now() + DispatchTimeInterval.seconds(Int(AppArgs.shared.timeout))
         DispatchQueue.global(qos: .background).asyncAfter(deadline: timeoutTime) {
             guard counter < self.timeoutCounter else {
                 self.finishOperation(status: .testTimeout)
