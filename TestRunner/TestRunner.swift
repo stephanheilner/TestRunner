@@ -137,8 +137,13 @@ open class TestRunner: NSObject {
                 
                 if retryCount < AppArgs.shared.retryCount && !failedTests.isEmpty {
                     // Retry failed tests individually
-                    for test in failedTests {
+                    var retryTests = failedTests
+                    if let test = retryTests.shift() {
                         let retryOperation = self.createOperation(deviceFamily, simulatorName: simulatorName, deviceID: deviceID, tests: [test], retryCount: retryCount)
+                        self.testRunnerQueue.addOperation(retryOperation)
+                    }
+                    if !retryTests.isEmpty {
+                        let retryOperation = self.createOperation(deviceFamily, simulatorName: simulatorName, deviceID: deviceID, tests: retryTests, retryCount: retryCount)
                         self.testRunnerQueue.addOperation(retryOperation)
                     }
                 } else {
