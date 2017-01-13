@@ -49,8 +49,9 @@ class BuildTests {
         guard task.terminationStatus == 0 else {
             if let log = String(data: task.standardErrorPipe.fileHandleForReading.readDataToEndOfFile(), encoding: String.Encoding.utf8), !log.isEmpty {
                 throw FailureError.failed(log: log)
+            } else {
+                throw FailureError.failed(log: "Build failed.")
             }
-            return
         }
 
         if listTests {
