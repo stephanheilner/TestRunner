@@ -62,10 +62,11 @@ class TestRunnerOperation: Operation {
         self.deviceFamily = deviceFamily
         self.simulatorName = simulatorName
         self.deviceID = deviceID
-        self.tests = tests.shuffled()
+        self.tests = tests
         self.retryCount = retryCount
         self.launchRetryCount = launchRetryCount
         var logPrefix = "\(AppArgs.shared.logsDir)/\(deviceID)"
+        
         if tests.count == 1 {
             logPrefix += "-" + tests[0].replacingOccurrences(of: "/", with: "-")
         }
@@ -110,7 +111,8 @@ class TestRunnerOperation: Operation {
 
         Summary.outputSummary(logFile: logFilePath, simulatorName: simulatorName)
         
-        let failedTests = tests.filter { !results.filter({ $0.passed }).map({ $0.testName }).contains($0) }
+        let passedTests = results.filter { $0.passed }.map { $0.testName }
+        let failedTests = tests.filter { passedTests.contains($0) }
         completion?(status, simulatorName, failedTests, deviceID, retryCount, launchRetryCount)
         
         isExecuting = false

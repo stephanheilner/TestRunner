@@ -19,7 +19,8 @@ class TestPartitioner {
             if let data = try? Data(contentsOf: URL(fileURLWithPath: AppArgs.shared.logsDir + "/tests.json")) {
                 if let targetTests = try JSONSerialization.jsonObject(with: data, options: []) as? [String: [String]] {
                     if let target = AppArgs.shared.target, let tests = targetTests[target] {
-                        allTests.formUnion(tests)
+                        let testNames = tests.map { $0.replacingOccurrences(of: "\(target)/", with: "") }
+                        allTests.formUnion(testNames)
                     } else {
                         targetTests.forEach { target, tests in
                             allTests.formUnion(tests)
@@ -43,7 +44,7 @@ class TestPartitioner {
         for i in 0..<partitionsCount {
             start = Int(round(numTestsPerPartition * Float(i)))
             end = Int(round(numTestsPerPartition * Float(i + 1)))
-            partitionTests.append(Array(tests[start..<end]))
+            partitionTests.append(Array(tests[start..<end]).shuffled())
         }
         
         let simulatorsCount = AppArgs.shared.simulatorsCount

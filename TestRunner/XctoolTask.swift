@@ -56,7 +56,7 @@ class XctoolTask {
         return task.isRunning
     }
     
-    init(actions: [String], deviceID: String? = nil, destination: String? = nil, tests: [String]? = nil, logFilePath: String? = nil) {
+    init(actions: [String], deviceID: String? = nil, destination: String? = nil, tests: [String], logFilePath: String? = nil) {
         task = Process()
         task.launchPath = "/bin/sh"
         task.currentDirectoryPath = AppArgs.shared.currentDirectory
@@ -84,16 +84,8 @@ class XctoolTask {
         arguments += actions
         arguments += ["-newSimulatorInstance"]
         
-        if let tests = tests?.grouped(by: { test -> String in
-            if let range = test.range(of: "/") {
-                return test.substring(to: range.lowerBound)
-            }
-            return test
-        }) {
-            for (target, testNames) in tests {
-                let targetTests = testNames.map { $0.replacingOccurrences(of: "\(target)/", with: "") }
-                arguments += ["-only", "\(target):\(targetTests.joined(separator: ","))"]
-            }
+        if let target = AppArgs.shared.target {
+            arguments += ["-only", "\(target):\(tests.joined(separator: ","))"]
         }
         
         arguments += ["-reporter", "pretty"]
