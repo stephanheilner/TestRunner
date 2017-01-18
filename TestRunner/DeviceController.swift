@@ -218,7 +218,19 @@ class DeviceController {
         task.launch()
         task.waitUntilExit()
         
-        ["xcodebuild", "xctool", "iPhoneSimulator", "pkd", "IDSKeychainSyncingProxy", "CloudKeychainProxy", "aslmanager", "launchd_sim"].forEach(killProcessesWithGrepArg)
+        let processesToKill = [
+            "xcodebuild",
+            "xctool",
+            "iPhoneSimulator",
+            "pkd",
+            "IDSKeychainSyncingProxy",
+            "CloudKeychainProxy",
+            "aslmanager",
+            "launchd_sim",
+            "UserEventAgent",
+            "MobileSMSSpotlightImporter"
+        ]
+        processesToKill.forEach(killProcessesWithGrepArg)
     }
     
     func createTestDevices(_ numberOfDevices: Int? = nil, testDevices: [(simulatorName: String, deviceID: String)] = []) -> [String: [(simulatorName: String, deviceID: String)]] {
