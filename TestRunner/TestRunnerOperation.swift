@@ -107,12 +107,12 @@ class TestRunnerOperation: Operation {
         simulatorDidLaunch()
         
         let results = JSON.testResults(logPath: self.logFilePath)
-        let status: TestRunnerStatus = results.any(condition: { !$0.passed }) ? .failed : .success
 
         Summary.outputSummary(logFile: logFilePath, simulatorName: simulatorName)
         
         let passedTests = results.filter { $0.passed }.map { $0.testName }
         let failedTests = tests.filter { !passedTests.contains($0) }
+        let status: TestRunnerStatus = failedTests.isEmpty ? .success : .failed
         completion?(status, simulatorName, failedTests, deviceID, retryCount, launchRetryCount)
         
         isExecuting = false
