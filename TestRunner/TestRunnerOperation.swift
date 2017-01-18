@@ -53,7 +53,7 @@ class TestRunnerOperation: Operation {
     fileprivate let logFilePath: String
     fileprivate var status: TestRunnerStatus = .stopped
     fileprivate var lastCheck = Date().timeIntervalSince1970
-    fileprivate var timeoutCounter = 0
+    fileprivate var numberOfLogsReceived = 0
     
     var simulatorLaunched = false
     var completion: ((_ status: TestRunnerStatus, _ simulatorName: String, _ failedTests: [String], _ deviceID: String, _ retryCount: Int, _ launchRetryCount: Int) -> Void)?
@@ -149,7 +149,7 @@ class TestRunnerOperation: Operation {
             guard !self.simulatorLaunched else { return }
                 
             TRLog("TIMED OUT Launching Simulator", simulatorName: self.simulatorName)
-            self.finishOperation(status: .launchTimeout)
+            self.finishOperation()
             return
         }
     }
@@ -162,31 +162,18 @@ extension TestRunnerOperation: XctoolTaskDelegate {
         guard data.count > 0 else { return }
 
         TRLog(data, simulatorName: simulatorName)
-
-        let counter = timeoutCounter
+        
+        numberOfLogsReceived += 1
+        let currentLogCount = numberOfLogsReceived
+        notifyIfLaunched(data)
         
         DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + AppArgs.shared.timeout) {
-            guard counter < self.timeoutCounter else {
-                self.finishOperation(status: .testTimeout)
+            guard currentLogCount < self.numberOfLogsReceived else {
+                TRLog("No logs received for \(AppArgs.shared.timeout) seconds, failing", simulatorName: self.simulatorName)
+                self.finishOperation()
                 return
             }
         }
-        timeoutCounter += 1
-        
-        notifyIfLaunched(data)
-    }
-    
-}
-
-extension NSRange {
-    
-    func range(from string: String) -> Range<String.Index>? {
-        guard let from16 = string.utf16.index(string.utf16.startIndex, offsetBy: location, limitedBy: string.utf16.endIndex),
-            let to16 = string.utf16.index(from16, offsetBy: length, limitedBy: string.utf16.endIndex),
-            let from = String.Index(from16, within: string),
-            let to = String.Index(to16, within: string) else { return nil }
-        
-        return from ..< to
     }
     
 }
