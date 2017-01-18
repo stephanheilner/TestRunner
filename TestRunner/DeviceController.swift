@@ -42,13 +42,11 @@ class DeviceController {
     }()
     
     func resetAndCreateDevices() -> [String: [(simulatorName: String, deviceID: String)]]? {
-        killallXcodebuild()
         killallSimulators()
         return createTestDevices(testDevices: getTestDevices())
     }
     
     func resetDevices() {
-        killallXcodebuild()
         killallSimulators()
         
         getTestDevices().forEach {
@@ -157,7 +155,7 @@ class DeviceController {
     func killProcessesForDevice(deviceID: String) {
         print("\t* Killing processes for device:", deviceID)
         
-        let grepArgs = [deviceID, "xcodebuild", "iPhoneSimulator", "pkd", "IDSKeychainSyncingProxy", "CloudKeychainProxy", "aslmanager", "launchd_sim"]
+        let grepArgs = [deviceID]
         
         grepArgs.forEach(killProcessesWithGrepArg)
     }
@@ -166,6 +164,8 @@ class DeviceController {
         let task = Process()
         task.launchPath = "/bin/sh"
         task.arguments = ["-c", "/usr/local/bin/pstree -U -w | grep \(grepArg); /bin/ps aux | grep \(grepArg)"]
+        
+//        print("Kill Process", task.arguments?.joined(separator: " ") ?? "")
         
         var standardOutputData = Data()
         let pipe = Pipe()
@@ -176,7 +176,7 @@ class DeviceController {
         task.launch()
         task.waitUntilExit()
         
-        if task.terminationStatus == 0, let processInfoString = String(data: standardOutputData, encoding: String.Encoding.utf8) {
+        if task.terminationStatus == 0, let processInfoString = String(data: standardOutputData, encoding: .utf8) {
             for processString in processInfoString.components(separatedBy: "\n") {
                 let parts = processString.components(separatedBy: " ")
                 for part in parts {
@@ -217,27 +217,8 @@ class DeviceController {
         }
         task.launch()
         task.waitUntilExit()
-    }
-    
-    func killallXcodebuild() {
-        print("\n=== KILLING xcodebuild ===")
         
-        let task = Process()
-        task.launchPath = "/usr/bin/killall"
-        task.arguments = ["xcodebuild"]
-        
-        let standardOutputPipe = Pipe()
-        task.standardOutput = standardOutputPipe
-        standardOutputPipe.fileHandleForReading.readabilityHandler = { handle in
-            TRLog(handle.availableData)
-        }
-        let standardErrorPipe = Pipe()
-        task.standardError = standardErrorPipe
-        standardErrorPipe.fileHandleForReading.readabilityHandler = { handle in
-            TRLog(handle.availableData)
-        }
-        task.launch()
-        task.waitUntilExit()
+        ["xcodebuild", "xctool", "iPhoneSimulator", "pkd", "IDSKeychainSyncingProxy", "CloudKeychainProxy", "aslmanager", "launchd_sim"].forEach(killProcessesWithGrepArg)
     }
     
     func createTestDevices(_ numberOfDevices: Int? = nil, testDevices: [(simulatorName: String, deviceID: String)] = []) -> [String: [(simulatorName: String, deviceID: String)]] {
@@ -349,7 +330,7 @@ class DeviceController {
         
         guard task.terminationStatus == 0 else { return nil }
         
-        if let deviceID = String(data: data as Data, encoding: String.Encoding.utf8)?.trimmed() {
+        if let deviceID = String(data: data as Data, encoding: .utf8)?.trimmed() {
             print("\n=== CREATED DEVICE (\(deviceID)) ===")
             return (simulatorName: simulatorName, deviceID: deviceID)
         }
@@ -357,9 +338,10 @@ class DeviceController {
     }
     
     func installAppsOnDevice(deviceID: String) {
+        deleteApplicationBundles(deviceID: deviceID)
+
         print("\t* Installing apps on device")
         
-        deleteApplicationBundles(deviceID: deviceID)
         simctl(command: "boot", deviceID: deviceID)
         
         if let regex = try? NSRegularExpression(pattern: ".*\\.app$", options: []) {
@@ -376,12 +358,6 @@ class DeviceController {
         }
 
         simctl(command: "shutdown", deviceID: deviceID)
-    }
-    
-    func killAndDeleteTestDevices() {
-        killallXcodebuild()
-        killallSimulators()
-        print("\n")
     }
     
 }

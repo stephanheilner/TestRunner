@@ -112,7 +112,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-build-tests false"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-run-tests false"
@@ -127,8 +127,8 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-partitions-count 30"
-            isEnabled = "NO">
+            argument = "-partitions-count 40"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-partitions-count 7"
@@ -143,11 +143,11 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-simulators-count 2"
-            isEnabled = "NO">
+            argument = "-simulators-count 3"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-devices &quot;iPhone 5, iOS 10.1&quot;"
+            argument = "-devices &quot;iPhone 5s, iOS 10.2&quot;"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

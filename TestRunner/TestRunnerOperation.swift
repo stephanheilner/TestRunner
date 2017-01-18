@@ -69,8 +69,7 @@ class TestRunnerOperation: Operation {
         if tests.count == 1 {
             logPrefix += "-" + tests[0].replacingOccurrences(of: "/", with: "-")
         }
-        self.logFilePath = String(format: "%@-%d.log", logPrefix, retryCount + 1)
-        print("log file path:", logFilePath)
+        self.logFilePath = String(format: "%@-%d.json", logPrefix, retryCount + 1)
         
         _executing = false
         _finished = false
@@ -88,17 +87,12 @@ class TestRunnerOperation: Operation {
         DeviceController.sharedController.reuseDevice(simulatorName: simulatorName, deviceID: deviceID)
         if retryCount == 0 {
             DeviceController.sharedController.installAppsOnDevice(deviceID: deviceID)
-        } else {
-            DeviceController.sharedController.killallSimulators()
         }
 
         let logMessage = String(format: "Running Tests:\n\t%@\n\n", tests.joined(separator: "\n\t"))
-        if let logData = logMessage.data(using: String.Encoding.utf8) {
-            TRLog(logData, simulatorName: simulatorName)
-        }
+        TRLog(logMessage, simulatorName: simulatorName)
         
-        let task = XcodebuildTask(actions: ["test-without-building"], deviceID: deviceID, tests: tests, logFilePath: logFilePath)
-        
+        let task = XctoolTask(actions: ["run-tests"], deviceID: deviceID, tests: tests, logFilePath: logFilePath)
         task.delegate = self
         task.launch()
         task.waitUntilExit()
@@ -108,43 +102,16 @@ class TestRunnerOperation: Operation {
         finishOperation(status: status)
     }
     
-    func launchSimulator() {
-        let task = Process()
-        task.launchPath = "/bin/sh"
-        let arguments = ["-c", "/usr/bin/open -n /Applications/Xcode.app/Contents/Developer/Applications/Simulator.app --args -CurrentDeviceUDID \(deviceID)"]
-        task.arguments = arguments
-        
-        print(arguments)
-        
-        let outputPipe = Pipe()
-        outputPipe.fileHandleForReading.readabilityHandler = { handle in
-            TRLog(handle.availableData)
-        }
-        task.standardOutput = outputPipe
-        
-        let errorPipe = Pipe()
-        errorPipe.fileHandleForReading.readabilityHandler = { handle in
-            TRLog(handle.availableData)
-        }
-        task.standardError = errorPipe
-        task.launch()
-        task.waitUntilExit()
-
-    }
-    
     func finishOperation(status: TestRunnerStatus) {
         simulatorDidLaunch()
         
-        var status = status
+        let results = JSON.testResults(logPath: self.logFilePath)
+        let status: TestRunnerStatus = results.any(condition: { !$0.passed }) ? .failed : .success
+
+        Summary.outputSummary(logFile: logFilePath, simulatorName: simulatorName)
         
-        let succeededTests = Summary.getSucceededTests(logFile: logFilePath)
-        if tests.count > succeededTests.count {
-            status = .failed
-        }
-        
-        Summary.outputSummary(logFile: logFilePath, attemptedTests: tests)
-        
-        completion?(status, simulatorName, tests.filter { !succeededTests.contains($0) }, deviceID, retryCount, launchRetryCount)
+        let failedTests = tests.filter { !results.filter({ $0.passed }).map({ $0.testName }).contains($0) }
+        completion?(status, simulatorName, failedTests, deviceID, retryCount, launchRetryCount)
         
         isExecuting = false
         isFinished = true
@@ -166,19 +133,15 @@ class TestRunnerOperation: Operation {
         lastCheck = now
         
         DispatchQueue.global(qos: .background).async {
-            do {
-                let log = try String(contentsOfFile: self.logFilePath, encoding: String.Encoding.utf8)
-                if Summary.TestSuiteStartedRegex.numberOfMatches(in: log, options: [], range: NSRange(location: 0, length: log.length)) > 0 {
-                    self.simulatorDidLaunch()
-                }
-            } catch {}
+            if JSON.hasBeginTestSuiteEvent(logPath: self.logFilePath) {
+                self.simulatorDidLaunch()
+            }
         }
         
         DispatchQueue.main.asyncAfter(deadline: (.now() + DispatchTimeInterval.seconds(AppArgs.shared.launchTimeout))) {
             guard !self.simulatorLaunched else { return }
-            if let data = "TIMED OUT Launching Simulator".data(using: String.Encoding.utf8) {
-                TRLog(data, simulatorName: self.simulatorName)
-            }
+                
+            TRLog("TIMED OUT Launching Simulator", simulatorName: self.simulatorName)
             self.finishOperation(status: .launchTimeout)
             return
         }
@@ -186,17 +149,16 @@ class TestRunnerOperation: Operation {
     
 }
 
-extension TestRunnerOperation: XcodebuildTaskDelegate {
+extension TestRunnerOperation: XctoolTaskDelegate {
 
-    func outputDataReceived(_ task: XcodebuildTask, data: Data) {
+    func outputDataReceived(_ task: XctoolTask, data: Data) {
         guard data.count > 0 else { return }
 
         TRLog(data, simulatorName: simulatorName)
 
         let counter = timeoutCounter
         
-        let timeoutTime = DispatchTime.now() + DispatchTimeInterval.seconds(Int(AppArgs.shared.timeout))
-        DispatchQueue.global(qos: .background).asyncAfter(deadline: timeoutTime) {
+        DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + AppArgs.shared.timeout) {
             guard counter < self.timeoutCounter else {
                 self.finishOperation(status: .testTimeout)
                 return

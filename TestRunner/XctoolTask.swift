@@ -1,5 +1,5 @@
 //
-//  XcodebuildTask.swift
+//  XctoolTask.swift
 //  TestRunner
 //
 //  Created by Stephan Heilner on 2/12/16.
@@ -9,17 +9,17 @@
 import Cocoa
 
 
-protocol XcodebuildTaskDelegate {
-
-    func outputDataReceived(_ task: XcodebuildTask, data: Data)
+protocol XctoolTaskDelegate {
+    
+    func outputDataReceived(_ task: XctoolTask, data: Data)
     
 }
 
-class XcodebuildTask {
+class XctoolTask {
     
     fileprivate let task: Process
     
-    var delegate: XcodebuildTaskDelegate?
+    var delegate: XctoolTaskDelegate?
     var logFilePath: String?
     
     var terminationHandler: ((Process) -> Void)? {
@@ -42,7 +42,7 @@ class XcodebuildTask {
             return task.isRunning
         }
     }
-
+    
     var terminationReason: Process.TerminationReason {
         get {
             return task.terminationReason
@@ -62,7 +62,7 @@ class XcodebuildTask {
         task.currentDirectoryPath = AppArgs.shared.currentDirectory
         task.environment = ProcessInfo.processInfo.environment
         
-        var arguments = ["xcodebuild"] + actions
+        var arguments = ["/usr/local/bin/xctool"]
         
         if let project = AppArgs.shared.projectPath {
             arguments += ["-project", project]
@@ -81,28 +81,38 @@ class XcodebuildTask {
             arguments += ["-destination", "'\(destination)'"]
         }
         
-        if let tests = tests {
-            arguments += tests.map { "-only-testing:\($0)" }
+        arguments += actions
+        arguments += ["-newSimulatorInstance"]
+        
+        if let tests = tests?.grouped(by: { test -> String in
+            if let range = test.range(of: "/") {
+                return test.substring(to: range.lowerBound)
+            }
+            return test
+        }) {
+            for (target, testNames) in tests {
+                let targetTests = testNames.map { $0.replacingOccurrences(of: "\(target)/", with: "") }
+                arguments += ["-only", "\(target):\(targetTests.joined(separator: ","))"]
+            }
         }
         
-        var output: [String] = []
+        arguments += ["-reporter", "pretty"]
         if let logFilePath = logFilePath {
-            output = ["|", "tee", "\"\(logFilePath)\""]
+            arguments += ["-reporter", "json-stream:\(logFilePath)"]
         }
-        output += ["|", "LC_ALL='en_US.UTF-8'", "/usr/local/bin/xcpretty"]
-
-        let shellCommand = (arguments + output).joined(separator: " ")
-        TRLog("\n\n\(shellCommand)\n\n")
+        
+        let shellCommand = arguments.joined(separator: " ")
+//        TRLog("\n\n\(shellCommand)\n\n")
         
         task.arguments = ["-c", shellCommand]
         task.standardError = standardErrorPipe
         task.standardOutput = standardOutputPipe
-
+        
         standardOutputPipe.fileHandleForReading.readabilityHandler = { handle in
             self.delegate?.outputDataReceived(self, data: handle.availableData)
         }
     }
-
+    
     func launch() {
         task.launch()
     }

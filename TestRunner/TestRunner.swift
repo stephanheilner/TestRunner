@@ -32,12 +32,24 @@ var lastSimulatorName = ""
 
 func TRLog(_ logData: Data, simulatorName: String? = nil) {
     logQueue.async {
-        guard !logData.isEmpty, let log = String(data: logData, encoding: String.Encoding.utf8), !log.isEmpty else { return }
+        guard !logData.isEmpty, let log = String(data: logData, encoding: .utf8), !log.isEmpty else { return }
         if let simulatorName = simulatorName, simulatorName != lastSimulatorName {
             print("-----------", simulatorName, "-----------\n", log, terminator: "")
             lastSimulatorName = simulatorName
         } else {
             print(log, terminator: "")
+        }
+    }
+}
+
+func TRLog(_ logString: String, simulatorName: String? = nil) {
+    logQueue.async {
+        guard !logString.isEmpty else { return }
+        if let simulatorName = simulatorName, simulatorName != lastSimulatorName {
+            print("-----------", simulatorName, "-----------\n", logString)
+            lastSimulatorName = simulatorName
+        } else {
+            print(logString)
         }
     }
 }
@@ -54,11 +66,17 @@ open class TestRunner: NSObject {
         exit(testsPassed ? 0 : 1)
     }
     
-    let testRunnerQueue = OperationQueue()
+    let testRunnerQueue = TestRunnerOperationQueue()
     var simulatorPassStatus = [String: Bool]()
     
     func runTests() -> Bool {
-		testRunnerQueue.maxConcurrentOperationCount = 1
+        do {
+            for logURL in try FileManager.default.contentsOfDirectory(at: URL(fileURLWithPath: AppArgs.shared.logsDir), includingPropertiesForKeys: nil, options: []) {
+                guard logURL.lastPathComponent != "tests.json" else { continue }
+                
+                try FileManager.default.removeItem(at: logURL)
+            }
+        } catch {}
         
         if AppArgs.shared.buildTests {
             do {
@@ -112,7 +130,7 @@ open class TestRunner: NSObject {
             // Shutdown and kill all simulators
             DeviceController.sharedController.resetDevices()
             
-            Summary.outputSummary(attemptedTests: Array(testsByDevice.values.joined()))
+            Summary.outputSummary()
         }
 
         let failed = simulatorPassStatus.any { _, passed in
@@ -126,12 +144,12 @@ open class TestRunner: NSObject {
         operation.completion = { status, simulatorName, failedTests, deviceID, retryCount, launchRetryCount in
             switch status {
             case .success:
-                NSLog("Tests PASSED on %@\n", simulatorName)
+                TRLog("Tests PASSED on \(simulatorName)", simulatorName: simulatorName)
                 self.simulatorPassStatus[simulatorName] = true
                 
             case .failed, .testTimeout, .launchTimeout, .stopped:
                 let retryCount = retryCount + 1
-                NSLog("\n\nTests FAILED (Attempt %d of %d) on %@\n", retryCount, AppArgs.shared.retryCount, simulatorName)
+                TRLog("\n\nTests FAILED (Attempt \(retryCount) of \(AppArgs.shared.retryCount)) on \(simulatorName)", simulatorName: simulatorName)
                 
                 self.simulatorPassStatus[simulatorName] = false
                 
