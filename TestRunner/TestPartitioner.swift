@@ -44,7 +44,7 @@ class TestPartitioner {
         for i in 0..<partitionsCount {
             start = Int(round(numTestsPerPartition * Float(i)))
             end = Int(round(numTestsPerPartition * Float(i + 1)))
-            partitionTests.append(Array(tests[start..<end]).shuffled())
+            partitionTests.append(Array(tests[start..<end]))
         }
         
         let simulatorsCount = AppArgs.shared.simulatorsCount
