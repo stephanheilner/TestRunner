@@ -168,7 +168,7 @@ extension TestRunnerOperation: XctoolTaskDelegate {
         notifyIfLaunched(data)
         
         DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + AppArgs.shared.timeout) {
-            guard !isFinished, currentLogCount < self.numberOfLogsReceived else {
+            guard !self.isFinished, currentLogCount < self.numberOfLogsReceived else {
                 TRLog("****************=============== No logs received for \(AppArgs.shared.timeout) seconds, failing ===============****************", simulatorName: self.simulatorName)
                 self.finishOperation()
                 return
