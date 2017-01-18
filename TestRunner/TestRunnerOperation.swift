@@ -158,9 +158,13 @@ class TestRunnerOperation: Operation {
 
 extension TestRunnerOperation: XctoolTaskDelegate {
 
-    func outputDataReceived(_ task: XctoolTask, data: Data) {
+    func outputDataReceived(data: Data, isError: Bool) {
         guard data.count > 0 else { return }
-
+        
+        if isError {
+            TRLog("Error logs incoming!", simulatorName: simulatorName)
+        }
+        
         TRLog(data, simulatorName: simulatorName)
         
         numberOfLogsReceived += 1

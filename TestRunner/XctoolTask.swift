@@ -11,7 +11,7 @@ import Cocoa
 
 protocol XctoolTaskDelegate {
     
-    func outputDataReceived(_ task: XctoolTask, data: Data)
+    func outputDataReceived(data: Data, isError: Bool)
     
 }
 
@@ -100,7 +100,11 @@ class XctoolTask {
         task.standardOutput = standardOutputPipe
         
         standardOutputPipe.fileHandleForReading.readabilityHandler = { handle in
-            self.delegate?.outputDataReceived(self, data: handle.availableData)
+            self.delegate?.outputDataReceived(data: handle.availableData, isError: false)
+        }
+        
+        standardErrorPipe.fileHandleForReading.readabilityHandler = { handle in
+            self.delegate?.outputDataReceived(data: handle.availableData, isError: true)
         }
     }
     
