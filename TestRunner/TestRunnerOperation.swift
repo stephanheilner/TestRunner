@@ -98,15 +98,20 @@ class TestRunnerOperation: Operation {
         task.launch()
         task.waitUntilExit()
         
-        let status: TestRunnerStatus = task.terminationStatus == 0 ? .success : .failed
+        if task.terminationStatus != 0 {
+            TRLog("****************=============== TASK TERMINATED ABNORMALLY WITH STATUS \(task.terminationStatus) ===============****************", simulatorName: simulatorName)
+            if case task.terminationReason = Process.TerminationReason.uncaughtSignal {
+                TRLog("****************=============== TASK TERMINATED DUE TO UNCAUGHT EXCEPTION ===============****************, , simulatorName: simulatorName")
+            }
+        }
 
-        finishOperation(status: status)
+        finishOperation()
     }
     
-    func finishOperation(status: TestRunnerStatus) {
+    func finishOperation() {
         simulatorDidLaunch()
         
-        let results = JSON.testResults(logPath: self.logFilePath)
+        let results = JSON.testResults(logPath: logFilePath)
 
         Summary.outputSummary(logFile: logFilePath, simulatorName: simulatorName)
         

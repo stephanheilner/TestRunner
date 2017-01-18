@@ -94,7 +94,6 @@ class XctoolTask {
         }
         
         let shellCommand = arguments.joined(separator: " ")
-//        TRLog("\n\n\(shellCommand)\n\n")
         
         task.arguments = ["-c", shellCommand]
         task.standardError = standardErrorPipe
