@@ -112,7 +112,7 @@ class TestRunnerOperation: Operation {
         Summary.outputSummary(logFile: logFilePath, simulatorName: simulatorName)
         
         let passedTests = results.filter { $0.passed }.map { $0.testName }
-        let failedTests = tests.filter { passedTests.contains($0) }
+        let failedTests = tests.filter { !passedTests.contains($0) }
         completion?(status, simulatorName, failedTests, deviceID, retryCount, launchRetryCount)
         
         isExecuting = false
