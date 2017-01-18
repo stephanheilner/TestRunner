@@ -101,7 +101,7 @@ class TestRunnerOperation: Operation {
         if task.terminationStatus != 0 {
             TRLog("****************=============== TASK TERMINATED ABNORMALLY WITH STATUS \(task.terminationStatus) ===============****************", simulatorName: simulatorName)
             if case task.terminationReason = Process.TerminationReason.uncaughtSignal {
-                TRLog("****************=============== TASK TERMINATED DUE TO UNCAUGHT EXCEPTION ===============****************, , simulatorName: simulatorName")
+                TRLog("****************=============== TASK TERMINATED DUE TO UNCAUGHT EXCEPTION ===============****************", simulatorName: simulatorName)
             }
         }
 
@@ -168,8 +168,8 @@ extension TestRunnerOperation: XctoolTaskDelegate {
         notifyIfLaunched(data)
         
         DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + AppArgs.shared.timeout) {
-            guard currentLogCount < self.numberOfLogsReceived else {
-                TRLog("No logs received for \(AppArgs.shared.timeout) seconds, failing", simulatorName: self.simulatorName)
+            guard !isFinished, currentLogCount < self.numberOfLogsReceived else {
+                TRLog("****************=============== No logs received for \(AppArgs.shared.timeout) seconds, failing ===============****************", simulatorName: self.simulatorName)
                 self.finishOperation()
                 return
             }
