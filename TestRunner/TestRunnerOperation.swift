@@ -172,10 +172,11 @@ extension TestRunnerOperation: XctoolTaskDelegate {
         notifyIfLaunched(data)
         
         DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + AppArgs.shared.timeout) { [weak self] in
-            guard let strongSelf = self, !strongSelf.isFinished, currentLogCount < strongSelf.numberOfLogsReceived else {
+            guard let strongSelf = self, !strongSelf.isFinished else { return }
+            
+            if currentLogCount >= strongSelf.numberOfLogsReceived {
                 TRLog("****************=============== No logs received for \(AppArgs.shared.timeout) seconds, failing ===============****************", simulatorName: self?.simulatorName)
                 self?.finishOperation()
-                return
             }
         }
     }
