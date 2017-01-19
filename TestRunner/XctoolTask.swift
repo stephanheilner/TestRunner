@@ -56,7 +56,7 @@ class XctoolTask {
         return task.isRunning
     }
     
-    init(actions: [String], deviceID: String? = nil, destination: String? = nil, tests: [String], logFilePath: String? = nil) {
+    init(actions: [String], simulator: Simulator, tests: [String], logFilePath: String? = nil) {
         task = Process()
         task.launchPath = "/bin/sh"
         task.currentDirectoryPath = AppArgs.shared.currentDirectory
@@ -73,14 +73,7 @@ class XctoolTask {
         arguments += ["-sdk", "iphonesimulator"]
         arguments += ["-derivedDataPath", AppArgs.shared.derivedDataPath]
         arguments += ["CONFIGURATION_BUILD_DIR=\(AppArgs.shared.outputDirectory)"]
-        
-        if let deviceID = deviceID {
-            arguments += ["-destination", "'id=\(deviceID)'"]
-        }
-        if let destination = destination {
-            arguments += ["-destination", "'\(destination)'"]
-        }
-        
+        arguments += ["-destination", "'id=\(simulator.deviceID)'"]
         arguments += actions
         arguments += ["-newSimulatorInstance"]
         

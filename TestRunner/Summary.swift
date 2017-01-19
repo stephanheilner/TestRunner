@@ -10,7 +10,7 @@ import Foundation
 
 class Summary {
     
-    class func outputSummary(logFile: String? = nil, simulatorName: String? = nil) {
+    class func outputSummary(logFile: String? = nil, simulator: Simulator? = nil) {
         let logDirectoryURL = URL(fileURLWithPath: AppArgs.shared.logsDir)
         
         var logs = [String]()
@@ -28,7 +28,7 @@ class Summary {
                 testResults += JSON.testResults(logPath: fileURL.path)
             }
         } catch {
-            TRLog(error.localizedDescription, simulatorName: simulatorName)
+            TRLog(error.localizedDescription, simulator: simulator)
         }
 
         let succeededTests = testResults.filter { $0.passed }
@@ -52,7 +52,7 @@ class Summary {
         }
         
         logs.append("\n=================================================================\n")
-        TRLog(logs.joined(separator: "\n"), simulatorName: simulatorName)
+        TRLog(logs.joined(separator: "\n"), simulator: simulator)
     }
     
 }

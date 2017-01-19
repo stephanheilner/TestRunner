@@ -30,11 +30,11 @@ let logQueue = DispatchQueue(label: "TestRunner.log")
 
 var lastSimulatorName = ""
 
-func TRLog(_ logData: Data, simulatorName: String? = nil) {
+func TRLog(_ logData: Data, simulator: Simulator? = nil) {
     logQueue.async {
         guard !logData.isEmpty, let log = String(data: logData, encoding: .utf8), !log.isEmpty else { return }
-        if let simulatorName = simulatorName, simulatorName != lastSimulatorName {
-            print("-----------", simulatorName, "-----------\n", log, terminator: "")
+        if let simulatorName = simulator?.name, simulatorName != lastSimulatorName {
+            print("\n-----------", simulatorName, "-----------\n\n", log, terminator: "")
             lastSimulatorName = simulatorName
         } else {
             print(log, terminator: "")
@@ -42,11 +42,11 @@ func TRLog(_ logData: Data, simulatorName: String? = nil) {
     }
 }
 
-func TRLog(_ logString: String, simulatorName: String? = nil) {
+func TRLog(_ logString: String, simulator: Simulator? = nil) {
     logQueue.async {
         guard !logString.isEmpty else { return }
-        if let simulatorName = simulatorName, simulatorName != lastSimulatorName {
-            print("-----------", simulatorName, "-----------\n", logString)
+        if let simulatorName = simulator?.name, simulatorName != lastSimulatorName {
+            print("\n-----------", simulatorName, "-----------\n\n", logString)
             lastSimulatorName = simulatorName
         } else {
             print(logString)
@@ -102,7 +102,7 @@ open class TestRunner: NSObject {
             print("\n=== TESTING ON DEVICES ===")
             for (deviceName, simulators) in devices {
                 for simulator in simulators {
-                    print(deviceName, ":", simulator.simulatorName, "(", simulator.deviceID, ")")
+                    print(deviceName, ":", simulator.name, "(", simulator.deviceID, ")")
                 }
             }
             
@@ -114,11 +114,11 @@ open class TestRunner: NSObject {
             let partition = AppArgs.shared.partition
             let testsByDevice = testsByPartition[partition]
             
-            for (deviceFamily, deviceInfos) in devices {
-                for (index, deviceInfo) in deviceInfos.enumerated() {
+            for (_, simulators) in devices {
+                for (index, simulator) in simulators.enumerated() {
                     guard let tests = testsByDevice[index] else { continue }
                     
-                    let operation = createOperation(deviceFamily, simulatorName: deviceInfo.simulatorName, deviceID: deviceInfo.deviceID, tests: tests)
+                    let operation = createOperation(simulator: simulator, tests: tests)
                     
                     // Wait for loaded to finish
                     testRunnerQueue.addOperation(operation)
@@ -139,23 +139,23 @@ open class TestRunner: NSObject {
         return !failed
     }
     
-    func createOperation(_ deviceFamily: String, simulatorName: String, deviceID: String, tests: [String], retryCount: Int = 0, launchRetryCount: Int = 0) -> TestRunnerOperation {
-        let operation = TestRunnerOperation(deviceFamily: deviceFamily, simulatorName: simulatorName, deviceID: deviceID, tests: tests, retryCount: retryCount, launchRetryCount: launchRetryCount)
-        operation.completion = { status, simulatorName, failedTests, deviceID, retryCount, launchRetryCount in
+    func createOperation(simulator: Simulator, tests: [String], retryCount: Int = 0, launchRetryCount: Int = 0) -> TestRunnerOperation {
+        let operation = TestRunnerOperation(simulator: simulator, tests: tests, retryCount: retryCount, launchRetryCount: launchRetryCount)
+        operation.completion = { status, simulator, failedTests, retryCount, launchRetryCount in
             switch status {
             case .success:
-                TRLog("Tests PASSED on \(simulatorName)", simulatorName: simulatorName)
-                self.simulatorPassStatus[simulatorName] = true
+                TRLog("Tests PASSED on \(simulator.name)", simulator: simulator)
+                self.simulatorPassStatus[simulator.name] = true
                 
             case .failed, .testTimeout, .launchTimeout, .stopped:
                 let retryCount = retryCount + 1
-                TRLog("\n\nTests FAILED (Attempt \(retryCount) of \(AppArgs.shared.retryCount)) on \(simulatorName)", simulatorName: simulatorName)
+                TRLog("\n\nTests FAILED (Attempt \(retryCount) of \(AppArgs.shared.retryCount)) on \(simulator.name)", simulator: simulator)
                 
-                self.simulatorPassStatus[simulatorName] = false
+                self.simulatorPassStatus[simulator.name] = false
                 
                 if retryCount < AppArgs.shared.retryCount && !failedTests.isEmpty {
                     if !failedTests.isEmpty {
-                        let retryOperation = self.createOperation(deviceFamily, simulatorName: simulatorName, deviceID: deviceID, tests: failedTests, retryCount: retryCount)
+                        let retryOperation = self.createOperation(simulator: simulator, tests: failedTests, retryCount: retryCount)
                         self.testRunnerQueue.addOperation(retryOperation)
                     }
                 } else {

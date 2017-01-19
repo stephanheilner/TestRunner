@@ -41,7 +41,7 @@ class DeviceController {
         return self.testDevicePrefix + " %d, %@, %@" // number, device type, runtime
     }()
     
-    func resetAndCreateDevices() -> [String: [(simulatorName: String, deviceID: String)]]? {
+    func resetAndCreateDevices() -> [String: [Simulator]]? {
         killallSimulators()
         return createTestDevices(testDevices: getTestDevices())
     }
@@ -50,8 +50,8 @@ class DeviceController {
         killallSimulators()
         
         getTestDevices().forEach {
-            reuseDevice(simulatorName: $0.simulatorName, deviceID: $0.deviceID)
-            deleteApplicationBundles(deviceID: $0.deviceID)
+            reuseDevice(simulator: $0)
+            deleteApplicationBundles(simulator: $0)
         }
     }
     
@@ -69,8 +69,8 @@ class DeviceController {
         return runtimes
     }
     
-    func getTestDevices() -> [(simulatorName: String, deviceID: String)] {
-        var testDevices = [(simulatorName: String, deviceID: String)]()
+    func getTestDevices() -> [Simulator] {
+        var testDevices = [Simulator]()
         
         for (key, values) in getDeviceInfoJSON() ?? [:] where key == "devices" {
             guard let deviceValues = values as? [String: AnyObject] else { continue }
@@ -80,7 +80,7 @@ class DeviceController {
                 
                 for device in devices {
                     if let name = device["name"] as? String, name.hasPrefix(testDevicePrefix), let udid = device["udid"] as? String {
-                        testDevices.append(simulatorName: name, deviceID: udid)
+                        testDevices.append(Simulator(name: name, deviceID: udid))
                     }
                 }
             }
@@ -122,8 +122,10 @@ class DeviceController {
         }
     }
     
-    func simctl(command: String, deviceID: String, appPath: String? = nil) {
-        var arguments = ["/usr/bin/xcrun", "simctl", command, deviceID]
+    func simctl(command: String, simulator: Simulator, appPath: String? = nil, retryCount: Int = 1) {
+        guard retryCount < 5 else { return }
+        
+        var arguments = ["/usr/bin/xcrun", "simctl", command, simulator.deviceID]
         
         if let appPath = appPath {
             arguments.append(appPath)
@@ -135,37 +137,47 @@ class DeviceController {
         
         let outputPipe = Pipe()
         outputPipe.fileHandleForReading.readabilityHandler = { handle in
-            TRLog(handle.availableData)
+            TRLog(handle.availableData, simulator: simulator)
         }
         task.standardOutput = outputPipe
         
-        let errorPipe = Pipe()
-        errorPipe.fileHandleForReading.readabilityHandler = { handle in
-            TRLog(handle.availableData)
-        }
-        task.standardError = errorPipe
+//        let errorPipe = Pipe()
+//        errorPipe.fileHandleForReading.readabilityHandler = { handle in
+//            TRLog(handle.availableData, simulator: simulator)
+//        }
+//        task.standardError = errorPipe
         
         let start = Date()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + AppArgs.shared.launchTimeout) { [weak self] in
+            if task.terminationStatus != 0 {
+                // Retry
+                self?.simctl(command: command, simulator: simulator, appPath: appPath, retryCount: retryCount + 1)
+            }
+        }
+        
         task.launch()
         task.waitUntilExit()
         
-        print("\t* simctl", command, deviceID, "(\(Date().timeIntervalSince(start)) seconds)")
+        TRLog("\t* simctl \(command) \(simulator.deviceID) (\(Date().timeIntervalSince(start)) seconds)", simulator: simulator)
     }
     
-    func killProcessesForDevice(deviceID: String) {
-        print("\t* Killing processes for device:", deviceID)
+    func killProcessesForDevice(simulator: Simulator) {
+        TRLog("\t* Killing processes for device: \(simulator.deviceID)", simulator: simulator)
         
-        let grepArgs = [deviceID]
+        let grepArgs = [simulator.deviceID]
         
-        grepArgs.forEach(killProcessesWithGrepArg)
+        grepArgs.forEach { killProcesses(grepArg: $0, simulator: simulator) }
     }
     
-    func killProcessesWithGrepArg(grepArg: String) {
+    func killProcesses(grepArg: String, simulator: Simulator? = nil) {
         let task = Process()
         task.launchPath = "/bin/sh"
-        task.arguments = ["-c", "/usr/local/bin/pstree -U -w | grep \(grepArg); /bin/ps aux | grep \(grepArg)"]
         
-//        print("Kill Process", task.arguments?.joined(separator: " ") ?? "")
+        let arguments = ["/usr/local/bin/pstree -U -w | grep", grepArg, "; /bin/ps aux | grep", grepArg]
+        task.arguments = ["-c", arguments.joined(separator: " ")]
+        
+        TRLog("\t\(arguments.joined(separator: " "))", simulator: simulator)
         
         var standardOutputData = Data()
         let pipe = Pipe()
@@ -181,17 +193,21 @@ class DeviceController {
                 let parts = processString.components(separatedBy: " ")
                 for part in parts {
                     guard let processID = Int(part) else { continue }
-                    killProcess(processID: processID)
+                    killProcess(processID: processID, simulator: simulator)
                     break
                 }
             }
         }
     }
     
-    func killProcess(processID: Int) {
+    func killProcess(processID: Int, simulator: Simulator? = nil) {
         let showProcess = Process()
         showProcess.launchPath = "/bin/sh"
-        showProcess.arguments = ["-c", "/bin/kill -9 \(processID)"]
+        
+        let arguments = ["/bin/kill", "-9", "\(processID)"]
+        TRLog("\t\t\(arguments.joined(separator: " "))", simulator: simulator)
+        
+        showProcess.arguments = ["-c", arguments.joined(separator: " ")]
         showProcess.standardOutput = Pipe()
         showProcess.standardError = Pipe()
         showProcess.launch()
@@ -199,11 +215,11 @@ class DeviceController {
     }
     
     func killallSimulators() {
-        print("\n=== KILLING SIMULATORS ===")
+        TRLog("\n=== KILLING SIMULATORS ===")
         
         let task = Process()
-        task.launchPath = "/usr/bin/killall"
-        task.arguments = ["Simulator"]
+        task.launchPath = "/bin/sh"
+        task.arguments = ["-c", "/usr/bin/killall Simulator"]
         
         let standardOutputPipe = Pipe()
         task.standardOutput = standardOutputPipe
@@ -221,7 +237,7 @@ class DeviceController {
         let processesToKill = [
             "xcodebuild",
             "xctool",
-            "iPhoneSimulator",
+            "Simulator",
             "pkd",
             "IDSKeychainSyncingProxy",
             "CloudKeychainProxy",
@@ -230,11 +246,11 @@ class DeviceController {
             "UserEventAgent",
             "MobileSMSSpotlightImporter"
         ]
-        processesToKill.forEach(killProcessesWithGrepArg)
+        processesToKill.forEach { killProcesses(grepArg: $0) }
     }
     
-    func createTestDevices(_ numberOfDevices: Int? = nil, testDevices: [(simulatorName: String, deviceID: String)] = []) -> [String: [(simulatorName: String, deviceID: String)]] {
-        var devices = [String: [(simulatorName: String, deviceID: String)]]()
+    func createTestDevices(_ numberOfDevices: Int? = nil, testDevices: [Simulator] = []) -> [String: [Simulator]] {
+        var devices = [String: [Simulator]]()
         
         let devicesArg = AppArgs.shared.devices
         let numberOfSimulators = numberOfDevices ?? AppArgs.shared.simulatorsCount
@@ -247,18 +263,18 @@ class DeviceController {
                 for _ in 1...numberOfSimulators {
                     let simulatorName = String(format: simulatorNameFormat, simulatorNumber, name, runtime)
                     
-                    if let simulatorDevice = testDevices.find(where: { $0.simulatorName == simulatorName }) {
-                        reuseDevice(simulatorName: simulatorDevice.simulatorName, deviceID: simulatorDevice.deviceID)
+                    if let simulator = testDevices.find(where: { $0.name == simulatorName }) {
+                        reuseDevice(simulator: simulator)
                         
-                        if var simulatorDevices = devices[deviceFamily] {
-                            simulatorDevices.append(simulatorDevice)
-                            devices[deviceFamily] = simulatorDevices
+                        if var simulators = devices[deviceFamily] {
+                            simulators.append(simulator)
+                            devices[deviceFamily] = simulators
                         } else {
-                            devices[deviceFamily] = [simulatorDevice]
+                            devices[deviceFamily] = [simulator]
                         }
                         
                         simulatorNumber += 1
-                    } else if let simulatorDevice = createTestDevice(simulatorName, deviceTypeID: deviceTypeID, runtimeID: runtimeID) {
+                    } else if let simulatorDevice = createTestDevice(name: simulatorName, deviceTypeID: deviceTypeID, runtimeID: runtimeID) {
                         if var simulatorDevices = devices[deviceFamily] {
                             simulatorDevices.append(simulatorDevice)
                             devices[deviceFamily] = simulatorDevices
@@ -275,20 +291,20 @@ class DeviceController {
         return devices
     }
     
-    func reuseDevice(simulatorName: String, deviceID: String) {
-        print("\t* Preparing device for reuse")
+    func reuseDevice(simulator: Simulator) {
+        TRLog("\t* Preparing device for reuse", simulator: simulator)
         
-        killProcessesForDevice(deviceID: deviceID)
-        simctl(command: "shutdown", deviceID: deviceID)
-        deleteApplicationData(deviceID: deviceID)
+        killProcessesForDevice(simulator: simulator)
+        simctl(command: "shutdown", simulator: simulator)
+        deleteApplicationData(simulator: simulator)
     }
     
-    func deleteApplicationBundles(deviceID: String) {
-        print("\t* Deleting app bundles")
+    func deleteApplicationBundles(simulator: Simulator) {
+        TRLog("\t* Deleting app bundles", simulator: simulator)
         
         let task = Process()
         task.launchPath = "/bin/sh"
-        task.arguments = ["-c", "/bin/rm -rf \(NSHomeDirectory())/Library/Developer/CoreSimulator/Devices/\(deviceID)/data/Containers/Bundle/Application/*"]
+        task.arguments = ["-c", "/bin/rm -rf \(NSHomeDirectory())/Library/Developer/CoreSimulator/Devices/\(simulator.deviceID)/data/Containers/Bundle/Application/*"]
         
         let standardOutputPipe = Pipe()
         task.standardOutput = standardOutputPipe
@@ -304,12 +320,12 @@ class DeviceController {
         task.waitUntilExit()
     }
     
-    func deleteApplicationData(deviceID: String) {
-        print("\t* Deleting app data")
+    func deleteApplicationData(simulator: Simulator) {
+        TRLog("\t* Deleting app data", simulator: simulator)
         
         let task = Process()
         task.launchPath = "/bin/sh"
-        task.arguments = ["-c", "/bin/rm -rf \(NSHomeDirectory())/Library/Developer/CoreSimulator/Devices/\(deviceID)/data/Containers/Data/Application/*"]
+        task.arguments = ["-c", "/bin/rm -rf \(NSHomeDirectory())/Library/Developer/CoreSimulator/Devices/\(simulator.deviceID)/data/Containers/Data/Application/*"]
         
         let standardOutputPipe = Pipe()
         task.standardOutput = standardOutputPipe
@@ -325,10 +341,12 @@ class DeviceController {
         task.waitUntilExit()
     }
     
-    func createTestDevice(_ simulatorName: String, deviceTypeID: String, runtimeID: String) -> (simulatorName: String, deviceID: String)? {
+    func createTestDevice(name: String, deviceTypeID: String, runtimeID: String) -> Simulator? {
         let task = Process()
-        task.launchPath = "/usr/bin/xcrun"
-        task.arguments = ["simctl", "create", simulatorName, deviceTypeID, runtimeID]
+        task.launchPath = "/bin/sh"
+        
+        let arguments = ["/usr/bin/xcrun", "simctl", "create", name, deviceTypeID, runtimeID]
+        task.arguments = ["-c", arguments.joined(separator: " ")]
         
         let createDeviceOutput = Pipe()
         task.standardOutput = createDeviceOutput
@@ -343,18 +361,19 @@ class DeviceController {
         guard task.terminationStatus == 0 else { return nil }
         
         if let deviceID = String(data: data as Data, encoding: .utf8)?.trimmed() {
-            print("\n=== CREATED DEVICE (\(deviceID)) ===")
-            return (simulatorName: simulatorName, deviceID: deviceID)
+            let simulator = Simulator(name: name, deviceID: deviceID)
+            TRLog("\n=== CREATED DEVICE (\(deviceID)) ===", simulator: simulator)
+            return simulator
         }
         return nil
     }
     
-    func installAppsOnDevice(deviceID: String) {
-        deleteApplicationBundles(deviceID: deviceID)
-
-        print("\t* Installing apps on device")
+    func installAppsOnDevice(simulator: Simulator) {
+        deleteApplicationBundles(simulator: simulator)
         
-        simctl(command: "boot", deviceID: deviceID)
+        TRLog("\t* Installing apps on device", simulator: simulator)
+        
+        simctl(command: "boot", simulator: simulator)
         
         if let regex = try? NSRegularExpression(pattern: ".*\\.app$", options: []) {
             do {
@@ -362,14 +381,14 @@ class DeviceController {
                 for filename in try FileManager.default.contentsOfDirectory(atPath: productPath) {
                     guard regex.numberOfMatches(in: filename, options: [], range: NSRange(location: 0, length: filename.length)) > 0 else { continue }
                     
-                    simctl(command: "install", deviceID: deviceID, appPath: "\(productPath)/\(filename)")
+                    simctl(command: "install", simulator: simulator, appPath: "\(productPath)/\(filename)")
                 }
             } catch {
-                print("Unable to find any app bundles!", error)
+                TRLog("Unable to find any app bundles! \(error)", simulator: simulator)
             }
         }
-
-        simctl(command: "shutdown", deviceID: deviceID)
+        
+        simctl(command: "shutdown", simulator: simulator)
     }
     
 }

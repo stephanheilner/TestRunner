@@ -19,8 +19,6 @@ enum TestRunnerStatus: Int {
 
 class TestRunnerOperation: Operation {
     
-    fileprivate let deviceFamily: String
-    fileprivate let deviceID: String
     fileprivate let tests: [String]
     
     override var isExecuting: Bool {
@@ -47,7 +45,7 @@ class TestRunnerOperation: Operation {
     }
     fileprivate var _finished: Bool
     
-    fileprivate let simulatorName: String
+    fileprivate let simulator: Simulator
     fileprivate let retryCount: Int
     fileprivate let launchRetryCount: Int
     fileprivate let logFilePath: String
@@ -56,16 +54,14 @@ class TestRunnerOperation: Operation {
     fileprivate var numberOfLogsReceived = 0
     
     var simulatorLaunched = false
-    var completion: ((_ status: TestRunnerStatus, _ simulatorName: String, _ failedTests: [String], _ deviceID: String, _ retryCount: Int, _ launchRetryCount: Int) -> Void)?
+    var completion: ((_ status: TestRunnerStatus, _ simulator: Simulator, _ failedTests: [String], _ retryCount: Int, _ launchRetryCount: Int) -> Void)?
     
-    init(deviceFamily: String, simulatorName: String, deviceID: String, tests: [String], retryCount: Int, launchRetryCount: Int) {
-        self.deviceFamily = deviceFamily
-        self.simulatorName = simulatorName
-        self.deviceID = deviceID
+    init(simulator: Simulator, tests: [String], retryCount: Int, launchRetryCount: Int) {
+        self.simulator = simulator
         self.tests = tests
         self.retryCount = retryCount
         self.launchRetryCount = launchRetryCount
-        var logPrefix = "\(AppArgs.shared.logsDir)/\(deviceID)"
+        var logPrefix = "\(AppArgs.shared.logsDir)/\(simulator.deviceID)"
         
         if tests.count == 1 {
             logPrefix += "-" + tests[0].replacingOccurrences(of: "/", with: "-")
@@ -85,40 +81,42 @@ class TestRunnerOperation: Operation {
         self.status = .running
         
         // Clear device for reuse
-        DeviceController.sharedController.reuseDevice(simulatorName: simulatorName, deviceID: deviceID)
+        DeviceController.sharedController.reuseDevice(simulator: simulator)
         if retryCount == 0 {
-            DeviceController.sharedController.installAppsOnDevice(deviceID: deviceID)
+            DeviceController.sharedController.installAppsOnDevice(simulator: simulator)
         }
 
-        let logMessage = String(format: "Running Tests:\n\t%@\n\n", tests.joined(separator: "\n\t"))
-        TRLog(logMessage, simulatorName: simulatorName)
+        let logMessage = String(format: "\nRunning Tests:\n\t%@\n\n", tests.joined(separator: "\n\t"))
+        TRLog(logMessage, simulator: simulator)
         
-        let task = XctoolTask(actions: ["run-tests"], deviceID: deviceID, tests: tests, logFilePath: logFilePath)
+        let task = XctoolTask(actions: ["run-tests"], simulator: simulator, tests: tests, logFilePath: logFilePath)
         task.delegate = self
         task.launch()
         task.waitUntilExit()
         
         if task.terminationStatus != 0 {
-            TRLog("****************=============== TASK TERMINATED ABNORMALLY WITH STATUS \(task.terminationStatus) ===============****************", simulatorName: simulatorName)
+            TRLog("****************=============== TASK TERMINATED ABNORMALLY WITH STATUS \(task.terminationStatus) ===============****************", simulator: simulator)
             if case task.terminationReason = Process.TerminationReason.uncaughtSignal {
-                TRLog("****************=============== TASK TERMINATED DUE TO UNCAUGHT EXCEPTION ===============****************", simulatorName: simulatorName)
+                TRLog("****************=============== TASK TERMINATED DUE TO UNCAUGHT EXCEPTION ===============****************", simulator: simulator)
             }
         }
 
         finishOperation()
     }
     
-    func finishOperation() {
+    func finishOperation(showSummary: Bool = true) {
         simulatorDidLaunch()
         
         let results = JSON.testResults(logPath: logFilePath)
 
-        Summary.outputSummary(logFile: logFilePath, simulatorName: simulatorName)
+        if showSummary {
+            Summary.outputSummary(logFile: logFilePath, simulator: simulator)
+        }
         
         let passedTests = results.filter { $0.passed }.map { $0.testName }
         let failedTests = tests.filter { !passedTests.contains($0) }
         let status: TestRunnerStatus = failedTests.isEmpty ? .success : .failed
-        completion?(status, simulatorName, failedTests, deviceID, retryCount, launchRetryCount)
+        completion?(status, simulator, failedTests, retryCount, launchRetryCount)
         
         isExecuting = false
         isFinished = true
@@ -145,11 +143,11 @@ class TestRunnerOperation: Operation {
             }
         }
         
-        DispatchQueue.main.asyncAfter(deadline: (.now() + DispatchTimeInterval.seconds(AppArgs.shared.launchTimeout))) {
-            guard !self.simulatorLaunched else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + AppArgs.shared.launchTimeout) { [weak self] in
+            guard self?.simulatorLaunched == false else { return }
                 
-            TRLog("TIMED OUT Launching Simulator", simulatorName: self.simulatorName)
-            self.finishOperation()
+            TRLog("TIMED OUT Launching Simulator", simulator: self?.simulator)
+            self?.finishOperation(showSummary: false)
             return
         }
     }
@@ -162,21 +160,21 @@ extension TestRunnerOperation: XctoolTaskDelegate {
         guard data.count > 0 else { return }
         
         if isError {
-            TRLog("Error logs incoming!", simulatorName: simulatorName)
+            TRLog("Error logs incoming!", simulator: simulator)
         }
         
-        TRLog(data, simulatorName: simulatorName)
+        TRLog(data, simulator: simulator)
         
         numberOfLogsReceived += 1
         let currentLogCount = numberOfLogsReceived
         notifyIfLaunched(data)
         
         DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + AppArgs.shared.timeout) { [weak self] in
-            guard let strongSelf = self, !strongSelf.isFinished else { return }
+            guard self?.isFinished == false else { return }
             
-            if currentLogCount >= strongSelf.numberOfLogsReceived {
-                TRLog("****************=============== No logs received for \(AppArgs.shared.timeout) seconds, failing ===============****************", simulatorName: self?.simulatorName)
-                self?.finishOperation()
+            if currentLogCount >= self?.numberOfLogsReceived ?? 0 {
+                TRLog("**************************************************************************\n=============== No logs received for \(AppArgs.shared.timeout) seconds, failing ===============\n**************************************************************************", simulator: self?.simulator)
+                self?.finishOperation(showSummary: false)
             }
         }
     }

@@ -30,6 +30,7 @@
 		D4829BCB1D8750C6000E3BDB /* WaitOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4829BC11D8750C6000E3BDB /* WaitOperation.swift */; };
 		D4829BCC1D8750C6000E3BDB /* XcodebuildTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4829BC21D8750C6000E3BDB /* XcodebuildTask.swift */; };
 		D49ECFA71E2FD6DB00A20EF5 /* Summary.swift in Sources */ = {isa = PBXBuildFile; fileRef = D49ECFA61E2FD6DB00A20EF5 /* Summary.swift */; };
+		D4CFF2021E314DB3001EA98C /* Simulator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4CFF2011E314DB3001EA98C /* Simulator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -69,6 +70,7 @@
 		D4829BC11D8750C6000E3BDB /* WaitOperation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WaitOperation.swift; sourceTree = "<group>"; };
 		D4829BC21D8750C6000E3BDB /* XcodebuildTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XcodebuildTask.swift; sourceTree = "<group>"; };
 		D49ECFA61E2FD6DB00A20EF5 /* Summary.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Summary.swift; sourceTree = "<group>"; };
+		D4CFF2011E314DB3001EA98C /* Simulator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Simulator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -133,6 +135,7 @@
 				D4829BC11D8750C6000E3BDB /* WaitOperation.swift */,
 				D4829BC21D8750C6000E3BDB /* XcodebuildTask.swift */,
 				D46F163A1E2EC2C400BD6C7D /* XctoolTask.swift */,
+				D4CFF2011E314DB3001EA98C /* Simulator.swift */,
 			);
 			path = TestRunner;
 			sourceTree = "<group>";
@@ -199,6 +202,7 @@
 			files = (
 				D40F70DE1DCB8CC200CC54A9 /* ObserverSet.swift in Sources */,
 				D4829BC31D8750C6000E3BDB /* AppArgs.swift in Sources */,
+				D4CFF2021E314DB3001EA98C /* Simulator.swift in Sources */,
 				D4829BCB1D8750C6000E3BDB /* WaitOperation.swift in Sources */,
 				D40F70DA1DCB8CC200CC54A9 /* Double.swift in Sources */,
 				D4829BC81D8750C6000E3BDB /* TestPartitioner.swift in Sources */,
