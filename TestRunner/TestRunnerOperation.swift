@@ -176,9 +176,8 @@ class TestRunnerOperation: Operation {
         
         DispatchQueue.main.asyncAfter(deadline: (.now() + DispatchTimeInterval.seconds(AppArgs.shared.launchTimeout))) {
             guard !self.simulatorLaunched else { return }
-            if let data = "TIMED OUT Launching Simulator".data(using: String.Encoding.utf8) {
-                TRLog(data, simulatorName: self.simulatorName)
-            }
+
+            TRLog("TIMED OUT Launching Simulator", simulatorName: self.simulatorName)
             self.finishOperation(status: .launchTimeout)
             return
         }
@@ -193,18 +192,18 @@ extension TestRunnerOperation: XcodebuildTaskDelegate {
 
         TRLog(data, simulatorName: simulatorName)
 
+        timeoutCounter += 1
         let counter = timeoutCounter
+        notifyIfLaunched(data)
         
-        let timeoutTime = DispatchTime.now() + DispatchTimeInterval.seconds(Int(AppArgs.shared.timeout))
-        DispatchQueue.global(qos: .background).asyncAfter(deadline: timeoutTime) {
-            guard counter < self.timeoutCounter else {
-                self.finishOperation(status: .testTimeout)
-                return
+        DispatchQueue.global(qos: .background).asyncAfter(deadline: .now() + AppArgs.shared.timeout) { [weak self] in
+            guard self?.isFinished == false else { return }
+            
+            if counter >= self?.timeoutCounter ?? 0 {
+                TRLog("**************************************************************************\n=============== No logs received for \(AppArgs.shared.timeout) seconds, failing ===============\n**************************************************************************", simulatorName: self?.simulatorName)
+                self?.finishOperation(status: .testTimeout)
             }
         }
-        timeoutCounter += 1
-        
-        notifyIfLaunched(data)
     }
     
 }

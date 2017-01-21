@@ -42,6 +42,19 @@ func TRLog(_ logData: Data, simulatorName: String? = nil) {
     }
 }
 
+func TRLog(_ log: String, simulatorName: String? = nil) {
+    logQueue.async {
+        guard !log.isEmpty else { return }
+        if let simulatorName = simulatorName, simulatorName != lastSimulatorName {
+            print("-----------", simulatorName, "-----------\n", log, terminator: "")
+            lastSimulatorName = simulatorName
+        } else {
+            print(log, terminator: "")
+        }
+    }
+}
+
+
 open class TestRunner: NSObject {
     
     open static func start() {
