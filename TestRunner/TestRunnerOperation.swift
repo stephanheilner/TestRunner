@@ -62,7 +62,7 @@ class TestRunnerOperation: Operation {
         self.deviceFamily = deviceFamily
         self.simulatorName = simulatorName
         self.deviceID = deviceID
-        self.tests = tests.shuffled()
+        self.tests = tests
         self.retryCount = retryCount
         self.launchRetryCount = launchRetryCount
         var logPrefix = "\(AppArgs.shared.logsDir)/\(deviceID)"
