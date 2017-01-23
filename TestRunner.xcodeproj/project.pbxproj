@@ -17,6 +17,7 @@
 		D40F70DE1DCB8CC200CC54A9 /* ObserverSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40F70D41DCB8CC200CC54A9 /* ObserverSet.swift */; };
 		D40F70DF1DCB8CC200CC54A9 /* SequenceType.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40F70D51DCB8CC200CC54A9 /* SequenceType.swift */; };
 		D40F70E01DCB8CC200CC54A9 /* String.swift in Sources */ = {isa = PBXBuildFile; fileRef = D40F70D61DCB8CC200CC54A9 /* String.swift */; };
+		D41487841E36C680000A8739 /* BluepillTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = D41487831E36C680000A8739 /* BluepillTask.swift */; };
 		D46F163B1E2EC2C400BD6C7D /* XctoolTask.swift in Sources */ = {isa = PBXBuildFile; fileRef = D46F163A1E2EC2C400BD6C7D /* XctoolTask.swift */; };
 		D4829BB01D874EBB000E3BDB /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4829BAF1D874EBB000E3BDB /* main.swift */; };
 		D4829BB71D874F07000E3BDB /* TestRunner.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4829BB61D874F07000E3BDB /* TestRunner.swift */; };
@@ -56,6 +57,7 @@
 		D40F70D41DCB8CC200CC54A9 /* ObserverSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObserverSet.swift; sourceTree = "<group>"; };
 		D40F70D51DCB8CC200CC54A9 /* SequenceType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SequenceType.swift; sourceTree = "<group>"; };
 		D40F70D61DCB8CC200CC54A9 /* String.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = String.swift; sourceTree = "<group>"; };
+		D41487831E36C680000A8739 /* BluepillTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BluepillTask.swift; sourceTree = "<group>"; };
 		D46F163A1E2EC2C400BD6C7D /* XctoolTask.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = XctoolTask.swift; sourceTree = "<group>"; };
 		D4829BAC1D874EBB000E3BDB /* TestRunner */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = TestRunner; sourceTree = BUILT_PRODUCTS_DIR; };
 		D4829BAF1D874EBB000E3BDB /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
@@ -136,6 +138,7 @@
 				D4829BC21D8750C6000E3BDB /* XcodebuildTask.swift */,
 				D46F163A1E2EC2C400BD6C7D /* XctoolTask.swift */,
 				D4CFF2011E314DB3001EA98C /* Simulator.swift */,
+				D41487831E36C680000A8739 /* BluepillTask.swift */,
 			);
 			path = TestRunner;
 			sourceTree = "<group>";
@@ -209,6 +212,7 @@
 				D40F70DF1DCB8CC200CC54A9 /* SequenceType.swift in Sources */,
 				D4829BB01D874EBB000E3BDB /* main.swift in Sources */,
 				D4829BC51D8750C6000E3BDB /* DeviceController.swift in Sources */,
+				D41487841E36C680000A8739 /* BluepillTask.swift in Sources */,
 				D40F70DB1DCB8CC200CC54A9 /* Int.swift in Sources */,
 				D40F70D81DCB8CC200CC54A9 /* CaseCountable.swift in Sources */,
 				D4829BC61D8750C6000E3BDB /* JSON.swift in Sources */,

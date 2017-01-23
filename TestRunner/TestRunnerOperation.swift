@@ -82,15 +82,15 @@ class TestRunnerOperation: Operation {
         self.status = .running
         
         // Clear device for reuse
-        DeviceController.sharedController.reuseDevice(simulator: simulator)
-        if retryCount == 0 {
-            DeviceController.sharedController.installAppsOnDevice(simulator: simulator)
-        }
+//        DeviceController.sharedController.reuseDevice(simulator: simulator)
+//        if retryCount == 0 {
+//            DeviceController.sharedController.installAppsOnDevice(simulator: simulator)
+//        }
 
         let logMessage = String(format: "\nRunning Tests:\n\t%@\n\n", tests.joined(separator: "\n\t"))
         TRLog(logMessage, simulator: simulator)
         
-        let task = XctoolTask(actions: ["run-tests"], simulator: simulator, tests: tests, logFilePath: logFilePath)
+        let task = BluepillTask(simulator: simulator, tests: tests, logFilePath: logFilePath)
         task.delegate = self
         task.launch()
         task.waitUntilExit()
@@ -158,7 +158,7 @@ class TestRunnerOperation: Operation {
     
 }
 
-extension TestRunnerOperation: XctoolTaskDelegate {
+extension TestRunnerOperation: BluepillTaskDelegate {
 
     func outputDataReceived(data: Data, isError: Bool) {
         guard data.count > 0 else { return }

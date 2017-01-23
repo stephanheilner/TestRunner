@@ -144,7 +144,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-simulators-count 3"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-devices &quot;iPhone 5s, iOS 10.2&quot;"
