@@ -13,6 +13,7 @@ enum TestRunnerStatus: Int {
     case running
     case testTimeout
     case launchTimeout
+    case terminatedAbnormally
     case success
     case failed
 }
@@ -99,24 +100,27 @@ class TestRunnerOperation: Operation {
             if case task.terminationReason = Process.TerminationReason.uncaughtSignal {
                 TRLog("****************=============== TASK TERMINATED DUE TO UNCAUGHT EXCEPTION ===============****************", simulator: simulator)
             }
+            finishOperation(status: .terminatedAbnormally)
+        } else {
+            finishOperation()
         }
-
-        finishOperation()
     }
     
-    func finishOperation(showSummary: Bool = true) {
+    func finishOperation(status: TestRunnerStatus? = nil) {
         simulatorDidLaunch()
         
         let results = JSON.testResults(logPath: logFilePath)
 
-        if showSummary {
-            Summary.outputSummary(logFile: logFilePath, simulator: simulator)
-        }
-        
         let passedTests = results.filter { $0.passed }.map { $0.testName }
         let failedTests = tests.filter { !passedTests.contains($0) }
-        let status: TestRunnerStatus = failedTests.isEmpty ? .success : .failed
-        completion?(status, simulator, failedTests, retryCount, launchRetryCount)
+
+        var status = status
+        if status == nil {
+            Summary.outputSummary(logFile: logFilePath, simulator: simulator)
+            status = failedTests.isEmpty ? .success : .failed
+        }
+        
+        completion?(status ?? .success, simulator, failedTests, retryCount, launchRetryCount)
         
         isExecuting = false
         isFinished = true
@@ -147,7 +151,7 @@ class TestRunnerOperation: Operation {
             guard self?.simulatorLaunched == false else { return }
                 
             TRLog("TIMED OUT Launching Simulator", simulator: self?.simulator)
-            self?.finishOperation(showSummary: false)
+            self?.finishOperation(status: .launchTimeout)
             return
         }
     }
@@ -174,7 +178,7 @@ extension TestRunnerOperation: XctoolTaskDelegate {
             
             if currentLogCount >= self?.numberOfLogsReceived ?? 0 {
                 TRLog("**************************************************************************\n=============== No logs received for \(AppArgs.shared.timeout) seconds, failing ===============\n**************************************************************************", simulator: self?.simulator)
-                self?.finishOperation(showSummary: false)
+                self?.finishOperation(status: .testTimeout)
             }
         }
     }
