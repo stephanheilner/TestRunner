@@ -149,19 +149,19 @@ open class TestRunner: NSObject {
             case .failed, .testTimeout, .launchTimeout, .stopped, .terminatedAbnormally:
                 var retryCount = retryCount
                 if status == .failed {
-                    retryCount += 1
+                    retryCount = retryCount + 1
                 }
                 
                 var launchRetryCount = launchRetryCount
                 if status == .launchTimeout || status == .testTimeout || status == .terminatedAbnormally {
-                    launchRetryCount += 1
+                     launchRetryCount = launchRetryCount + 1
                 }
 
                 TRLog("\n\nTests FAILED (Attempt \(retryCount) of \(AppArgs.shared.retryCount)) on \(simulator.name)", simulator: simulator)
                 
                 self.simulatorPassStatus[simulator.name] = false
                 
-                if retryCount < AppArgs.shared.retryCount && !failedTests.isEmpty {
+                if retryCount < AppArgs.shared.retryCount && launchRetryCount < AppArgs.shared.launchRetryCount && !failedTests.isEmpty {
                     if !failedTests.isEmpty {
                         let retryOperation = self.createOperation(simulator: simulator, tests: failedTests, retryCount: retryCount, launchRetryCount: launchRetryCount)
                         self.testRunnerQueue.addOperation(retryOperation)
