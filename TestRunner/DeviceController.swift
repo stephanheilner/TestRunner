@@ -244,7 +244,9 @@ class DeviceController {
             "aslmanager",
             "launchd_sim",
             "UserEventAgent",
-            "MobileSMSSpotlightImporter"
+            "MobileSMSSpotlightImporter",
+            "UserEventAgent",
+            "mdworker"
         ]
         processesToKill.forEach { killProcesses(grepArg: $0) }
     }
