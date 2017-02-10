@@ -30,6 +30,7 @@ struct AppArgs {
     let logsDir: String
     let retryCount: Int
     let launchRetryCount: Int
+    let needsExternalDisplay: Bool
     
     var outputDirectory: String {
         return derivedDataPath + "/output"
@@ -110,6 +111,8 @@ struct AppArgs {
         guard partition < partitionsCount else {
             exitWithMessage("-partition must be lower than -partitions-count")
         }
+        
+        needsExternalDisplay = UserDefaults.standard.bool(forKey: "needs-external-display")
 
         var projectDirectory: String?
         

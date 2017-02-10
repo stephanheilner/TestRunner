@@ -107,13 +107,14 @@ open class TestRunner: NSObject {
             }
             
             let partition = AppArgs.shared.partition
+            let needsExternalDisplay = AppArgs.shared.needsExternalDisplay
             let testsByDevice = testsByPartition[partition]
             
             for (deviceFamily, deviceInfos) in devices {
                 for (index, deviceInfo) in deviceInfos.enumerated() {
                     guard let tests = testsByDevice[index] else { continue }
                     
-                    let operation = createOperation(deviceFamily, simulatorName: deviceInfo.simulatorName, deviceID: deviceInfo.deviceID, tests: tests)
+                    let operation = createOperation(deviceFamily, simulatorName: deviceInfo.simulatorName, deviceID: deviceInfo.deviceID, tests: tests, needsExternalDisplay: needsExternalDisplay)
                     
                     // Wait for loaded to finish
                     testRunnerQueue.addOperation(operation)
@@ -134,9 +135,9 @@ open class TestRunner: NSObject {
         return !failed
     }
     
-    func createOperation(_ deviceFamily: String, simulatorName: String, deviceID: String, tests: [String], retryCount: Int = 0, launchRetryCount: Int = 0) -> TestRunnerOperation {
-        let operation = TestRunnerOperation(deviceFamily: deviceFamily, simulatorName: simulatorName, deviceID: deviceID, tests: tests, retryCount: retryCount, launchRetryCount: launchRetryCount)
-        operation.completion = { status, simulatorName, failedTests, deviceID, retryCount, launchRetryCount in
+    func createOperation(_ deviceFamily: String, simulatorName: String, deviceID: String, tests: [String], retryCount: Int = 0, launchRetryCount: Int = 0, needsExternalDisplay: Bool = false) -> TestRunnerOperation {
+        let operation = TestRunnerOperation(deviceFamily: deviceFamily, simulatorName: simulatorName, deviceID: deviceID, tests: tests, retryCount: retryCount, launchRetryCount: launchRetryCount, needsExternalDisplay: needsExternalDisplay)
+        operation.completion = { status, simulatorName, failedTests, deviceID, retryCount, launchRetryCount, needsExternalDisplay in
             switch status {
             case .success:
                 NSLog("Tests PASSED on %@\n", simulatorName)
@@ -152,11 +153,11 @@ open class TestRunner: NSObject {
                     // Retry failed tests individually
                     var retryTests = failedTests
                     if let test = retryTests.shift() {
-                        let retryOperation = self.createOperation(deviceFamily, simulatorName: simulatorName, deviceID: deviceID, tests: [test], retryCount: retryCount)
+                        let retryOperation = self.createOperation(deviceFamily, simulatorName: simulatorName, deviceID: deviceID, tests: [test], retryCount: retryCount, needsExternalDisplay: needsExternalDisplay)
                         self.testRunnerQueue.addOperation(retryOperation)
                     }
                     if !retryTests.isEmpty {
-                        let retryOperation = self.createOperation(deviceFamily, simulatorName: simulatorName, deviceID: deviceID, tests: retryTests, retryCount: retryCount)
+                        let retryOperation = self.createOperation(deviceFamily, simulatorName: simulatorName, deviceID: deviceID, tests: retryTests, retryCount: retryCount, needsExternalDisplay: needsExternalDisplay)
                         self.testRunnerQueue.addOperation(retryOperation)
                     }
                 } else {
