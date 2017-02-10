@@ -155,7 +155,24 @@ class TestRunnerOperation: Operation {
         
         simulatorLaunched = true
         
+        if AppArgs.shared.needsExternalDisplay {
+            connectExternalDisplayToSimulator()
+        }
         NotificationCenter.default.post(name: Notification.Name(rawValue: TestRunnerOperationQueue.SimulatorLoadedNotification), object: nil)
+    }
+    
+    func connectExternalDisplayToSimulator() {
+        let applescript = ["tell application \"Simulator\" to activate", "tell application \"System Events\" to tell process \"Simulator\" to tell menu bar 1 to tell menu bar item \"Hardware\" to tell menu \"Hardware\" to tell menu item \"External Displays\" to tell menu \"External Displays\" to click menu item \"1920×1080 (1080p)\"", "tell application \"System Events\" to tell process \"Simulator\" to tell menu bar 1 to activate"]
+        var error: NSDictionary?
+        
+        applescript.forEach { script in
+            if let scriptObject = NSAppleScript(source: script) {
+                _ = scriptObject.executeAndReturnError(&error)
+                if let error = error {
+                    print("error :\(error)")
+                }
+            }
+        }
     }
     
     func notifyIfLaunched(_ data: Data) {
