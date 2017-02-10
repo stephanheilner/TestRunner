@@ -54,19 +54,17 @@ class TestRunnerOperation: Operation {
     fileprivate var status: TestRunnerStatus = .stopped
     fileprivate var lastCheck = Date().timeIntervalSince1970
     fileprivate var timeoutCounter = 0
-    fileprivate var needsExternalDisplay = false
     
     var simulatorLaunched = false
-    var completion: ((_ status: TestRunnerStatus, _ simulatorName: String, _ failedTests: [String], _ deviceID: String, _ retryCount: Int, _ launchRetryCount: Int, _ needsExternalDisplay: Bool) -> Void)?
+    var completion: ((_ status: TestRunnerStatus, _ simulatorName: String, _ failedTests: [String], _ deviceID: String, _ retryCount: Int, _ launchRetryCount: Int) -> Void)?
     
-    init(deviceFamily: String, simulatorName: String, deviceID: String, tests: [String], retryCount: Int, launchRetryCount: Int, needsExternalDisplay: Bool) {
+    init(deviceFamily: String, simulatorName: String, deviceID: String, tests: [String], retryCount: Int, launchRetryCount: Int) {
         self.deviceFamily = deviceFamily
         self.simulatorName = simulatorName
         self.deviceID = deviceID
         self.tests = tests
         self.retryCount = retryCount
         self.launchRetryCount = launchRetryCount
-        self.needsExternalDisplay = needsExternalDisplay
         var logPrefix = "\(AppArgs.shared.logsDir)/\(deviceID)"
         if tests.count == 1 {
             logPrefix += "-" + tests[0].replacingOccurrences(of: "/", with: "-")
@@ -146,7 +144,7 @@ class TestRunnerOperation: Operation {
         
         Summary.outputSummary(logFile: logFilePath, attemptedTests: tests)
         
-        completion?(status, simulatorName, tests.filter { !succeededTests.contains($0) }, deviceID, retryCount, launchRetryCount, needsExternalDisplay)
+        completion?(status, simulatorName, tests.filter { !succeededTests.contains($0) }, deviceID, retryCount, launchRetryCount)
         
         isExecuting = false
         isFinished = true
@@ -156,13 +154,14 @@ class TestRunnerOperation: Operation {
         guard !simulatorLaunched else { return }
         
         simulatorLaunched = true
-        connectExternalDisplayToSimulator()
+        
+        if AppArgs.shared.needsExternalDisplay {
+            connectExternalDisplayToSimulator()
+        }
         NotificationCenter.default.post(name: Notification.Name(rawValue: TestRunnerOperationQueue.SimulatorLoadedNotification), object: nil)
     }
     
     func connectExternalDisplayToSimulator() {
-        guard needsExternalDisplay else { return }
-        
         let applescript = ["tell application \"Simulator\" to activate", "tell application \"System Events\" to tell process \"Simulator\" to tell menu bar 1 to tell menu bar item \"Hardware\" to tell menu \"Hardware\" to tell menu item \"External Displays\" to tell menu \"External Displays\" to click menu item \"1920×1080 (1080p)\"", "tell application \"System Events\" to tell process \"Simulator\" to tell menu bar 1 to activate"]
         var error: NSDictionary?
         
