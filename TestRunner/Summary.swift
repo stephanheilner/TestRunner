@@ -74,7 +74,7 @@ class Summary {
             
             let testSuite = log.substring(with: testSuiteRange)
             let succeeded = succeededTests.flatMap { formattedTestName(testCase: $0, testSuite: testSuite) }
-            return (succeeded: succeeded)
+            return succeeded
         } catch {
             return []
         }
